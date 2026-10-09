@@ -1,0 +1,121 @@
+---
+import Icon from './Icon.astro'
+import { materials } from '../data/materials'
+---
+
+<section class="section" id="materials" data-stage="rose">
+	<div class="container story__text">
+		<span class="eyebrow reveal">Бесплатные материалы</span>
+		<h2 class="reveal" data-delay="1">
+			Когда случилась потеря
+		</h2>
+		<p class="lead reveal" data-delay="2">
+			Короткие памятки на первые дни после выкидыша — для вас и для тех, кто рядом. Их можно прочитать на сайте или
+			сохранить себе в PDF.
+		</p>
+
+		<ul class="materials soft-divide">
+			{materials.map((m, i) => (
+				<li class="reveal" data-delay={String(i)}>
+					<a href={`/materials/${m.slug}/`} class="material">
+						<span class="material__icon">
+							<Icon name={m.icon} size={28} />
+						</span>
+						<span class="material__body">
+							<span class="material__audience">{m.audience}</span>
+							<span class="material__title">{m.title}</span>
+							<span class="material__text muted">{m.short}</span>
+							<span class="material__more">
+								Читать
+								<Icon name="arrow-out" size={18} />
+							</span>
+						</span>
+					</a>
+				</li>
+			))}
+		</ul>
+	</div>
+</section>
+
+<style>
+	.materials {
+		list-style: none;
+		margin: 40px 0 0;
+		padding: 0;
+	}
+
+	.material {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-items: start;
+		gap: 12px 16px;
+		padding: 26px 12px;
+		margin-inline: -12px;
+		border-radius: 12px;
+		text-decoration: none;
+		transition: background-color 0.4s var(--ease);
+	}
+
+	.material:hover,
+	.material:focus-visible {
+		background: color-mix(in srgb, var(--accent) 10%, transparent);
+	}
+
+	.material__icon {
+		display: grid;
+		place-items: center;
+		width: 52px;
+		height: 52px;
+		border-radius: 50%;
+		color: var(--accent);
+		background: color-mix(in srgb, var(--accent) 12%, transparent);
+		transition:
+			color 1.4s var(--ease),
+			background-color 1.4s var(--ease);
+	}
+
+	.material__body {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	.material__audience {
+		font-size: 0.74rem;
+		font-weight: 500;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--accent);
+		transition: color 1.4s var(--ease);
+	}
+
+	.material__title {
+		font-family: var(--font-serif);
+		font-size: 1.45rem;
+		line-height: 1.2;
+	}
+
+	.material__text {
+		font-size: 0.95rem;
+		max-width: 48ch;
+	}
+
+	.material__more {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin-top: 4px;
+		font-size: 0.9rem;
+		font-weight: 500;
+	}
+
+	.material__more :global(svg) {
+		color: var(--accent);
+		transition: transform 0.5s var(--ease);
+	}
+
+	.material:hover .material__more :global(svg),
+	.material:focus-visible .material__more :global(svg) {
+		transform: translate(3px, -3px);
+	}
+</style>

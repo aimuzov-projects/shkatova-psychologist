@@ -17,8 +17,12 @@ import { person } from '../data/site'
 // после CSS.
 const preload = [prataCyr, prataLat, golosCyr, golosCyr500, golosLat, golosLat500, golosLatExt]
 
-const title = `${person.name} — ${person.role.toLowerCase()}`
-const description = person.intro
+interface Props {
+	title?: string
+	description?: string
+}
+
+const { title = `${person.name} — ${person.role.toLowerCase()}`, description = person.intro } = Astro.props
 ---
 
 <!doctype html>

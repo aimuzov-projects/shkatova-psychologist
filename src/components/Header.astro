@@ -2,11 +2,19 @@
 import Icon from './Icon.astro'
 import Logo from './Logo.astro'
 import { nav, person } from '../data/site'
+
+// Вне главной якоря секций ведут на главную.
+interface Props {
+	home?: boolean
+}
+
+const { home = true } = Astro.props
+const base = home ? '' : '/'
 ---
 
 <header class="header">
 	<div class="container header__inner">
-		<a href="#top" class="logo">
+		<a href={`${base}#top`} class="logo">
 			<Logo class="logo__mark" size={40} />
 			<span class="logo__text">
 				<span class="logo__name">{person.name}</span>
@@ -17,7 +25,7 @@ import { nav, person } from '../data/site'
 			<ul class="nav">
 				{nav.map((item) => (
 					<li>
-						<a href={item.href}>
+						<a href={base + item.href}>
 							<Icon name={item.icon} size={16} />
 							{item.label}
 						</a>
@@ -25,7 +33,7 @@ import { nav, person } from '../data/site'
 				))}
 			</ul>
 		</nav>
-		<a href="#contacts" class="btn header__cta">
+		<a href={`${base}#contacts`} class="btn header__cta">
 			<Icon name="calendar" size={16} />
 			Записаться
 		</a>
@@ -196,11 +204,12 @@ import { nav, person } from '../data/site'
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		gap: 32px;
+		gap: 24px;
 	}
 
 	.nav a {
 		display: inline-flex;
+		white-space: nowrap;
 		align-items: center;
 		gap: 7px;
 		text-decoration: none;
@@ -232,6 +241,14 @@ import { nav, person } from '../data/site'
 	@media (min-width: 1000px) {
 		.nav {
 			display: flex;
+		}
+	}
+
+	/* Шесть пунктов меню с иконками и подписью под именем влезают только от 1280px. */
+	@media (min-width: 1000px) and (max-width: 1279px) {
+		.logo__role,
+		.nav a :global(svg) {
+			display: none;
 		}
 	}
 </style>

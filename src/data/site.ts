@@ -159,6 +159,7 @@ export const nav: { href: string; label: string; icon: IconName }[] = [
 	{ href: '#about', label: 'Обо мне', icon: 'heart' },
 	{ href: '#topics', label: 'С чем работаю', icon: 'sprout' },
 	{ href: '#services', label: 'Услуги', icon: 'sunrise' },
+	{ href: '#materials', label: 'Материалы', icon: 'book' },
 	{ href: '#faq', label: 'Вопросы', icon: 'chat' },
 	{ href: '#contacts', label: 'Контакты', icon: 'plane' },
 ]
