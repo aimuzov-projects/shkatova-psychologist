@@ -39,6 +39,18 @@ const description = person.intro;
       const root = document.documentElement;
       const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+      // Якорь в адресе ломает рефреш: браузер восстанавливает прокрутку, а потом плавно
+      // едет к якорю. Поэтому ссылки внутри страницы крутят сами и адрес не трогают.
+      document.addEventListener('click', (e) => {
+        const link = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
+        if (!link || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return;
+        const target = document.getElementById(link.hash.slice(1));
+        if (!target) return;
+        e.preventDefault();
+        if (target.id === 'top') scrollTo({ top: 0 });
+        else target.scrollIntoView();
+      });
+
       // Стадия суток: секция, занявшая середину экрана, красит всю страницу.
       const stageObserver = new IntersectionObserver(
         (entries) => {
@@ -162,9 +174,10 @@ const description = person.intro;
       // пересчитывала бы стили всей страницы на каждом кадре.
       const storyVeil = document.querySelector<HTMLElement>('[data-veil="story"]');
       const updatePageBg = () => {
-        if (storyVeil) storyVeil.style.backgroundColor = colorAt(scrollY + innerHeight / 2);
+        if (storyVeil && bgStops.length) storyVeil.style.backgroundColor = colorAt(scrollY + innerHeight / 2);
       };
-      buildBackground();
+      // Первый раз фон строит сам ResizeObserver: он срабатывает после раскладки и до
+      // отрисовки, а прямой вызов здесь заставлял бы браузер раскладывать страницу заранее.
       new ResizeObserver(() => {
         buildBackground();
         updatePageBg();
