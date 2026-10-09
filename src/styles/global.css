@@ -169,6 +169,11 @@ img {
   -webkit-user-drag: none;
 }
 
+/* <picture> только выбирает формат, раскладку держит сам <img>. */
+picture {
+  display: contents;
+}
+
 .selectable {
   -webkit-user-select: text;
   user-select: text;
