@@ -130,8 +130,9 @@
 	}
 }
 
+/* Без scroll-behavior: smooth: с ним браузер плавно едет к якорю из адреса при каждом
+   открытии страницы. Плавность нужна только по клику, её даёт скрипт в Base.astro. */
 html {
-	scroll-behavior: smooth;
 	background: var(--bg);
 }
 
@@ -385,10 +386,6 @@ svg {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	html {
-		scroll-behavior: auto;
-	}
-
 	.reveal {
 		opacity: 1;
 		transform: none;

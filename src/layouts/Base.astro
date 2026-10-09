@@ -114,8 +114,9 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description =
 				const target = document.getElementById(link.hash.slice(1))
 				if (!target) return
 				e.preventDefault()
-				if (target.id === 'top') scrollTo({ top: 0 })
-				else target.scrollIntoView()
+				const behavior = reduce ? 'auto' : 'smooth'
+				if (target.id === 'top') scrollTo({ top: 0, behavior })
+				else target.scrollIntoView({ behavior })
 			})
 
 			// Стадия суток: секция, занявшая середину экрана, красит всю страницу.
