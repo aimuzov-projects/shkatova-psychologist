@@ -45,7 +45,24 @@ const description = person.intro;
             return;
           }
         }
-        (k = e.createElement(t)), (a = e.getElementsByTagName(t)[0]), (k.async = 1), (k.src = r), a.parentNode.insertBefore(k, a);
+        // Скрипт счётчика (~85 КБ) на мобильном отнимал канал у шрифтов и первого фото.
+        // Грузим по первому действию или через 4 с после load, вызовы ym до того ждут в очереди.
+        var events = ['scroll', 'pointerdown', 'keydown', 'touchstart'];
+        var load = function () {
+          if (k) return;
+          events.forEach(function (name) {
+            m.removeEventListener(name, load);
+          });
+          (k = e.createElement(t)), (a = e.getElementsByTagName(t)[0]), (k.async = 1), (k.src = r), a.parentNode.insertBefore(k, a);
+        };
+        events.forEach(function (name) {
+          m.addEventListener(name, load, { passive: true });
+        });
+        var later = function () {
+          setTimeout(load, 4000);
+        };
+        if (e.readyState === 'complete') later();
+        else m.addEventListener('load', later);
       })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=113579697', 'ym');
 
       ym(113579697, 'init', {
@@ -215,38 +232,11 @@ const description = person.intro;
         updatePageBg();
       }).observe(document.body);
 
-      // Телефон: первый экран прокручен -- шапка уезжает, а кнопка записи
-      // перелетает из неё в правый нижний угол и сжимается в круг. Обратно так же.
+      // Телефон: первый экран прокручен -- шапка уезжает, а справа в угол
+      // выезжает круглая кнопка записи (сама анимация -- в стилях Header.astro).
       const hero = document.querySelector<HTMLElement>('#top');
-      const header = document.querySelector<HTMLElement>('.header');
-      const cta = document.querySelector<HTMLElement>('.header__cta');
       const fab = document.querySelector<HTMLElement>('.fab');
-      const narrow = matchMedia('(max-width: 999px)');
       let pastHero = false;
-      // Кнопка едет по прямой и меняет только ширину и высоту: таблетка сужается в круг.
-      // Обратно она остаётся на месте кнопки шапки и гаснет там, а не в углу.
-      const fly = (from: DOMRect, to: DOMRect, back: boolean) => {
-        const options: KeyframeAnimationOptions = {
-          duration: 1000,
-          easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
-          direction: back ? 'reverse' : 'normal',
-          fill: back ? 'forwards' : 'none',
-        };
-        const flights = [
-          fab!.animate(
-            [
-              {
-                width: `${from.width}px`,
-                height: `${from.height}px`,
-                transform: `translate(${from.right - to.right}px, ${from.bottom - to.bottom}px)`,
-              },
-              { width: `${to.width}px`, height: `${to.height}px`, transform: 'none' },
-            ],
-            options,
-          ),
-        ];
-        return Promise.all(flights.map((a) => a.finished)).then(() => flights);
-      };
       const contactsSection = document.querySelector<HTMLElement>('#contacts');
       let atContacts = false;
       const updateFab = () => {
@@ -260,27 +250,11 @@ const description = person.intro;
       };
 
       const updateHeader = () => {
-        if (!hero || !header || !cta || !fab) return;
+        if (!hero) return;
         const next = hero.getBoundingClientRect().bottom < 80;
         if (next === pastHero) return;
         pastHero = next;
-        const animate = narrow.matches && !reduce;
-        const ctaBox = cta.getBoundingClientRect();
-        if (pastHero) {
-          root.classList.add('past-hero');
-          if (animate) fly(ctaBox, fab.getBoundingClientRect(), false);
-          return;
-        }
-        // Шапка ещё за краем: кнопка вернётся туда, где окажется после выезда.
-        const home = new DOMRect(ctaBox.left, ctaBox.top + header.offsetHeight, ctaBox.width, ctaBox.height);
-        if (animate) {
-          root.classList.add('fab-leaving');
-          fly(home, fab.getBoundingClientRect(), true).then((flights) => {
-            root.classList.remove('fab-leaving');
-            setTimeout(() => flights.forEach((a) => a.cancel()), 300);
-          });
-        }
-        root.classList.remove('past-hero');
+        root.classList.toggle('past-hero', pastHero);
       };
 
       const onScroll = () => {
