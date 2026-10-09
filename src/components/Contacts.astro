@@ -1,0 +1,130 @@
+---
+import Blob from './Blob.astro';
+import { contacts } from '../data/site';
+
+const items = [
+  { title: 'Telegram', ...contacts.telegram, external: true },
+  { title: 'WhatsApp', ...contacts.whatsapp, external: true },
+  { title: 'Телефон', ...contacts.phone, external: false },
+  { title: 'ВКонтакте', ...contacts.vk, external: true },
+];
+---
+
+<section class="section" id="contacts">
+  <div class="container">
+    <div class="card">
+      <Blob class="card__blob" color="var(--accent-hover)" />
+      <div class="card__intro">
+        <span class="eyebrow">Контакты</span>
+        <h2>Запишитесь на первую встречу</h2>
+        <p>
+          Напишите в удобный мессенджер — отвечу в течение дня и подберём время. Если сложно
+          сформулировать запрос, просто напишите «хочу на консультацию».
+        </p>
+        <p class="card__address">{contacts.address}</p>
+      </div>
+
+      <ul class="links">
+        {items.map((i) => (
+          <li>
+            <a
+              href={i.href}
+              {...(i.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              <span class="links__title">{i.title}</span>
+              <span class="links__value">{i.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .card {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 40px;
+    padding: clamp(32px, 6vw, 64px);
+    border-radius: calc(var(--radius) * 1.5);
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .card :global(.card__blob) {
+    position: absolute;
+    width: 520px;
+    right: -180px;
+    bottom: -220px;
+    opacity: 0.5;
+  }
+
+  .card__intro,
+  .links {
+    position: relative;
+  }
+
+  .eyebrow {
+    color: rgb(255 255 255 / 0.8);
+  }
+
+  .card__intro p {
+    color: rgb(255 255 255 / 0.9);
+    max-width: 48ch;
+  }
+
+  .card__address {
+    font-size: 0.9rem;
+  }
+
+  .links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+    align-content: center;
+  }
+
+  .links a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    padding: 18px 22px;
+    border-radius: var(--radius-sm);
+    background: rgb(255 255 255 / 0.12);
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  .links a:hover {
+    background: rgb(255 255 255 / 0.22);
+  }
+
+  .links a:focus-visible {
+    outline-color: #fff;
+  }
+
+  .links__title {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .links__value {
+    font-weight: 600;
+  }
+
+  @media (min-width: 900px) {
+    .card {
+      grid-template-columns: 1.2fr 1fr;
+      gap: 64px;
+    }
+  }
+</style>

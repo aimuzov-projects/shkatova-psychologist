@@ -1,0 +1,23 @@
+# Сайт на сервере skator.ru. Порты 80/443 держит Caddy проекта skator, он проксирует
+# домен сюда по сети skator_default. deploy.sh кладёт dist/ рядом с этим файлом.
+
+services:
+  site:
+    image: nginx:1.29-alpine
+    container_name: shkatova-site
+    restart: unless-stopped
+    volumes:
+      - ./dist:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - skator
+    logging:
+      driver: json-file
+      options:
+        max-size: '5m'
+        max-file: '2'
+
+networks:
+  skator:
+    name: skator_default
+    external: true

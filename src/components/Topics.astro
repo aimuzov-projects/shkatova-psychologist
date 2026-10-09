@@ -1,0 +1,65 @@
+---
+import { topics } from '../data/site';
+---
+
+<section class="section" id="topics">
+  <div class="container">
+    <span class="eyebrow">С чем работаю</span>
+    <h2>С какими запросами приходят</h2>
+    <p class="lead">Не обязательно, чтобы «всё было плохо». Прийти можно и с ощущением, что просто нужна опора.</p>
+
+    <ul class="topics">
+      {topics.map((t, i) => (
+        <li class="topic">
+          <span class="topic__num">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{t.title}</h3>
+          <p>{t.text}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .topics {
+    list-style: none;
+    margin: 48px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  }
+
+  .topic {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 28px;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .topic:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+  }
+
+  .topic__num {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 16px;
+    border-radius: 50% 45% 55% 50%;
+    background: var(--surface);
+    color: var(--accent);
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .topic p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+</style>

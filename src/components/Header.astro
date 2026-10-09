@@ -1,0 +1,91 @@
+---
+import { nav, person } from '../data/site';
+---
+
+<header class="header">
+  <div class="container header__inner">
+    <a href="#top" class="logo">
+      <span class="logo__name">{person.name}</span>
+      <span class="logo__role">{person.role}</span>
+    </a>
+    <nav aria-label="Основное меню">
+      <ul class="nav">
+        {nav.map((item) => (
+          <li>
+            <a href={item.href}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+    <a href="#contacts" class="btn header__cta">Записаться</a>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgb(251 246 241 / 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 68px;
+  }
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: var(--text);
+    line-height: 1.1;
+  }
+
+  .logo__name {
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    font-weight: 600;
+  }
+
+  .logo__role {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .nav {
+    display: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 28px;
+  }
+
+  .nav a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+
+  .nav a:hover {
+    color: var(--accent);
+  }
+
+  .header__cta {
+    padding: 0.6em 1.3em;
+    font-size: 0.9rem;
+  }
+
+  @media (min-width: 1000px) {
+    .nav {
+      display: flex;
+    }
+  }
+</style>

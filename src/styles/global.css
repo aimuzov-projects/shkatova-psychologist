@@ -1,0 +1,159 @@
+:root {
+  --bg: #fbf6f1;
+  --surface: #f3e6dc;
+  --surface-2: #fffaf6;
+  --accent: #b5694a;
+  --accent-hover: #9c5639;
+  --rose: #d9a79a;
+  --sage: #b9c2a8;
+  --text: #3e2f2a;
+  --muted: #6e5a52;
+  --line: #e6d4c7;
+
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Manrope', system-ui, sans-serif;
+
+  --radius: 28px;
+  --radius-sm: 16px;
+  --shadow: 0 12px 40px -18px rgb(110 70 50 / 0.35);
+  --container: 1120px;
+  --gutter: 16px;
+  --section-y: clamp(64px, 10vw, 120px);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 32px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.1;
+  margin: 0 0 0.5em;
+}
+
+h2 {
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+}
+
+h3 {
+  font-size: 1.6rem;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--accent);
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  padding-block: var(--section-y);
+  position: relative;
+}
+
+.section--tinted {
+  background: var(--surface);
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.lead {
+  font-size: 1.15rem;
+  color: var(--muted);
+  max-width: 60ch;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.9em 1.8em;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+  box-shadow: inset 0 0 0 1.5px var(--line);
+}
+
+.btn--ghost:hover {
+  background: var(--surface-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

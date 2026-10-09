@@ -1,0 +1,81 @@
+---
+import { services } from '../data/site';
+---
+
+<section class="section section--tinted" id="services">
+  <div class="container">
+    <span class="eyebrow">Услуги и цены</span>
+    <h2>Форматы работы</h2>
+    <p class="lead">Первую встречу можно провести в любом формате — после неё решим, что подходит именно вам.</p>
+
+    <div class="services">
+      {services.map((s) => (
+        <article class:list={['service', { 'service--featured': s.featured }]}>
+          {s.featured && <span class="service__badge">Популярное</span>}
+          <h3>{s.title}</h3>
+          <p class="service__duration">{s.duration}</p>
+          <p class="service__text">{s.text}</p>
+          <p class="service__price">{s.price}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .services {
+    margin-top: 48px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  }
+
+  .service {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-2);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    box-shadow: var(--shadow);
+  }
+
+  .service--featured {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .service__badge {
+    align-self: flex-start;
+    margin: -12px 0 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.2);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .service__duration {
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .service--featured .service__duration,
+  .service--featured .service__text {
+    color: rgb(255 255 255 / 0.88);
+  }
+
+  .service__text {
+    flex: 1;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  .service__price {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 2.1rem;
+    font-weight: 600;
+  }
+</style>
