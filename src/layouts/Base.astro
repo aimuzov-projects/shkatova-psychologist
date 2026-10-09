@@ -7,11 +7,15 @@ import prataLat from '@fontsource/prata/files/prata-latin-400-normal.woff2?url';
 import golosCyr from '@fontsource/golos-text/files/golos-text-cyrillic-400-normal.woff2?url';
 import golosCyr500 from '@fontsource/golos-text/files/golos-text-cyrillic-500-normal.woff2?url';
 import golosLat from '@fontsource/golos-text/files/golos-text-latin-400-normal.woff2?url';
+import golosLat500 from '@fontsource/golos-text/files/golos-text-latin-500-normal.woff2?url';
+import golosLatExt from '@fontsource/golos-text/files/golos-text-latin-ext-400-normal.woff2?url';
 import '../styles/global.css';
 import { person } from '../data/site';
 
 // Шрифты свои и в preload, иначе текст рисуется запасным и прыгает.
-const preload = [prataCyr, prataLat, golosCyr, golosCyr500, golosLat];
+// latin-ext нужен ради знака ₽ в ценах, но без preload он грузится цепочкой
+// после CSS.
+const preload = [prataCyr, prataLat, golosCyr, golosCyr500, golosLat, golosLat500, golosLatExt];
 
 const title = `${person.name} — ${person.role.toLowerCase()}`;
 const description = person.intro;
@@ -123,16 +127,21 @@ const description = person.intro;
       );
       document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
 
+      // Каждый measure* только читает геометрию и возвращает запись в DOM. Кадр сначала
+      // меряет всё, потом всё пишет: чтение после записи заставляло бы браузер
+      // раскладывать страницу заново на каждый замер.
+      type Write = () => void;
+
       // Параллакс: сдвиг пропорционален расстоянию обёртки до центра экрана.
       const parallax = [...document.querySelectorAll<HTMLElement>('[data-parallax]')];
       let ticking = false;
-      const updateParallax = () => {
+      const measureParallax = (): Write => {
         const mid = innerHeight / 2;
-        for (const el of parallax) {
+        const offsets = parallax.map((el) => {
           const box = (el.parentElement as HTMLElement).getBoundingClientRect();
-          const offset = (box.top + box.height / 2 - mid) * Number(el.dataset.parallax);
-          el.style.transform = `translate3d(0, ${offset.toFixed(1)}px, 0)`;
-        }
+          return (box.top + box.height / 2 - mid) * Number(el.dataset.parallax);
+        });
+        return () => parallax.forEach((el, i) => (el.style.transform = `translate3d(0, ${offsets[i].toFixed(1)}px, 0)`));
       };
 
       // Активно последнее фото, чья линия пройдена; вуаль густеет до следующего.
@@ -145,34 +154,41 @@ const description = person.intro;
           at: Number(el.dataset.at ?? 0),
         })),
       }));
-      const updateStories = () => {
+      const measureStories = (): Write => {
         const vh = innerHeight;
-        for (const { story, veil, shots } of stories) {
+        const writes = stories.map(({ story, veil, shots }): Write => {
           const box = story.getBoundingClientRect();
           const passed = shots.map(({ trigger, at }) =>
             trigger ? (at <= 1 ? vh * at : at) - trigger.getBoundingClientRect().top : -box.top,
           );
           let active = -1;
           passed.forEach((p, i) => p >= 0 && (active = i));
-          shots.forEach(({ el }, i) => el.classList.toggle('is-active', i === active));
-          if (!veil || active < 0) continue;
-          const end = active + 1 < passed.length ? passed[active] - passed[active + 1] : passed[active] + box.bottom - vh;
-          const progress = Math.min(1, Math.max(0, passed[active] / Math.max(1, end)));
-          veil.style.opacity = (0.35 + 0.45 * progress).toFixed(3);
-        }
+          let opacity: string | null = null;
+          if (veil && active >= 0) {
+            const end = active + 1 < passed.length ? passed[active] - passed[active + 1] : passed[active] + box.bottom - vh;
+            const progress = Math.min(1, Math.max(0, passed[active] / Math.max(1, end)));
+            opacity = (0.35 + 0.45 * progress).toFixed(3);
+          }
+          return () => {
+            shots.forEach(({ el }, i) => el.classList.toggle('is-active', i === active));
+            if (veil && opacity) veil.style.opacity = opacity;
+          };
+        });
+        return () => writes.forEach((write) => write());
       };
 
       // На телефоне у секций свои фото: вуаль густеет, пока секция уезжает вверх.
       const sectionVeils = [...document.querySelectorAll<HTMLElement>('[data-veil]:not([data-veil="story"])')];
-      const updateSectionVeils = () => {
+      const measureSectionVeils = (): Write => {
         const vh = innerHeight;
-        for (const veil of sectionVeils) {
+        const opacities = sectionVeils.map((veil) => {
           const section = veil.closest('section');
-          if (!section) continue;
+          if (!section) return null;
           const box = section.getBoundingClientRect();
           const progress = Math.min(1, Math.max(0, -box.top / (box.height - vh * 0.5)));
-          veil.style.opacity = (0.35 + 0.45 * progress).toFixed(3);
-        }
+          return (0.35 + 0.45 * progress).toFixed(3);
+        });
+        return () => sectionVeils.forEach((veil, i) => opacities[i] && (veil.style.opacity = opacities[i]));
       };
 
       // Фон -- один градиент по всей странице. Если у соседей текст одного тона, цвет
@@ -183,7 +199,7 @@ const description = person.intro;
         return 0.2126 * r + 0.7152 * g + 0.0722 * b > 140;
       };
       let bgStops: { y: number; color: string }[] = [];
-      const buildBackground = () => {
+      const measureBackground = (): Write => {
         const items = sections.map((el) => {
           const box = el.getBoundingClientRect();
           const style = getComputedStyle(el);
@@ -207,7 +223,8 @@ const description = person.intro;
           }
         });
         const list = bgStops.map(({ y, color }) => `${color} ${Math.round(y)}px`).join(', ');
-        document.body.style.backgroundImage = `linear-gradient(in oklab to bottom, ${list}, ${items.at(-1)!.color})`;
+        return () =>
+          (document.body.style.backgroundImage = `linear-gradient(in oklab to bottom, ${list}, ${items.at(-1)!.color})`);
       };
       // Тот же цвет в точке страницы: им красятся шапка и вуали на фото.
       const colorAt = (y: number) => {
@@ -225,12 +242,6 @@ const description = person.intro;
       const updatePageBg = () => {
         if (storyVeil && bgStops.length) storyVeil.style.backgroundColor = colorAt(scrollY + innerHeight / 2);
       };
-      // Первый раз фон строит сам ResizeObserver: он срабатывает после раскладки и до
-      // отрисовки, а прямой вызов здесь заставлял бы браузер раскладывать страницу заранее.
-      new ResizeObserver(() => {
-        buildBackground();
-        updatePageBg();
-      }).observe(document.body);
 
       // Телефон: первый экран прокручен -- шапка уезжает, а справа в угол
       // выезжает круглая кнопка записи (сама анимация -- в стилях Header.astro).
@@ -239,41 +250,53 @@ const description = person.intro;
       let pastHero = false;
       const contactsSection = document.querySelector<HTMLElement>('#contacts');
       let atContacts = false;
-      const updateFab = () => {
-        if (!fab || !contactsSection) return;
+      const measureFab = (): Write | null => {
+        if (!fab || !contactsSection) return null;
         const next = contactsSection.getBoundingClientRect().top < innerHeight * 0.5;
-        if (next === atContacts) return;
+        if (next === atContacts) return null;
         atContacts = next;
-        root.classList.toggle('at-contacts', atContacts);
-        fab.setAttribute('href', atContacts ? '#top' : '#contacts');
-        fab.setAttribute('aria-label', atContacts ? 'Наверх' : 'Записаться');
+        return () => {
+          root.classList.toggle('at-contacts', atContacts);
+          fab.setAttribute('href', atContacts ? '#top' : '#contacts');
+          fab.setAttribute('aria-label', atContacts ? 'Наверх' : 'Записаться');
+        };
       };
 
-      const updateHeader = () => {
-        if (!hero) return;
+      const measureHeader = (): Write | null => {
+        if (!hero) return null;
         const next = hero.getBoundingClientRect().bottom < 80;
-        if (next === pastHero) return;
+        if (next === pastHero) return null;
         pastHero = next;
-        root.classList.toggle('past-hero', pastHero);
+        return () => root.classList.toggle('past-hero', pastHero);
+      };
+
+      const frame = (extra: (Write | null)[] = []) => {
+        const writes = [
+          ...extra,
+          measureHeader(),
+          measureFab(),
+          measureStories(),
+          measureSectionVeils(),
+          reduce ? null : measureParallax(),
+        ];
+        root.classList.toggle('scrolled', scrollY > 40);
+        writes.forEach((write) => write?.());
+        updatePageBg();
       };
 
       const onScroll = () => {
-        root.classList.toggle('scrolled', scrollY > 40);
         if (ticking) return;
         ticking = true;
         requestAnimationFrame(() => {
-          updateHeader();
-          updateFab();
-          updatePageBg();
-          updateStories();
-          updateSectionVeils();
-          if (!reduce) updateParallax();
+          frame();
           ticking = false;
         });
       };
       addEventListener('scroll', onScroll, { passive: true });
-      addEventListener('resize', onScroll);
-      onScroll();
+
+      // Первый кадр и пересчёт после ресайза делает ResizeObserver: он срабатывает уже
+      // после раскладки, так что замеры не заставляют браузер раскладывать страницу заранее.
+      new ResizeObserver(() => frame([measureBackground()])).observe(document.body);
 
       const glow = document.querySelector<HTMLElement>('.glow');
       if (glow && !reduce && matchMedia('(pointer: fine)').matches) {
