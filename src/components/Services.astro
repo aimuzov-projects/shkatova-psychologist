@@ -29,7 +29,18 @@ const rest = services.filter((s) => !s.popular)
 					</span>
 					<span class="offer__head">
 						<span class="offer__title">{offer.title}</span>
-						<span class="offer__price">{offer.price}</span>
+						<span class="offer__prices">
+							{offer.oldPrice && (
+								<del class="offer__old">
+									<span class="visually-hidden">Было </span>
+									{offer.oldPrice}
+								</del>
+							)}
+							<span class="offer__price">
+								{offer.oldPrice && <span class="visually-hidden">Сейчас </span>}
+								{offer.price}
+							</span>
+						</span>
 					</span>
 					<span class="offer__duration">{offer.duration}</span>
 					<span class="offer__text">{offer.text}</span>
@@ -52,6 +63,7 @@ const rest = services.filter((s) => !s.popular)
 								<span class="service__text muted">{s.text}</span>
 							</span>
 							<span class="service__meta">
+								{s.oldPrice && <del class="service__old muted">{s.oldPrice}</del>}
 								<span class:list={['service__price', s.free && 'service__price--free']}>{s.price}</span>
 								<span class="service__duration muted">{s.duration}</span>
 							</span>
@@ -148,9 +160,39 @@ const rest = services.filter((s) => !s.popular)
 		font-size: clamp(1.7rem, 4vw, 2.2rem);
 	}
 
+	.offer__prices {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 10px;
+	}
+
 	.offer__price {
 		font-size: clamp(1.5rem, 3.4vw, 1.9rem);
 		color: #a5573f;
+	}
+
+	.offer__old,
+	.service__old {
+		font-family: var(--font-serif);
+		text-decoration-thickness: 1.5px;
+	}
+
+	.offer__old {
+		font-size: 1.1rem;
+		opacity: 0.55;
+	}
+
+	.service__old {
+		font-size: 1rem;
+	}
+
+	.visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
 	}
 
 	.offer__duration {
