@@ -439,34 +439,40 @@ const slots = (text: string) =>
 		padding: 20px 24px;
 		border-radius: 16px;
 		background: color-mix(in srgb, var(--accent) 14%, transparent);
+		/* Строки с плашками разведены, иначе плашки соседних строк налезают друг на друга. */
+		line-height: 1.9;
 	}
 
 	/* Места формулы -- плашки своего цвета, а в примерах тем же цветом подчёркнуто
-	   то, что их заполняет. Цвета светлые: читаются на любой стадии слайда. */
+	   то, что их заполняет. Цвета глубокие: белый текст на них читается. */
 	.slot--1,
 	.fill--1 {
-		--slot: #ffd3a1;
+		--slot: #b8653a;
 	}
 
 	.slot--2,
 	.fill--2 {
-		--slot: #c4d8ff;
+		--slot: #5f6fb3;
 	}
 
 	.slot {
-		padding: 0.05em 0.4em 0.1em;
+		padding: 0.05em 0.4em 0.12em;
 		border-radius: 0.35em;
 		background: var(--slot);
-		color: #3b2340;
+		color: #fff;
 		white-space: nowrap;
 	}
 
+	.examples li {
+		line-height: 1.8;
+	}
+
 	.fill {
-		padding: 0 0.1em;
-		border-radius: 0.2em;
-		background: color-mix(in srgb, var(--slot) 34%, transparent);
-		box-shadow: inset 0 -3px 0 var(--slot);
-		color: inherit;
+		padding: 0.05em 0.2em;
+		border-radius: 0.25em;
+		background: color-mix(in srgb, var(--slot) 55%, transparent);
+		box-shadow: inset 0 -2px 0 var(--slot);
+		color: #fff;
 		-webkit-box-decoration-break: clone;
 		box-decoration-break: clone;
 	}
