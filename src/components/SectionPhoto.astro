@@ -14,7 +14,7 @@ const { src, position = '50% 0%' } = Astro.props
 
 <div class="section-photo" aria-hidden="true">
 	<div class="veil" data-veil></div>
-	<div class="px" data-parallax="-0.08">
+	<div class="px" data-parallax="-0.2">
 		<Picture
 			formats={['avif']}
 			fallbackFormat="webp"
@@ -39,8 +39,10 @@ const { src, position = '50% 0%' } = Astro.props
 		-webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 55%, transparent 100%);
 	}
 
+	/* Запас сверху и снизу под сдвиг параллакса, иначе на краях пути открывается пустота. */
 	.px {
-		height: 112%;
+		position: absolute;
+		inset: -22% 0;
 	}
 
 	img {

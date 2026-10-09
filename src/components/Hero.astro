@@ -8,7 +8,7 @@ import { person } from '../data/site'
 <section class="hero" id="top" data-stage="night">
 	<div class="hero__photo" aria-hidden="true">
 		<div class="veil" data-veil></div>
-		<div class="px" data-parallax="-0.08">
+		<div class="px" data-parallax="-0.2">
 			<!-- На десктопе фото скрыто, а eager-картинку браузер всё равно качает: 1px берёт самый маленький файл. -->
 			<Picture
 				formats={['avif']}
@@ -142,8 +142,11 @@ import { person } from '../data/site'
 		transition: background 1.4s var(--ease);
 	}
 
+	/* Первый экран при прокрутке только отстаёт и едет вниз, запас нужен сверху. Больше
+	   не даём, иначе обрезается голова, а щель в самом конце пути прячет градиент сверху. */
 	.hero__photo .px {
-		height: 112%;
+		position: absolute;
+		inset: -18% 0 -6%;
 	}
 
 	.hero__photo img {
