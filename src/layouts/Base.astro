@@ -45,18 +45,13 @@ const description = person.intro;
             return;
           }
         }
-        // Скрипт метрики весит ~100 КБ и на мобильном отнимал канал у первого фото.
-        // Грузим после load: вызовы ym до этого копятся в очереди и не теряются.
-        var load = function () {
-          (k = e.createElement(t)), (a = e.getElementsByTagName(t)[0]), (k.async = 1), (k.src = r), a.parentNode.insertBefore(k, a);
-        };
-        if (e.readyState === 'complete') load();
-        else m.addEventListener('load', load);
+        (k = e.createElement(t)), (a = e.getElementsByTagName(t)[0]), (k.async = 1), (k.src = r), a.parentNode.insertBefore(k, a);
       })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=113579697', 'ym');
 
       ym(113579697, 'init', {
         ssr: true,
-        webvisor: true,
+        // Вебвизор выключен: на мобильном он поднимал LCP с ~2.1 до ~3 с.
+        webvisor: false,
         clickmap: true,
         ecommerce: 'dataLayer',
         referrer: document.referrer,
