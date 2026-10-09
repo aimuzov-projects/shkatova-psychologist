@@ -9,19 +9,19 @@ import { faq } from '../data/site';
     <h2 class="reveal" data-delay="1">Частые вопросы</h2>
     <p class="lead reveal" data-delay="2">Не нашли ответа? Напишите мне — отвечу лично.</p>
 
-    <dl class="faq soft-divide">
+    <div class="faq soft-divide">
       {faq.map((item) => (
         <div class="faq__item reveal">
           <span class="faq__badge" aria-hidden="true">
             <Icon name={item.icon} size={30} />
           </span>
           <div class="faq__body">
-            <dt>{item.q}</dt>
-            <dd class="muted">{item.a}</dd>
+            <h3 class="faq__q">{item.q}</h3>
+            <p class="faq__a muted">{item.a}</p>
           </div>
         </div>
       ))}
-    </dl>
+    </div>
   </div>
 </section>
 
@@ -60,13 +60,14 @@ import { faq } from '../data/site';
     transform: scale(1.06) rotate(-4deg);
   }
 
-  dt {
-    font-family: var(--font-serif);
+  .faq__q {
+    margin: 0;
     font-size: 1.3rem;
     line-height: 1.25;
+    letter-spacing: normal;
   }
 
-  dd {
+  .faq__a {
     grid-column: 1 / -1;
     margin: 0;
     font-size: 0.97rem;
@@ -97,11 +98,11 @@ import { faq } from '../data/site';
       height: 30px;
     }
 
-    dt {
+    .faq__q {
       margin: 6px 0 8px;
     }
 
-    dd {
+    .faq__a {
       grid-column: auto;
     }
   }
