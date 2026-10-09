@@ -22,9 +22,17 @@ import { nav, person } from '../data/site';
         ))}
       </ul>
     </nav>
-    <a href="#contacts" class="btn header__cta">Записаться</a>
+    <a href="#contacts" class="btn header__cta"><Icon name="calendar" size={16} />Записаться</a>
   </div>
 </header>
+
+<a href="#contacts" class="fab" aria-label="Записаться">
+  <span class="fab__bg"></span>
+  <span class="fab__icons">
+    <Icon name="calendar" size={24} class="fab__icon fab__icon--book" />
+    <Icon name="arrow-up" size={24} class="fab__icon fab__icon--up" />
+  </span>
+</a>
 
 <style>
   .header {
@@ -33,11 +41,87 @@ import { nav, person } from '../data/site';
     z-index: 20;
     color: var(--fg);
     /* Подложка с размытием всегда, а не только после прокрутки: меню читается над фото. */
-    background: color-mix(in srgb, var(--page-bg, var(--bg)) 72%, transparent);
+    background: color-mix(in srgb, var(--bg) 72%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     box-shadow: 0 8px 24px -18px rgb(20 10 20 / 0.18);
-    transition: color 1.4s var(--ease), background-color 1.4s var(--ease);
+    transition:
+      color 1.4s var(--ease),
+      background-color 1.4s var(--ease),
+      transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  /* Телефон: за первым экраном шапка уезжает, а запись живёт в круглой кнопке в углу.
+     Перелёт кнопки из шапки в угол рисует скрипт в Base.astro. */
+  @media (max-width: 999px) {
+    :global(html.past-hero) .header {
+      transform: translateY(-100%);
+    }
+
+    :global(html.past-hero) .header__cta,
+    :global(html.fab-leaving) .header__cta {
+      visibility: hidden;
+    }
+  }
+
+  .fab {
+    position: fixed;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    color: var(--btn-fg);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.25s var(--ease), visibility 0s 0.25s;
+  }
+
+  .fab__bg {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: var(--btn-bg);
+    box-shadow: 0 10px 30px -12px rgb(20 10 20 / 0.45);
+  }
+
+  .fab__icons {
+    position: relative;
+    display: grid;
+  }
+
+  /* У контактов записываться уже некуда: календарь уступает место стрелке наверх. */
+  .fab :global(.fab__icon) {
+    grid-area: 1 / 1;
+    transition: opacity 0.3s var(--ease), transform 0.45s var(--ease);
+  }
+
+  .fab :global(.fab__icon--up),
+  :global(html.at-contacts) .fab :global(.fab__icon--book) {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.6);
+  }
+
+  :global(html.at-contacts) .fab :global(.fab__icon--up) {
+    opacity: 1;
+    transform: none;
+  }
+
+  :global(html.past-hero) .fab,
+  :global(html.fab-leaving) .fab {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.25s var(--ease);
+  }
+
+  @media (min-width: 1000px) {
+    .fab {
+      display: none;
+    }
   }
 
   .header::after {

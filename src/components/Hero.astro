@@ -54,8 +54,15 @@ import { person } from '../data/site';
     max-width: 620px;
   }
 
+  /* Строки склеены неразрывными пробелами: на телефоне шрифт идёт от ширины экрана. */
   h1 {
-    font-size: clamp(2.2rem, 5vw, 4.4rem);
+    font-size: clamp(1.7rem, 8.6vw, 4.4rem);
+  }
+
+  @media (min-width: 900px) {
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 4.4rem);
+    }
   }
 
   h1 em {
@@ -64,18 +71,43 @@ import { person } from '../data/site';
     transition: color 1.4s var(--ease);
   }
 
+  /* На телефоне кнопки друг под другом во всю ширину; от 360px текст в одну строку. */
   .hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 36px;
+    display: grid;
+    gap: 10px;
+    margin-top: 32px;
+  }
+
+  .hero__actions .btn {
+    justify-content: center;
+    padding-inline: 1.2em;
+    text-align: center;
+  }
+
+  @media (min-width: 360px) {
+    .hero__actions .btn {
+      white-space: nowrap;
+    }
+  }
+
+  @media (min-width: 560px) {
+    .hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 36px;
+    }
+
+    .hero__actions .btn {
+      padding-inline: 1.9em;
+    }
   }
 
   /* Фото уходит в ночь по левому краю и снизу, чтобы не спорить с текстом. */
   .hero__photo {
     position: relative;
     z-index: 0;
-    height: min(68svh, 640px);
+    height: min(54svh, 480px);
     margin-bottom: -6svh;
     overflow: hidden;
     mask-image: linear-gradient(to top, transparent 0%, #000 45%);
@@ -87,7 +119,7 @@ import { person } from '../data/site';
     position: absolute;
     inset: 0;
     z-index: 1;
-    background: linear-gradient(to bottom, var(--page-bg, var(--bg)) 0%, transparent 32%);
+    background: linear-gradient(to bottom, var(--bg) 0%, transparent 32%);
     transition: background 1.4s var(--ease);
   }
 
@@ -116,6 +148,13 @@ import { person } from '../data/site';
     transform: translateX(-50%);
     color: var(--muted);
     transition: opacity 0.6s var(--ease), color 1.4s var(--ease);
+  }
+
+  /* На сенсорных экранах мышки нет, а подсказка налезает на кнопку. */
+  @media (pointer: coarse), (max-width: 899px) {
+    .hero__hint {
+      display: none;
+    }
   }
 
   :global(html.scrolled) .hero__hint {

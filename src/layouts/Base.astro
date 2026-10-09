@@ -158,18 +158,93 @@ const description = person.intro;
         const t = (y - a.y) / (b.y - a.y || 1);
         return `color-mix(in oklab, ${b.color} ${(t * 100).toFixed(1)}%, ${a.color})`;
       };
-      const updatePageBg = () => root.style.setProperty('--page-bg', colorAt(scrollY + innerHeight / 2));
+      // Цвет нужен только затемнению на фото в колонке: переменная на <html>
+      // пересчитывала бы стили всей страницы на каждом кадре.
+      const storyVeil = document.querySelector<HTMLElement>('[data-veil="story"]');
+      const updatePageBg = () => {
+        if (storyVeil) storyVeil.style.backgroundColor = colorAt(scrollY + innerHeight / 2);
+      };
       buildBackground();
       new ResizeObserver(() => {
         buildBackground();
         updatePageBg();
       }).observe(document.body);
 
+      // Телефон: первый экран прокручен -- шапка уезжает, а кнопка записи
+      // перелетает из неё в правый нижний угол и сжимается в круг. Обратно так же.
+      const hero = document.querySelector<HTMLElement>('#top');
+      const header = document.querySelector<HTMLElement>('.header');
+      const cta = document.querySelector<HTMLElement>('.header__cta');
+      const fab = document.querySelector<HTMLElement>('.fab');
+      const narrow = matchMedia('(max-width: 999px)');
+      let pastHero = false;
+      // Кнопка едет по прямой и меняет только ширину и высоту: таблетка сужается в круг.
+      // Обратно она остаётся на месте кнопки шапки и гаснет там, а не в углу.
+      const fly = (from: DOMRect, to: DOMRect, back: boolean) => {
+        const options: KeyframeAnimationOptions = {
+          duration: 1000,
+          easing: 'cubic-bezier(0.65, 0, 0.35, 1)',
+          direction: back ? 'reverse' : 'normal',
+          fill: back ? 'forwards' : 'none',
+        };
+        const flights = [
+          fab!.animate(
+            [
+              {
+                width: `${from.width}px`,
+                height: `${from.height}px`,
+                transform: `translate(${from.right - to.right}px, ${from.bottom - to.bottom}px)`,
+              },
+              { width: `${to.width}px`, height: `${to.height}px`, transform: 'none' },
+            ],
+            options,
+          ),
+        ];
+        return Promise.all(flights.map((a) => a.finished)).then(() => flights);
+      };
+      const contactsSection = document.querySelector<HTMLElement>('#contacts');
+      let atContacts = false;
+      const updateFab = () => {
+        if (!fab || !contactsSection) return;
+        const next = contactsSection.getBoundingClientRect().top < innerHeight * 0.5;
+        if (next === atContacts) return;
+        atContacts = next;
+        root.classList.toggle('at-contacts', atContacts);
+        fab.setAttribute('href', atContacts ? '#top' : '#contacts');
+        fab.setAttribute('aria-label', atContacts ? 'Наверх' : 'Записаться');
+      };
+
+      const updateHeader = () => {
+        if (!hero || !header || !cta || !fab) return;
+        const next = hero.getBoundingClientRect().bottom < 80;
+        if (next === pastHero) return;
+        pastHero = next;
+        const animate = narrow.matches && !reduce;
+        const ctaBox = cta.getBoundingClientRect();
+        if (pastHero) {
+          root.classList.add('past-hero');
+          if (animate) fly(ctaBox, fab.getBoundingClientRect(), false);
+          return;
+        }
+        // Шапка ещё за краем: кнопка вернётся туда, где окажется после выезда.
+        const home = new DOMRect(ctaBox.left, ctaBox.top + header.offsetHeight, ctaBox.width, ctaBox.height);
+        if (animate) {
+          root.classList.add('fab-leaving');
+          fly(home, fab.getBoundingClientRect(), true).then((flights) => {
+            root.classList.remove('fab-leaving');
+            setTimeout(() => flights.forEach((a) => a.cancel()), 300);
+          });
+        }
+        root.classList.remove('past-hero');
+      };
+
       const onScroll = () => {
         root.classList.toggle('scrolled', scrollY > 40);
         if (ticking) return;
         ticking = true;
         requestAnimationFrame(() => {
+          updateHeader();
+          updateFab();
           updatePageBg();
           updateStories();
           updateSectionVeils();

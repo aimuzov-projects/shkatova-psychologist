@@ -61,10 +61,12 @@ import photo from '../assets/services.jpg';
     padding: 0;
   }
 
+  /* На телефоне иконка в строку с названием, описание и цена под ними. */
   .service__link {
     display: grid;
-    grid-template-columns: 44px 1fr;
-    gap: 8px 16px;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 8px 12px;
     padding: 26px 12px;
     margin-inline: -12px;
     border-radius: 12px;
@@ -78,9 +80,18 @@ import photo from '../assets/services.jpg';
   }
 
   .service__icon {
+    display: grid;
     color: var(--accent);
-    padding-top: 0.2em;
     transition: color 1.4s var(--ease);
+  }
+
+  .service__icon :global(svg) {
+    width: 1.6rem;
+    height: 1.6rem;
+  }
+
+  .service__body {
+    display: contents;
   }
 
   .service__title {
@@ -106,14 +117,14 @@ import photo from '../assets/services.jpg';
   }
 
   .service__text {
+    grid-column: 1 / -1;
     display: block;
-    margin-top: 8px;
     font-size: 0.93rem;
     max-width: 44ch;
   }
 
   .service__meta {
-    grid-column: 2;
+    grid-column: 1 / -1;
     display: flex;
     align-items: baseline;
     gap: 14px;
@@ -137,6 +148,26 @@ import photo from '../assets/services.jpg';
 
     .service__link {
       grid-template-columns: 52px 1fr auto;
+      align-items: start;
+      gap: 8px 16px;
+    }
+
+    .service__icon {
+      padding-top: 0.2em;
+    }
+
+    .service__icon :global(svg) {
+      width: 28px;
+      height: 28px;
+    }
+
+    .service__body {
+      display: block;
+    }
+
+    .service__text {
+      grid-column: auto;
+      margin-top: 8px;
     }
 
     .service__meta {

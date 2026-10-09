@@ -18,7 +18,7 @@
 }
 
 /* Путь от ночи к утру. Каждая секция несёт цвета своей стадии (data-stage),
-   фон страницы между ними плавно смешивает скрипт в Base.astro (--page-bg).
+   фон страницы между ними плавно смешивает градиент из скрипта в Base.astro.
    На <html> стадия тоже ставится: по ней красятся шапка и кнопки. */
 
 :root {
@@ -116,14 +116,28 @@
   box-sizing: border-box;
 }
 
+/* Якоря не прячут заголовок под шапкой. На телефоне шапки за первым экраном нет:
+   у секций без фото рубрика встаёт в 24px от верха, без пустой полосы. */
+@media (min-width: 1000px) {
+  html {
+    scroll-padding-top: 76px;
+  }
+}
+
+@media (max-width: 999px) {
+  .section:not(:has(.section-photo)) {
+    scroll-margin-top: calc(24px - var(--section-y));
+  }
+}
+
 html {
   scroll-behavior: smooth;
-  background: var(--page-bg, var(--bg));
+  background: var(--bg);
 }
 
 body {
   margin: 0;
-  background: var(--page-bg, var(--bg));
+  background: var(--bg);
   color: var(--fg);
   font-family: var(--font-sans);
   font-size: 17px;
@@ -344,7 +358,7 @@ svg {
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background: var(--page-bg, var(--bg));
+  background: var(--bg);
   opacity: 0.35;
   transition: opacity 0.5s linear;
 }

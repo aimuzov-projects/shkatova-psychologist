@@ -15,7 +15,7 @@ import { faq } from '../data/site';
           <span class="faq__badge" aria-hidden="true">
             <Icon name={item.icon} size={30} />
           </span>
-          <div>
+          <div class="faq__body">
             <dt>{item.q}</dt>
             <dd class="muted">{item.a}</dd>
           </div>
@@ -30,24 +30,30 @@ import { faq } from '../data/site';
     margin: 40px 0 0;
   }
 
+  /* На телефоне иконка в строку с вопросом и ростом с него, ответ под ними. */
   .faq__item {
     position: relative;
     display: grid;
-    grid-template-columns: 64px 1fr;
-    gap: 20px;
+    grid-template-columns: auto 1fr;
     align-items: start;
-    padding-block: 26px;
+    gap: 8px 12px;
+    padding-block: 22px;
+  }
+
+  .faq__body {
+    display: contents;
   }
 
   .faq__badge {
     display: grid;
     place-items: center;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
     color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
     transition: color 1.4s var(--ease), background-color 1.4s var(--ease), transform 0.6s var(--ease);
+  }
+
+  .faq__badge :global(svg) {
+    width: 1.6rem;
+    height: 1.6rem;
   }
 
   .faq__item:hover .faq__badge {
@@ -58,12 +64,45 @@ import { faq } from '../data/site';
     font-family: var(--font-serif);
     font-size: 1.3rem;
     line-height: 1.25;
-    margin: 6px 0 8px;
   }
 
   dd {
+    grid-column: 1 / -1;
     margin: 0;
     font-size: 0.97rem;
     max-width: 52ch;
+  }
+
+  @media (min-width: 900px) {
+    .faq__item {
+      grid-template-columns: 64px 1fr;
+      align-items: start;
+      gap: 20px;
+      padding-block: 26px;
+    }
+
+    .faq__body {
+      display: block;
+    }
+
+    .faq__badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+    }
+
+    .faq__badge :global(svg) {
+      width: 30px;
+      height: 30px;
+    }
+
+    dt {
+      margin: 6px 0 8px;
+    }
+
+    dd {
+      grid-column: auto;
+    }
   }
 </style>
