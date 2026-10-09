@@ -38,7 +38,7 @@
 	--muted: #b9a7b4;
 	--accent: #e3b48b;
 	--line: rgb(243 231 220 / 0.16);
-	--glow: rgb(227 180 139 / 0.16);
+	--glow: rgb(227 180 139 / 0.24);
 	--btn-bg: #fbf1e6;
 	--btn-fg: #3b2340;
 	--btn-hover: #ffffff;
@@ -50,7 +50,7 @@
 	--muted: #c4b3bf;
 	--accent: #e8b891;
 	--line: rgb(243 231 220 / 0.18);
-	--glow: rgb(232 184 145 / 0.12);
+	--glow: rgb(232 184 145 / 0.2);
 	--btn-bg: #fbf1e6;
 	--btn-fg: #3b2340;
 	--btn-hover: #ffffff;
@@ -62,7 +62,7 @@
 	--muted: #e4cfc6;
 	--accent: #f3cba7;
 	--line: rgb(251 239 228 / 0.22);
-	--glow: rgb(243 203 167 / 0.1);
+	--glow: rgb(243 203 167 / 0.16);
 	--btn-bg: #fbf1e6;
 	--btn-fg: #3b2340;
 	--btn-hover: #ffffff;
@@ -374,14 +374,20 @@ svg {
 	transition: opacity 0.5s linear;
 }
 
-/* Тёплое пятно света под курсором, видно только пока вокруг ночь. */
+/* Тёплое пятно света под курсором, видно только пока вокруг ночь. Свет ровный:
+   полная яркость держится до трети радиуса и только потом мягко гаснет. */
 .glow {
 	position: fixed;
 	inset: 0;
 	z-index: 5;
 	pointer-events: none;
 	mix-blend-mode: screen;
-	background: radial-gradient(460px circle at var(--x, 50%) var(--y, 30%), var(--glow), transparent 70%);
+	background: radial-gradient(
+		500px circle at var(--x, 50%) var(--y, 30%),
+		var(--glow) 0%,
+		var(--glow) 30%,
+		transparent 72%
+	);
 	transition: background 1.4s var(--ease);
 }
 
