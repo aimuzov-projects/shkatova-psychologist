@@ -1,7 +1,9 @@
+import type { ImageMetadata } from 'astro'
 import type { IconName } from '../components/Icon.astro'
+import mother from '../assets/materials/mother.png'
 
-// Бесплатные материалы: у каждого своя страница /materials/<slug>/ и карточка на главной.
-// Блоки разных видов, их разметку выбирает страница по type.
+// Бесплатные материалы: у каждого своя страница-презентация /materials/<slug>/
+// и карточка на главной. Блок -- слайд, а ошибки из dont-do идут по одной на слайд.
 export type MaterialBlock =
 	| { type: 'phrases'; title: string; items: { label: string; text: string }[] }
 	| { type: 'replies'; title: string; items: { label: string; text: string }[] }
@@ -15,6 +17,7 @@ export interface Material {
 	title: string
 	description: string
 	short: string
+	cover?: ImageMetadata
 	intro: string
 	blocks: MaterialBlock[]
 	outro: string[]
@@ -29,6 +32,7 @@ export const materials: Material[] = [
 		description:
 			'Что говорить себе, когда накрывает, что отвечать на бестактные слова окружающих и как просить о помощи. Бесплатный гайд перинатального психолога.',
 		short: 'Слова, на которые можно опереться самой и которыми можно защититься от обесценивающих фраз.',
+		cover: mother,
 		intro:
 			'Этот гайд — не про «забыть», а про то, как выстоять в самые острые первые дни. Сохраните его под рукой. Здесь собраны слова, которые помогут вам опереться на себя и защититься от чужих обесценивающих фраз.',
 		blocks: [

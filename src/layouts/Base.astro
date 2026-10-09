@@ -215,6 +215,8 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description =
 			}
 			let bgStops: { y: number; color: string }[] = []
 			const measureBackground = (): Write => {
+				// У страницы-презентации секций нет, фон красит она сама.
+				if (!sections.length) return () => {}
 				const items = sections.map((el) => {
 					const box = el.getBoundingClientRect()
 					const style = getComputedStyle(el)

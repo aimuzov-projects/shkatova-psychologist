@@ -1,241 +1,477 @@
 ---
 import type { GetStaticPaths } from 'astro'
+import { Picture } from 'astro:assets'
 import Base from '../../layouts/Base.astro'
-import Header from '../../components/Header.astro'
 import Icon from '../../components/Icon.astro'
-import Contacts from '../../components/Contacts.astro'
-import Footer from '../../components/Footer.astro'
-import { materials, type Material } from '../../data/materials'
+import { materials, type Material, type MaterialBlock } from '../../data/materials'
 import { contacts, person } from '../../data/site'
+import sea from '../../assets/materials/sea.png'
 
 export const getStaticPaths = (() =>
 	materials.map((material) => ({ params: { slug: material.slug }, props: { material } }))) satisfies GetStaticPaths
 
 const { material } = Astro.props as { material: Material }
+
+type DontDo = Extract<MaterialBlock, { type: 'dont-do' }>
+type Slide =
+	| { kind: 'cover' }
+	| { kind: 'block'; block: Exclude<MaterialBlock, DontDo> }
+	| { kind: 'pair'; block: DontDo; item: DontDo['items'][number]; n: number }
+	| { kind: 'outro' }
+
+const slides: Slide[] = [
+	{ kind: 'cover' },
+	...material.blocks.flatMap((block): Slide[] =>
+		block.type === 'dont-do'
+			? block.items.map((item, i) => ({ kind: 'pair', block, item, n: i + 1 }))
+			: [{ kind: 'block', block }],
+	),
+	{ kind: 'outro' },
+]
+
+// Как и главная, презентация идёт от ночи к утру: у каждого слайда своя стадия.
+const stages = ['night', 'dusk', 'dawn', 'rose', 'morning', 'day']
+const stageOf = (i: number) => stages[Math.round((i / (slides.length - 1)) * (stages.length - 1))]
+const pad = (n: number) => String(n).padStart(2, '0')
 ---
 
 <Base title={`${material.title} — ${person.name}`} description={material.description}>
-	<Header home={false} />
-	<main class="material-page">
-		<section class="section material-head" data-stage="night">
-			<div class="container narrow">
-				<a href="/#materials" class="back muted">
-					<Icon name="arrow-up" size={16} class="back__icon" />
-					Все материалы
-				</a>
-				<span class="eyebrow">{material.audience} · бесплатно</span>
-				<h1>{material.title}</h1>
-				<p class="lead selectable">{material.intro}</p>
-				<button type="button" class="btn btn--ghost print-btn" data-print>
-					<Icon name="download" size={18} />
-					Сохранить в PDF
-				</button>
-			</div>
-		</section>
+	<main class="deck">
+		<div class="deck__bg" aria-hidden="true">
+			<Picture src={sea} formats={['avif']} fallbackFormat="webp" alt="" widths={[480, 768]} sizes="100vw" />
+			<div class="deck__veil"></div>
+		</div>
 
-		<section class="section material-body" data-stage="dusk">
-			<div class="container narrow selectable">
-				{material.blocks.map((block) => (
-					<div class="block">
-						<h2 class="block__title">{block.title}</h2>
+		<div class="deck__progress" aria-hidden="true">
+			<span data-progress></span>
+		</div>
 
-						{block.type === 'phrases' && (
-							<ol class="phrases">
-								{block.items.map((item) => (
-									<li class="phrase">
-										<span class="phrase__label">{item.label}</span>
-										<blockquote class="phrase__text">«{item.text}»</blockquote>
-									</li>
-								))}
-							</ol>
+		<header class="deck__top container">
+			<a href="/#materials" class="deck__back">
+				<Icon name="arrow-up" size={16} class="deck__back-icon" />
+				<span>Все материалы</span>
+			</a>
+			<span class="deck__counter">
+				<span data-current>1</span> / {slides.length}
+			</span>
+		</header>
+
+		<div class="deck__track" data-track tabindex="-1" aria-roledescription="карусель" aria-label={material.title}>
+			{slides.map((slide, i) => (
+				<section
+					class:list={['slide', `slide--${slide.kind}`]}
+					data-stage-name={stageOf(i)}
+					aria-roledescription="слайд"
+					aria-label={`${i + 1} из ${slides.length}`}
+				>
+					<div class="slide__inner container selectable">
+						{slide.kind === 'cover' && (
+							<div class:list={['cover', material.cover && 'cover--image']}>
+								<div class="cover__text">
+									<span class="eyebrow">{material.audience} · бесплатно</span>
+									<h1>{material.title}</h1>
+									<p class="lead">{material.intro}</p>
+									<button type="button" class="btn" data-next>
+										Листать
+										<Icon name="arrow" size={18} class="slide__arrow" />
+									</button>
+								</div>
+								{material.cover && (
+									<Picture
+										class="cover__image"
+										src={material.cover}
+										formats={['avif']}
+										fallbackFormat="webp"
+										alt="Силуэт беременной женщины, бережно держащей светящегося малыша с крыльями"
+										widths={[360, 540, 720]}
+										sizes="(min-width: 900px) 320px, 50vw"
+										loading="eager"
+									/>
+								)}
+							</div>
 						)}
 
-						{block.type === 'replies' && (
-							<ol class="replies soft-divide">
-								{block.items.map((item) => (
-									<li class="reply">
-										<span class="reply__label muted">{item.label}</span>
-										<blockquote class="reply__text">«{item.text}»</blockquote>
-									</li>
-								))}
-							</ol>
-						)}
-
-						{block.type === 'formula' && (
+						{slide.kind === 'block' && (
 							<>
-								<p class="formula">{block.formula}</p>
-								<p class="examples-title muted">{block.examplesTitle}</p>
-								<ul class="examples">
-									{block.examples.map((text) => (
-										<li>«{text}»</li>
-									))}
-								</ul>
+								<h2 class="slide__title">{slide.block.title}</h2>
+								{slide.block.type === 'phrases' && (
+									<ol class="phrases">
+										{slide.block.items.map((item) => (
+											<li>
+												<span class="label">{item.label}</span>
+												<blockquote class="phrase">«{item.text}»</blockquote>
+											</li>
+										))}
+									</ol>
+								)}
+								{slide.block.type === 'replies' && (
+									<ol class="replies soft-divide">
+										{slide.block.items.map((item) => (
+											<li>
+												<span class="muted">{item.label}</span>
+												<blockquote class="reply">«{item.text}»</blockquote>
+											</li>
+										))}
+									</ol>
+								)}
+								{slide.block.type === 'formula' && (
+									<>
+										<p class="formula">{slide.block.formula}</p>
+										<p class="label examples-title">{slide.block.examplesTitle}</p>
+										<ul class="examples">
+											{slide.block.examples.map((text) => (
+												<li>«{text}»</li>
+											))}
+										</ul>
+									</>
+								)}
 							</>
 						)}
 
-						{block.type === 'dont-do' && (
-							<ol class="dont-do">
-								<li class="dont-do__head" aria-hidden="true">
-									<span>{block.dontLabel}</span>
-									<span>{block.doLabel}</span>
-								</li>
-								{block.items.map((item, i) => (
-									<li class="dont-do__row">
-										<span class="dont-do__num">{String(i + 1).padStart(2, '0')}</span>
-										<p class="dont-do__dont">
-											<Icon name="cross" size={20} class="dont-do__mark" />
-											<span class="visually-hidden">{block.dontLabel}: </span>
-											{item.dont}
-										</p>
-										<p class="dont-do__do">
-											<Icon name="check" size={20} class="dont-do__mark" />
-											<span class="visually-hidden">{block.doLabel}: </span>
-											{item.do}
-										</p>
-									</li>
+						{slide.kind === 'pair' && (
+							<div class="pair">
+								<span class="eyebrow">{slide.block.title}</span>
+								<span class="pair__num">
+									{pad(slide.n)}
+									<span class="muted"> / {pad(slide.block.items.length)}</span>
+								</span>
+								<div class="pair__dont">
+									<span class="label">
+										<Icon name="cross" size={18} />
+										{slide.block.dontLabel}
+									</span>
+									<p>{slide.item.dont}</p>
+								</div>
+								<div class="pair__do">
+									<span class="label">
+										<Icon name="check" size={18} />
+										{slide.block.doLabel}
+									</span>
+									<p>{slide.item.do}</p>
+								</div>
+							</div>
+						)}
+
+						{slide.kind === 'outro' && (
+							<div class="outro">
+								{material.outro.map((text) => (
+									<p>{text}</p>
 								))}
-							</ol>
+								<div class="outro__actions">
+									<a href={contacts.telegram.href} class="btn" target="_blank" rel="noopener noreferrer">
+										<Icon name="plane" size={18} />
+										Записаться в Telegram
+									</a>
+									<a href={contacts.whatsapp.href} class="btn btn--ghost" target="_blank" rel="noopener noreferrer">
+										<Icon name="chat" size={18} />
+										WhatsApp
+									</a>
+								</div>
+								<p class="outro__note muted">
+									Первая встреча — 20 минут онлайн, бесплатно. Напишите слово «Гармония», и мы подберём время.{' '}
+									<a href="/#about">Обо мне</a>
+								</p>
+							</div>
 						)}
 					</div>
-				))}
-			</div>
-		</section>
+				</section>
+			))}
+		</div>
 
-		<section class="section material-outro" data-stage="dawn">
-			<div class="container narrow selectable">
-				{material.outro.map((text) => (
-					<p class="outro">{text}</p>
-				))}
-				<a href="#contacts" class="btn outro__cta">
-					<Icon name="calendar" size={16} />
-					Записаться на бесплатные 20 минут
-				</a>
-			</div>
-		</section>
-
-		<Contacts />
-
-		<!-- Только для печати: на листе остаются автор и способ связаться. -->
-		<p class="print-signature">
-			{person.name}, {person.role.toLowerCase()} · Telegram {contacts.telegram.label} · {contacts.phone.label}
-		</p>
+		<nav class="deck__nav container" aria-label="Слайды">
+			<button type="button" class="deck__step" data-prev aria-label="Предыдущий слайд">
+				<Icon name="arrow" size={20} class="deck__step-prev" />
+			</button>
+			<button type="button" class="deck__step" data-next aria-label="Следующий слайд">
+				<Icon name="arrow" size={20} class="deck__step-next" />
+			</button>
+		</nav>
 	</main>
-	<Footer />
 </Base>
 
 <script>
-	document.querySelector('[data-print]')?.addEventListener('click', () => print())
+	const root = document.documentElement
+	const track = document.querySelector<HTMLElement>('[data-track]')!
+	const slides = [...track.querySelectorAll<HTMLElement>('.slide')]
+	const progress = document.querySelector<HTMLElement>('[data-progress]')!
+	const current = document.querySelector<HTMLElement>('[data-current]')!
+	const prev = document.querySelector<HTMLButtonElement>('[data-prev]')!
+	const nexts = [...document.querySelectorAll<HTMLButtonElement>('[data-next]')]
+	const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+	let index = -1
+
+	const go = (i: number) => {
+		const to = Math.max(0, Math.min(slides.length - 1, i))
+		track.scrollTo({ left: to * track.clientWidth, behavior: reduce ? 'auto' : 'smooth' })
+	}
+
+	// Полоса прогресса идёт за пальцем плавно, а текущим слайд становится, когда занял
+	// больше половины ширины: от него стадия, счётчик и стрелки.
+	const update = () => {
+		const position = track.scrollLeft / track.clientWidth
+		progress.style.transform = `scaleX(${(position + 1) / slides.length})`
+		const i = Math.round(position)
+		if (i === index) return
+		index = i
+		root.dataset.stage = slides[i].dataset.stageName
+		current.textContent = String(i + 1)
+		prev.disabled = i === 0
+		nexts.forEach((b) => (b.disabled = i === slides.length - 1))
+		// Соседние слайды вне экрана: Tab не должен уводить фокус за край.
+		slides.forEach((slide, j) => (slide.inert = j !== i))
+	}
+
+	let ticking = false
+	track.addEventListener(
+		'scroll',
+		() => {
+			if (ticking) return
+			ticking = true
+			requestAnimationFrame(() => {
+				update()
+				ticking = false
+			})
+		},
+		{ passive: true },
+	)
+
+	prev.addEventListener('click', () => go(index - 1))
+	nexts.forEach((b) => b.addEventListener('click', () => go(index + 1)))
+
+	document.addEventListener('keydown', (e) => {
+		if (e.metaKey || e.ctrlKey || e.altKey) return
+		const step = { ArrowRight: 1, PageDown: 1, ArrowLeft: -1, PageUp: -1 }[e.key]
+		if (step) go(index + step)
+		else if (e.key === 'Home') go(0)
+		else if (e.key === 'End') go(slides.length - 1)
+		else return
+		e.preventDefault()
+	})
+
+	// При повороте телефона ширина слайда меняется: остаёмся на том же слайде.
+	new ResizeObserver(() => {
+		if (index >= 0) track.scrollTo({ left: index * track.clientWidth })
+	}).observe(track)
+
+	update()
 </script>
 
 <style>
-	.narrow {
-		max-width: calc(760px + var(--gutter) * 2);
+	:global(html),
+	:global(body) {
+		height: 100%;
+		overflow: hidden;
 	}
 
-	.material-head {
-		padding-top: calc(76px + var(--section-y));
+	:global(body) {
+		transition: background-color 1.4s var(--ease);
 	}
 
-	.back {
+	.deck {
+		position: relative;
+		display: grid;
+		grid-template-rows: auto minmax(0, 1fr) auto;
+		height: 100svh;
+	}
+
+	.deck__bg {
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		overflow: hidden;
+	}
+
+	.deck__bg :global(img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.deck__veil {
+		position: absolute;
+		inset: 0;
+		background: var(--bg);
+		opacity: 0.78;
+		transition: background-color 1.4s var(--ease);
+	}
+
+	.deck__top,
+	.deck__nav {
 		display: flex;
-		width: fit-content;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		padding-block: 16px;
+	}
+
+	.deck__back {
+		display: inline-flex;
 		align-items: center;
 		gap: 8px;
-		margin-bottom: 32px;
-		font-size: 0.88rem;
+		font-size: 0.9rem;
 		text-decoration: none;
+		opacity: 0.85;
 	}
 
-	.back :global(.back__icon) {
+	.deck__back:hover {
+		opacity: 1;
+	}
+
+	.deck__back :global(.deck__back-icon) {
 		transform: rotate(-90deg);
+		color: var(--accent);
 	}
 
-	.back:hover {
-		color: var(--fg);
+	.deck__counter {
+		font-family: var(--font-serif);
+		font-variant-numeric: tabular-nums;
+		color: var(--muted);
 	}
 
-	h1 {
-		font-size: clamp(2.1rem, 5vw, 3.4rem);
+	.deck__track {
+		display: flex;
+		overflow-x: auto;
+		overflow-y: hidden;
+		scroll-snap-type: x mandatory;
+		overscroll-behavior-x: contain;
+		scrollbar-width: none;
 	}
 
-	.print-btn {
-		margin-top: 12px;
-		border: 0;
-		font-family: inherit;
-		cursor: pointer;
+	.deck__track::-webkit-scrollbar {
+		display: none;
 	}
 
-	.block + .block {
-		margin-top: 72px;
+	.deck__track:focus {
+		outline: none;
 	}
 
-	.block__title {
-		font-size: clamp(1.8rem, 4vw, 2.6rem);
-		margin-bottom: 32px;
+	.slide {
+		flex: 0 0 100%;
+		display: flex;
+		overflow-y: auto;
+		scroll-snap-align: start;
+		scroll-snap-stop: always;
+		scrollbar-width: thin;
 	}
 
-	.phrases,
-	.replies,
-	.examples,
-	.dont-do {
-		list-style: none;
-		margin: 0;
-		padding: 0;
+	/* Короткий слайд стоит по центру, длинный на маленьком экране прокручивается внутри. */
+	.slide__inner {
+		max-width: calc(820px + var(--gutter) * 2);
+		margin-block: auto;
+		padding-block: 24px;
 	}
 
-	.phrase + .phrase {
-		margin-top: 36px;
-	}
-
-	.phrase__label,
-	.dont-do__head {
+	.label {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
 		font-size: 0.78rem;
 		font-weight: 500;
 		letter-spacing: 0.18em;
 		text-transform: uppercase;
 		color: var(--accent);
+		transition: color 1.4s var(--ease);
 	}
 
 	blockquote {
 		margin: 0;
 	}
 
-	.phrase__text {
-		margin-top: 10px;
-		padding-left: 22px;
-		border-left: 1px solid var(--accent);
+	ol,
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	/* Обложка */
+	h1 {
+		font-size: clamp(2rem, 5.2vw, 3.6rem);
+	}
+
+	.cover {
+		display: grid;
+		gap: 24px;
+	}
+
+	.cover :global(.cover__image) {
+		order: -1;
+		width: auto;
+		height: min(24svh, 220px);
+		border-radius: 18px;
+		box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.6);
+	}
+
+	.cover .btn {
+		border: 0;
+		font-family: inherit;
+		cursor: pointer;
+	}
+
+	.cover .btn :global(.slide__arrow) {
+		transform: rotate(-90deg);
+	}
+
+	@media (min-width: 900px) {
+		/* Ширина колонки явная: в auto-колонке img с max-width: 100% схлопывается. */
+		.cover--image {
+			grid-template-columns: 1fr min(28vw, 320px);
+			align-items: center;
+			gap: 56px;
+		}
+
+		.cover :global(.cover__image) {
+			order: 0;
+			width: 100%;
+			height: auto;
+			max-height: 62svh;
+			object-fit: cover;
+		}
+	}
+
+	/* Фразы и ответы */
+	.slide__title {
+		font-size: clamp(1.9rem, 4.4vw, 3rem);
+		margin-bottom: clamp(20px, 4svh, 40px);
+	}
+
+	.phrases li + li {
+		margin-top: clamp(16px, 3.5svh, 32px);
+	}
+
+	.phrase,
+	.formula,
+	.pair__do p {
 		font-family: var(--font-serif);
-		font-size: clamp(1.3rem, 2.6vw, 1.65rem);
+		font-size: clamp(1.2rem, 2.6vw, 1.7rem);
 		line-height: 1.35;
 	}
 
+	.phrase {
+		margin-top: 8px;
+		padding-left: 20px;
+		border-left: 1px solid var(--accent);
+	}
+
+	.replies li {
+		padding-block: clamp(12px, 2.4svh, 22px);
+	}
+
 	.reply {
-		padding-block: 22px;
-	}
-
-	.reply__label {
-		font-size: 0.95rem;
-	}
-
-	.reply__text {
-		margin-top: 6px;
+		margin-top: 4px;
 		font-family: var(--font-serif);
-		font-size: 1.3rem;
+		font-size: clamp(1.1rem, 2.2vw, 1.4rem);
 		line-height: 1.4;
 	}
 
 	.formula {
-		padding: 22px 26px;
+		padding: 20px 24px;
 		border-radius: 16px;
-		background: color-mix(in srgb, var(--accent) 12%, transparent);
-		font-family: var(--font-serif);
-		font-size: clamp(1.3rem, 2.6vw, 1.65rem);
-		line-height: 1.35;
+		background: color-mix(in srgb, var(--accent) 14%, transparent);
 	}
 
 	.examples-title {
 		margin: 28px 0 12px;
-		font-size: 0.95rem;
 	}
 
 	.examples li {
@@ -246,145 +482,125 @@ const { material } = Astro.props as { material: Material }
 		margin-top: 12px;
 	}
 
-	/* На телефоне пара "не надо / вместо этого" идёт стопкой, на десктопе -- в две колонки. */
-	.dont-do__head {
-		display: none;
-	}
-
-	.dont-do__row {
+	/* Ошибка и чем её заменить */
+	.pair {
 		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 10px 16px;
-		padding-block: 24px;
-		border-top: 1px solid var(--line);
+		gap: 20px;
 	}
 
-	.dont-do__num {
-		grid-row: span 2;
+	.pair .eyebrow {
+		margin-bottom: 0;
+	}
+
+	.pair__num {
 		font-family: var(--font-serif);
-		font-size: 1.2rem;
+		font-size: clamp(3rem, 8vw, 5rem);
+		line-height: 1;
 		color: var(--accent);
+		transition: color 1.4s var(--ease);
 	}
 
-	.dont-do__dont,
-	.dont-do__do {
-		display: flex;
-		gap: 10px;
+	.pair__num .muted {
+		font-size: 0.4em;
+	}
+
+	.pair__dont,
+	.pair__do {
+		display: grid;
+		gap: 8px;
+	}
+
+	.pair__dont p,
+	.pair__do p {
 		margin: 0;
 	}
 
-	.dont-do__dont {
+	.pair__dont .label,
+	.pair__dont p {
 		color: var(--muted);
 	}
 
-	.dont-do :global(.dont-do__mark) {
-		flex-shrink: 0;
-		margin-top: 0.2em;
+	.pair__dont p {
+		font-size: 1.1rem;
 	}
 
-	.dont-do__dont :global(.dont-do__mark) {
-		opacity: 0.7;
+	.pair__do {
+		padding-top: 20px;
+		border-top: 1px solid var(--line);
 	}
 
-	.dont-do__do :global(.dont-do__mark) {
-		color: var(--accent);
-	}
-
-	@media (min-width: 768px) {
-		.dont-do__head,
-		.dont-do__row {
-			display: grid;
-			grid-template-columns: 40px 1fr 1.3fr;
-			gap: 24px;
-		}
-
-		.dont-do__head {
-			padding-bottom: 12px;
-		}
-
-		.dont-do__head span:first-child {
-			grid-column: 2;
-		}
-
-		.dont-do__num {
-			grid-row: auto;
-		}
-	}
-
-	.outro {
-		font-size: 1.2rem;
-	}
-
-	.outro:first-child {
+	/* Финал */
+	.outro p:first-child {
 		font-family: var(--font-serif);
-		font-size: clamp(1.4rem, 3vw, 1.9rem);
+		font-size: clamp(1.4rem, 3.4vw, 2.2rem);
 		line-height: 1.3;
 	}
 
-	.outro__cta {
-		margin-top: 16px;
+	.outro p {
+		font-size: 1.1rem;
 	}
 
-	.visually-hidden {
+	.outro__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-top: 28px;
+	}
+
+	.outro__note {
+		margin-top: 24px;
+		font-size: 0.95rem !important;
+	}
+
+	/* Навигация */
+	.deck__step {
+		display: grid;
+		place-items: center;
+		width: 48px;
+		height: 48px;
+		flex-shrink: 0;
+		border: 0;
+		border-radius: 50%;
+		background: var(--btn-bg);
+		color: var(--btn-fg);
+		cursor: pointer;
+		transition:
+			opacity 0.4s var(--ease),
+			transform 0.4s var(--ease);
+	}
+
+	.deck__step:hover:not(:disabled) {
+		transform: scale(1.06);
+	}
+
+	.deck__step:disabled {
+		opacity: 0.25;
+		cursor: default;
+	}
+
+	.deck__step :global(.deck__step-prev) {
+		transform: rotate(90deg);
+	}
+
+	.deck__step :global(.deck__step-next) {
+		transform: rotate(-90deg);
+	}
+
+	/* Тонкая полоса во всю ширину по верхнему краю: сколько уже пролистано. */
+	.deck__progress {
 		position: absolute;
-		width: 1px;
-		height: 1px;
-		overflow: hidden;
-		clip-path: inset(50%);
-		white-space: nowrap;
+		inset: 0 0 auto;
+		z-index: 1;
+		height: 3px;
+		background: var(--line);
 	}
 
-	.print-signature {
-		display: none;
-	}
-
-	/* PDF через печать браузера: чёрным по белому, без шапки, кнопок и контактов. */
-	@media print {
-		:global(html),
-		:global(body),
-		:global([data-stage]) {
-			--bg: #fff;
-			--fg: #1d1d1d;
-			--muted: #555;
-			--accent: #8a5a4c;
-			--line: #ddd;
-			background: #fff !important;
-			color: #1d1d1d;
-		}
-
-		:global(body::after),
-		:global(.glow),
-		:global(.header),
-		:global(.fab),
-		:global(#contacts),
-		:global(.footer),
-		.back,
-		.print-btn,
-		.outro__cta {
-			display: none !important;
-		}
-
-		.section {
-			padding-block: 0 24px;
-		}
-
-		.material-head {
-			padding-top: 0;
-		}
-
-		.dont-do__row,
-		.phrase,
-		.reply {
-			break-inside: avoid;
-		}
-
-		.print-signature {
-			display: block;
-			margin-top: 24px;
-			padding-top: 12px;
-			border-top: 1px solid #ddd;
-			font-size: 0.85rem;
-			color: #555;
-		}
+	.deck__progress span {
+		display: block;
+		height: 100%;
+		background: var(--accent);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: background-color 1.4s var(--ease);
 	}
 </style>
