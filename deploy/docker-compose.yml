@@ -1,5 +1,5 @@
 # Сайт на сервере skator.ru. Порты 80/443 держит Caddy проекта skator, он проксирует
-# домен сюда по сети skator_default. deploy.sh кладёт dist/ рядом с этим файлом.
+# домен сюда по сети skator_default. server.sh кладёт dist/ рядом с этим файлом.
 
 services:
   site:
