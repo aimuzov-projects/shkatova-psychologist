@@ -9,7 +9,8 @@ import { person } from '../data/site';
   <div class="hero__photo" aria-hidden="true">
     <div class="veil" data-veil></div>
     <div class="px" data-parallax="-0.08">
-      <Image src={hero} alt="" widths={[640, 1280]} sizes="(min-width: 900px) 56vw, 100vw" loading="eager" fetchpriority="high" />
+      <!-- На десктопе фото скрыто, а eager-картинку браузер всё равно качает: 1px берёт самый маленький файл. -->
+      <Image src={hero} alt="" widths={[480, 720, 960, 1280]} sizes="(min-width: 900px) 1px, 100vw" loading="eager" fetchpriority="high" />
     </div>
   </div>
 
@@ -134,8 +135,21 @@ import { person } from '../data/site';
     object-position: 50% 0%;
   }
 
-  /* Кнопка светится и дышит: 4 секунды ярче, 4 секунды тише. */
+  /* Кнопка светится и дышит: 4 секунды ярче, 4 секунды тише. Дышит слой с готовой
+     тенью через opacity -- анимацию box-shadow браузер перерисовывал бы на каждом кадре. */
   .btn--breath {
+    position: relative;
+    box-shadow: 0 0 14px 0 color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+
+  .btn--breath::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 44px 10px color-mix(in srgb, var(--accent) 70%, transparent);
+    opacity: 0;
+    pointer-events: none;
     animation: glow 8s ease-in-out infinite;
   }
 
@@ -196,12 +210,8 @@ import { person } from '../data/site';
   }
 
   @keyframes glow {
-    0%,
-    100% {
-      box-shadow: 0 0 14px 0 color-mix(in srgb, var(--accent) 35%, transparent);
-    }
     50% {
-      box-shadow: 0 0 44px 10px color-mix(in srgb, var(--accent) 70%, transparent);
+      opacity: 1;
     }
   }
 
