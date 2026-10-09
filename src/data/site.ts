@@ -72,7 +72,9 @@ export const services: {
 	duration: string
 	price: string
 	text: string
-	featured?: boolean
+	free?: boolean
+	// Чаще всего покупают: на сайте идёт отдельной карточкой над списком.
+	popular?: boolean
 }[] = [
 	{
 		icon: 'spark',
@@ -80,7 +82,7 @@ export const services: {
 		duration: '20 минут',
 		price: 'Бесплатно',
 		text: 'Напишите слово «Гармония» — познакомимся и поймём, чем я могу помочь. В подарок PDF «3 техники для моментального снижения тревоги».',
-		featured: true,
+		free: true,
 	},
 	{
 		icon: 'chat',
@@ -88,6 +90,7 @@ export const services: {
 		duration: '60 минут',
 		price: '2 500 ₽',
 		text: 'Очно в Тольятти или онлайн — видео, аудио или переписка. Беременность, роды, послеродовой период.',
+		popular: true,
 	},
 	{
 		icon: 'sunrise',

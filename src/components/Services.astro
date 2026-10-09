@@ -3,6 +3,9 @@ import Icon from './Icon.astro'
 import SectionPhoto from './SectionPhoto.astro'
 import { services } from '../data/site'
 import photo from '../assets/services.jpg'
+
+const offer = services.find((s) => s.popular)
+const rest = services.filter((s) => !s.popular)
 ---
 
 <section class="section services-section" id="services" data-stage="rose">
@@ -18,22 +21,38 @@ import photo from '../assets/services.jpg'
 		</p>
 
 		<div class="services">
+			{offer && (
+				<a href="#contacts" class="offer reveal">
+					<span class="offer__badge">
+						<Icon name="heart" size={16} />
+						Чаще всего выбирают
+					</span>
+					<span class="offer__head">
+						<span class="offer__title">{offer.title}</span>
+						<span class="offer__price">{offer.price}</span>
+					</span>
+					<span class="offer__duration">{offer.duration}</span>
+					<span class="offer__text">{offer.text}</span>
+					<span class="offer__cta">
+						Записаться
+						<Icon name="arrow-out" size={18} />
+					</span>
+				</a>
+			)}
+
 			<ol class="services__list soft-divide">
-				{services.map((s, i) => (
+				{rest.map((s, i) => (
 					<li class="service reveal" data-delay={String(i % 3)}>
 						<a href="#contacts" class="service__link">
 							<span class="service__icon">
 								<Icon name={s.icon} size={28} />
 							</span>
 							<span class="service__body">
-								<span class="service__title">
-									{s.title}
-									{s.featured && <span class="service__badge">бесплатно</span>}
-								</span>
+								<span class="service__title">{s.title}</span>
 								<span class="service__text muted">{s.text}</span>
 							</span>
 							<span class="service__meta">
-								<span class="service__price">{s.price}</span>
+								<span class:list={['service__price', s.free && 'service__price--free']}>{s.price}</span>
 								<span class="service__duration muted">{s.duration}</span>
 							</span>
 						</a>
@@ -52,6 +71,131 @@ import photo from '../assets/services.jpg'
 
 	.services {
 		margin-top: 48px;
+	}
+
+	/* Самую покупаемую услугу видно сразу, как "популярный тариф": не строка списка, а
+	   светлая карточка, которая дышит тем же светом, что главная кнопка первого экрана. */
+	.offer {
+		position: relative;
+		display: grid;
+		gap: 10px;
+		margin-bottom: 24px;
+		padding: 26px 24px 24px;
+		border-radius: 24px;
+		background: var(--btn-bg);
+		color: var(--btn-fg);
+		text-decoration: none;
+		box-shadow: 0 0 18px 0 color-mix(in srgb, var(--accent) 40%, transparent);
+		transition:
+			transform 0.5s var(--ease),
+			background-color 0.6s var(--ease);
+	}
+
+	.offer::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		box-shadow: 0 0 50px 8px color-mix(in srgb, var(--accent) 60%, transparent);
+		opacity: 0;
+		pointer-events: none;
+		animation: offer-glow 8s ease-in-out infinite;
+	}
+
+	@keyframes offer-glow {
+		50% {
+			opacity: 1;
+		}
+	}
+
+	.offer:hover,
+	.offer:focus-visible {
+		background: var(--btn-hover);
+		transform: translateY(-3px);
+	}
+
+	.offer__badge {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		width: fit-content;
+		padding: 6px 12px;
+		border-radius: 999px;
+		background: var(--btn-fg);
+		color: var(--btn-bg);
+		font-size: 0.7rem;
+		font-weight: 500;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+	}
+
+	.offer__head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 4px 16px;
+		margin-top: 6px;
+	}
+
+	.offer__title,
+	.offer__price {
+		font-family: var(--font-serif);
+		line-height: 1.1;
+	}
+
+	.offer__title {
+		font-size: clamp(1.7rem, 4vw, 2.2rem);
+	}
+
+	.offer__price {
+		font-size: clamp(1.5rem, 3.4vw, 1.9rem);
+		color: #a5573f;
+	}
+
+	.offer__duration {
+		font-size: 0.8rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		opacity: 0.7;
+	}
+
+	.offer__text {
+		max-width: 52ch;
+		font-size: 0.97rem;
+		opacity: 0.85;
+	}
+
+	.offer__cta {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		margin-top: 8px;
+		padding: 0.9em 1.6em;
+		border-radius: 999px;
+		background: var(--btn-fg);
+		color: var(--btn-bg);
+		font-weight: 500;
+		font-size: 0.95rem;
+	}
+
+	.offer__cta :global(svg) {
+		transition: transform 0.5s var(--ease);
+	}
+
+	.offer:hover .offer__cta :global(svg) {
+		transform: translate(3px, -3px);
+	}
+
+	@media (min-width: 600px) {
+		.offer {
+			padding: 32px 36px 30px;
+		}
+
+		.offer__cta {
+			width: fit-content;
+		}
 	}
 
 	.story__text {
@@ -108,20 +252,6 @@ import photo from '../assets/services.jpg'
 		line-height: 1.15;
 	}
 
-	.service__badge {
-		font-family: var(--font-sans);
-		font-size: 0.66rem;
-		letter-spacing: 0.16em;
-		text-transform: uppercase;
-		padding: 5px 10px;
-		border-radius: 999px;
-		background: var(--btn-bg);
-		color: var(--btn-fg);
-		transition:
-			background-color 1.4s var(--ease),
-			color 1.4s var(--ease);
-	}
-
 	.service__text {
 		grid-column: 1 / -1;
 		display: block;
@@ -139,6 +269,16 @@ import photo from '../assets/services.jpg'
 	.service__price {
 		font-family: var(--font-serif);
 		font-size: 1.35rem;
+	}
+
+	/* «Бесплатно» -- не цена, а повод написать: плашка заметнее цифр. */
+	.service__price--free {
+		padding: 0.15em 0.7em 0.2em;
+		border-radius: 999px;
+		background: var(--btn-bg);
+		color: var(--btn-fg);
+		font-size: 1.1rem;
+		box-shadow: 0 0 16px 0 color-mix(in srgb, var(--accent) 45%, transparent);
 	}
 
 	.service__duration {
