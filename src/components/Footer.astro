@@ -1,26 +1,28 @@
 ---
-import { person } from '../data/site';
+import { person } from '../data/site'
 
-const year = new Date().getFullYear();
+const year = new Date().getFullYear()
 ---
 
 <footer class="footer soft-rule" data-stage="day">
-  <div class="container footer__inner muted">
-    <span>© {year} {person.name}</span>
-    <span>Информация на сайте не является медицинской консультацией</span>
-  </div>
+	<div class="container footer__inner muted">
+		<span>
+			© {year} {person.name}
+		</span>
+		<span>Информация на сайте не является медицинской консультацией</span>
+	</div>
 </footer>
 
 <style>
-  .footer {
-    padding-block: 32px;
-    font-size: 0.82rem;
-  }
+	.footer {
+		padding-block: 32px;
+		font-size: 0.82rem;
+	}
 
-  .footer__inner {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 8px 24px;
-  }
+	.footer__inner {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 8px 24px;
+	}
 </style>

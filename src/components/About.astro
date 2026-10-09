@@ -1,89 +1,97 @@
 ---
-import SectionPhoto from './SectionPhoto.astro';
-import standing from '../assets/about.jpg';
-import { about } from '../data/site';
+import SectionPhoto from './SectionPhoto.astro'
+import standing from '../assets/about.jpg'
+import { about } from '../data/site'
 ---
 
 <section class="section about" id="about" data-stage="dusk">
-  <SectionPhoto src={standing} position="30% 0%" />
+	<SectionPhoto src={standing} position="30% 0%" />
 
-  <div class="container story__text about__inner">
-    <div class="about__text">
-      <span class="eyebrow reveal">Обо мне</span>
-      <h2 class="reveal" data-delay="1">Место, где можно быть разной</h2>
-      {about.paragraphs.map((p, i) => <p class={i === 0 ? 'lead reveal' : 'reveal'} data-delay="2">{p}</p>)}
+	<div class="container story__text about__inner">
+		<div class="about__text">
+			<span class="eyebrow reveal">Обо мне</span>
+			<h2 class="reveal" data-delay="1">
+				Место, где можно быть разной
+			</h2>
+			{about.paragraphs.map((p, i) => (
+				<p class={i === 0 ? 'lead reveal' : 'reveal'} data-delay="2">
+					{p}
+				</p>
+			))}
 
-      <ol class="education soft-divide reveal" data-delay="3">
-        {about.education.map((item) => (
-          <li>
-            <span class="education__year">{item.year}</span>
-            <span>{item.title}</span>
-          </li>
-        ))}
-      </ol>
-      <p class="profiles reveal" data-delay="3">
-        {about.profiles.map((p) => (
-          <a href={p.href} target="_blank" rel="noopener noreferrer">{p.label}</a>
-        ))}
-      </p>
-    </div>
-  </div>
+			<ol class="education soft-divide reveal" data-delay="3">
+				{about.education.map((item) => (
+					<li>
+						<span class="education__year">{item.year}</span>
+						<span>{item.title}</span>
+					</li>
+				))}
+			</ol>
+			<p class="profiles reveal" data-delay="3">
+				{about.profiles.map((p) => (
+					<a href={p.href} target="_blank" rel="noopener noreferrer">
+						{p.label}
+					</a>
+				))}
+			</p>
+		</div>
+	</div>
 </section>
 
 <style>
-  .about {
-    overflow: clip;
-    padding-top: 0;
-  }
+	.about {
+		overflow: clip;
+		padding-top: 0;
+	}
 
-  .about__inner {
-    position: relative;
-    z-index: 2;
-  }
+	.about__inner {
+		position: relative;
+		z-index: 2;
+	}
 
-  .education {
-    list-style: none;
-    margin: 40px 0 24px;
-    padding: 0;
-  }
+	.education {
+		list-style: none;
+		margin: 40px 0 24px;
+		padding: 0;
+	}
 
-  .education li {
-    display: grid;
-    grid-template-columns: 64px 1fr;
-    gap: 16px;
-    padding-block: 18px;
-    font-size: 0.93rem;
-    color: var(--muted);
-    transition: color 1.4s var(--ease);
-  }
+	.education li {
+		display: grid;
+		grid-template-columns: 64px 1fr;
+		gap: 16px;
+		padding-block: 18px;
+		font-size: 0.93rem;
+		color: var(--muted);
+		transition: color 1.4s var(--ease);
+	}
 
-  .education__year {
-    font-family: var(--font-serif);
-    font-size: 1.3rem;
-    color: var(--accent);
-    transition: color 1.4s var(--ease);
-  }
+	.education__year {
+		font-family: var(--font-serif);
+		font-size: 1.3rem;
+		color: var(--accent);
+		transition: color 1.4s var(--ease);
+	}
 
-  .profiles {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 24px;
-    font-size: 0.88rem;
-  }
+	.profiles {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 24px;
+		font-size: 0.88rem;
+	}
 
-  .profiles a {
-    color: var(--muted);
-    text-underline-offset: 4px;
-    transition: color 0.3s;
-  }
+	.profiles a {
+		color: var(--muted);
+		text-underline-offset: 4px;
+		transition: color 0.3s;
+	}
 
-  .profiles a:hover {
-    color: var(--fg);
-  }
+	.profiles a:hover {
+		color: var(--fg);
+	}
 
-  @media (min-width: 900px) {
-    .about {
-      padding-top: var(--section-y);
-    }
-  }
+	@media (min-width: 900px) {
+		.about {
+			padding-top: var(--section-y);
+		}
+	}
 </style>

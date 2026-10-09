@@ -1,225 +1,237 @@
 ---
-import Icon from './Icon.astro';
-import Logo from './Logo.astro';
-import { nav, person } from '../data/site';
+import Icon from './Icon.astro'
+import Logo from './Logo.astro'
+import { nav, person } from '../data/site'
 ---
 
 <header class="header">
-  <div class="container header__inner">
-    <a href="#top" class="logo">
-      <Logo class="logo__mark" size={40} />
-      <span class="logo__text">
-        <span class="logo__name">{person.name}</span>
-        <span class="logo__role">{person.role}</span>
-      </span>
-    </a>
-    <nav aria-label="Основное меню">
-      <ul class="nav">
-        {nav.map((item) => (
-          <li>
-            <a href={item.href}><Icon name={item.icon} size={16} />{item.label}</a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-    <a href="#contacts" class="btn header__cta"><Icon name="calendar" size={16} />Записаться</a>
-  </div>
+	<div class="container header__inner">
+		<a href="#top" class="logo">
+			<Logo class="logo__mark" size={40} />
+			<span class="logo__text">
+				<span class="logo__name">{person.name}</span>
+				<span class="logo__role">{person.role}</span>
+			</span>
+		</a>
+		<nav aria-label="Основное меню">
+			<ul class="nav">
+				{nav.map((item) => (
+					<li>
+						<a href={item.href}>
+							<Icon name={item.icon} size={16} />
+							{item.label}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+		<a href="#contacts" class="btn header__cta">
+			<Icon name="calendar" size={16} />
+			Записаться
+		</a>
+	</div>
 </header>
 
 <a href="#contacts" class="fab" aria-label="Записаться">
-  <span class="fab__bg"></span>
-  <span class="fab__icons">
-    <Icon name="calendar" size={24} class="fab__icon fab__icon--book" />
-    <Icon name="arrow-up" size={24} class="fab__icon fab__icon--up" />
-  </span>
+	<span class="fab__bg"></span>
+	<span class="fab__icons">
+		<Icon name="calendar" size={24} class="fab__icon fab__icon--book" />
+		<Icon name="arrow-up" size={24} class="fab__icon fab__icon--up" />
+	</span>
 </a>
 
 <style>
-  .header {
-    position: fixed;
-    inset: 0 0 auto;
-    z-index: 20;
-    color: var(--fg);
-    /* Подложка с размытием всегда, а не только после прокрутки: меню читается над фото. */
-    background: color-mix(in srgb, var(--bg) 72%, transparent);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 8px 24px -18px rgb(20 10 20 / 0.18);
-    transition:
-      color 1.4s var(--ease),
-      background-color 1.4s var(--ease),
-      transform 1s cubic-bezier(0.65, 0, 0.35, 1);
-  }
+	.header {
+		position: fixed;
+		inset: 0 0 auto;
+		z-index: 20;
+		color: var(--fg);
+		/* Подложка с размытием всегда, а не только после прокрутки: меню читается над фото. */
+		background: color-mix(in srgb, var(--bg) 72%, transparent);
+		backdrop-filter: blur(14px);
+		-webkit-backdrop-filter: blur(14px);
+		box-shadow: 0 8px 24px -18px rgb(20 10 20 / 0.18);
+		transition:
+			color 1.4s var(--ease),
+			background-color 1.4s var(--ease),
+			transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+	}
 
-  /* Телефон: за первым экраном шапка уезжает вместе со своей кнопкой,
-     а запись живёт в круглой кнопке, которая выезжает справа в угол. */
-  @media (max-width: 999px) {
-    :global(html.past-hero) .header {
-      transform: translateY(-100%);
-    }
-  }
+	/* Телефон: за первым экраном шапка уезжает вместе со своей кнопкой,
+	   а запись живёт в круглой кнопке, которая выезжает справа в угол. */
+	@media (max-width: 999px) {
+		:global(html.past-hero) .header {
+			transform: translateY(-100%);
+		}
+	}
 
-  .fab {
-    position: fixed;
-    right: 16px;
-    bottom: calc(16px + env(safe-area-inset-bottom));
-    z-index: 30;
-    display: grid;
-    place-items: center;
-    width: 56px;
-    height: 56px;
-    color: var(--btn-fg);
-    transform: translateX(calc(100% + 16px + env(safe-area-inset-right)));
-    visibility: hidden;
-    pointer-events: none;
-    transition: transform 0.6s var(--ease), visibility 0s 0.6s;
-  }
+	.fab {
+		position: fixed;
+		right: 16px;
+		bottom: calc(16px + env(safe-area-inset-bottom));
+		z-index: 30;
+		display: grid;
+		place-items: center;
+		width: 56px;
+		height: 56px;
+		color: var(--btn-fg);
+		transform: translateX(calc(100% + 16px + env(safe-area-inset-right)));
+		visibility: hidden;
+		pointer-events: none;
+		transition:
+			transform 0.6s var(--ease),
+			visibility 0s 0.6s;
+	}
 
-  .fab__bg {
-    position: absolute;
-    inset: 0;
-    border-radius: 999px;
-    background: var(--btn-bg);
-    box-shadow: 0 10px 30px -12px rgb(20 10 20 / 0.45);
-  }
+	.fab__bg {
+		position: absolute;
+		inset: 0;
+		border-radius: 999px;
+		background: var(--btn-bg);
+		box-shadow: 0 10px 30px -12px rgb(20 10 20 / 0.45);
+	}
 
-  .fab__icons {
-    position: relative;
-    display: grid;
-  }
+	.fab__icons {
+		position: relative;
+		display: grid;
+	}
 
-  /* У контактов записываться уже некуда: календарь уступает место стрелке наверх. */
-  .fab :global(.fab__icon) {
-    grid-area: 1 / 1;
-    transition: opacity 0.3s var(--ease), transform 0.45s var(--ease);
-  }
+	/* У контактов записываться уже некуда: календарь уступает место стрелке наверх. */
+	.fab :global(.fab__icon) {
+		grid-area: 1 / 1;
+		transition:
+			opacity 0.3s var(--ease),
+			transform 0.45s var(--ease);
+	}
 
-  .fab :global(.fab__icon--up),
-  :global(html.at-contacts) .fab :global(.fab__icon--book) {
-    opacity: 0;
-    transform: rotate(-90deg) scale(0.6);
-  }
+	.fab :global(.fab__icon--up),
+	:global(html.at-contacts) .fab :global(.fab__icon--book) {
+		opacity: 0;
+		transform: rotate(-90deg) scale(0.6);
+	}
 
-  :global(html.at-contacts) .fab :global(.fab__icon--up) {
-    opacity: 1;
-    transform: none;
-  }
+	:global(html.at-contacts) .fab :global(.fab__icon--up) {
+		opacity: 1;
+		transform: none;
+	}
 
-  :global(html.past-hero) .fab {
-    transform: none;
-    visibility: visible;
-    pointer-events: auto;
-    transition: transform 0.6s var(--ease);
-  }
+	:global(html.past-hero) .fab {
+		transform: none;
+		visibility: visible;
+		pointer-events: auto;
+		transition: transform 0.6s var(--ease);
+	}
 
-  @media (prefers-reduced-motion: reduce) {
-    .fab,
-    :global(html.past-hero) .fab {
-      transition: none;
-    }
-  }
+	@media (prefers-reduced-motion: reduce) {
+		.fab,
+		:global(html.past-hero) .fab {
+			transition: none;
+		}
+	}
 
-  @media (min-width: 1000px) {
-    .fab {
-      display: none;
-    }
-  }
+	@media (min-width: 1000px) {
+		.fab {
+			display: none;
+		}
+	}
 
-  .header::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
-    opacity: 0.6;
-  }
+	.header::after {
+		content: '';
+		position: absolute;
+		inset: auto 0 0;
+		height: 1px;
+		background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
+		opacity: 0.6;
+	}
 
-  .header__inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    min-height: 76px;
-  }
+	.header__inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		min-height: 76px;
+	}
 
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    line-height: 1.15;
-  }
+	.logo {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		text-decoration: none;
+		line-height: 1.15;
+	}
 
-  .logo :global(.logo__mark) {
-    flex-shrink: 0;
-    color: var(--accent);
-    transition: color 1.4s var(--ease), transform 0.6s var(--ease);
-  }
+	.logo :global(.logo__mark) {
+		flex-shrink: 0;
+		color: var(--accent);
+		transition:
+			color 1.4s var(--ease),
+			transform 0.6s var(--ease);
+	}
 
-  .logo:hover :global(.logo__mark) {
-    transform: rotate(-8deg);
-  }
+	.logo:hover :global(.logo__mark) {
+		transform: rotate(-8deg);
+	}
 
-  .logo__text {
-    display: flex;
-    flex-direction: column;
-  }
+	.logo__text {
+		display: flex;
+		flex-direction: column;
+	}
 
-  .logo__name {
-    font-family: var(--font-serif);
-    font-size: 1.25rem;
-  }
+	.logo__name {
+		font-family: var(--font-serif);
+		font-size: 1.25rem;
+	}
 
-  .logo__role {
-    display: none;
-    font-size: 0.66rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--muted);
-    transition: color 1.4s var(--ease);
-  }
+	.logo__role {
+		display: none;
+		font-size: 0.66rem;
+		letter-spacing: 0.18em;
+		text-transform: uppercase;
+		color: var(--muted);
+		transition: color 1.4s var(--ease);
+	}
 
-  .nav {
-    display: none;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    gap: 32px;
-  }
+	.nav {
+		display: none;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		gap: 32px;
+	}
 
-  .nav a {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    text-decoration: none;
-    font-size: 0.9rem;
-    opacity: 0.8;
-    transition: opacity 0.3s;
-  }
+	.nav a {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		text-decoration: none;
+		font-size: 0.9rem;
+		opacity: 0.8;
+		transition: opacity 0.3s;
+	}
 
-  .nav a :global(svg) {
-    color: var(--accent);
-    transition: color 1.4s var(--ease);
-  }
+	.nav a :global(svg) {
+		color: var(--accent);
+		transition: color 1.4s var(--ease);
+	}
 
-  .nav a:hover {
-    opacity: 1;
-  }
+	.nav a:hover {
+		opacity: 1;
+	}
 
-  .header__cta {
-    padding: 0.7em 1.4em;
-    font-size: 0.85rem;
-  }
+	.header__cta {
+		padding: 0.7em 1.4em;
+		font-size: 0.85rem;
+	}
 
-  @media (min-width: 600px) {
-    .logo__role {
-      display: block;
-    }
-  }
+	@media (min-width: 600px) {
+		.logo__role {
+			display: block;
+		}
+	}
 
-  @media (min-width: 1000px) {
-    .nav {
-      display: flex;
-    }
-  }
+	@media (min-width: 1000px) {
+		.nav {
+			display: flex;
+		}
+	}
 </style>

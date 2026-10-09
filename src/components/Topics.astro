@@ -1,169 +1,171 @@
 ---
-import Icon from './Icon.astro';
-import SectionPhoto from './SectionPhoto.astro';
-import reading from '../assets/topics.jpg';
-import { topics } from '../data/site';
+import Icon from './Icon.astro'
+import SectionPhoto from './SectionPhoto.astro'
+import reading from '../assets/topics.jpg'
+import { topics } from '../data/site'
 ---
 
 <section class="section topics-section" id="topics" data-stage="dawn">
-  <SectionPhoto src={reading} position="60% 40%" />
+	<SectionPhoto src={reading} position="60% 40%" />
 
-  <div class="container story__text">
-    <span class="eyebrow reveal">С чем работаю</span>
-    <h2 class="reveal" data-delay="1">С какими запросами приходят</h2>
-    <p class="lead reveal" data-delay="2">
-      Не обязательно, чтобы «всё было плохо». Прийти можно и с ощущением, что просто нужна опора.
-    </p>
+	<div class="container story__text">
+		<span class="eyebrow reveal">С чем работаю</span>
+		<h2 class="reveal" data-delay="1">
+			С какими запросами приходят
+		</h2>
+		<p class="lead reveal" data-delay="2">
+			Не обязательно, чтобы «всё было плохо». Прийти можно и с ощущением, что просто нужна опора.
+		</p>
 
-    <ol class="topics">
-      {topics.map((t, i) => (
-        <li class="topic reveal" data-delay={String(i % 2)}>
-          <span class="topic__badge">
-            <Icon name={t.icon} class="topic__icon" size={104} />
-          </span>
-          <div class="topic__body">
-            <h3>{t.title}</h3>
-            <p class="muted">{t.text}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
-  </div>
+		<ol class="topics">
+			{topics.map((t, i) => (
+				<li class="topic reveal" data-delay={String(i % 2)}>
+					<span class="topic__badge">
+						<Icon name={t.icon} class="topic__icon" size={104} />
+					</span>
+					<div class="topic__body">
+						<h3>{t.title}</h3>
+						<p class="muted">{t.text}</p>
+					</div>
+				</li>
+			))}
+		</ol>
+	</div>
 </section>
 
 <style>
-  .topics-section {
-    overflow: clip;
-    padding-top: 0;
-  }
+	.topics-section {
+		overflow: clip;
+		padding-top: 0;
+	}
 
-  .story__text {
-    position: relative;
-    z-index: 2;
-  }
+	.story__text {
+		position: relative;
+		z-index: 2;
+	}
 
-  .topics {
-    list-style: none;
-    margin: 48px 0 0;
-    padding: 0;
-    display: grid;
-    gap: 0 64px;
-  }
+	.topics {
+		list-style: none;
+		margin: 48px 0 0;
+		padding: 0;
+		display: grid;
+		gap: 0 64px;
+	}
 
-  /* На телефоне иконка в строку с заголовком и ростом с него, описание под ними. */
-  .topic {
-    position: relative;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: start;
-    gap: 10px 14px;
-    padding-block: 24px;
-  }
+	/* На телефоне иконка в строку с заголовком и ростом с него, описание под ними. */
+	.topic {
+		position: relative;
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-items: start;
+		gap: 10px 14px;
+		padding-block: 24px;
+	}
 
-  .topic__body {
-    display: contents;
-  }
+	.topic__body {
+		display: contents;
+	}
 
-  .topic h3 {
-    margin: 0;
-  }
+	.topic h3 {
+		margin: 0;
+	}
 
-  /* Разделитель тает к краям, чтобы не резать сетку по линейке. */
-  .topic::after {
-    content: '';
-    position: absolute;
-    inset: auto 0 0;
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
-    opacity: 0.6;
-    transition: background 1.4s var(--ease);
-  }
+	/* Разделитель тает к краям, чтобы не резать сетку по линейке. */
+	.topic::after {
+		content: '';
+		position: absolute;
+		inset: auto 0 0;
+		height: 1px;
+		background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
+		opacity: 0.6;
+		transition: background 1.4s var(--ease);
+	}
 
-  .topic:last-child::after {
-    display: none;
-  }
+	.topic:last-child::after {
+		display: none;
+	}
 
-  .topic p {
-    grid-column: 1 / -1;
-    margin: 0;
-    font-size: 0.97rem;
-  }
+	.topic p {
+		grid-column: 1 / -1;
+		margin: 0;
+		font-size: 0.97rem;
+	}
 
-  .topic__badge {
-    display: grid;
-    place-items: center;
-  }
+	.topic__badge {
+		display: grid;
+		place-items: center;
+	}
 
-  .topic :global(.topic__icon) {
-    width: 1.6rem;
-    height: 1.6rem;
-    color: var(--accent);
-    transition: color 1.4s var(--ease);
-  }
+	.topic :global(.topic__icon) {
+		width: 1.6rem;
+		height: 1.6rem;
+		color: var(--accent);
+		transition: color 1.4s var(--ease);
+	}
 
-  @media (min-width: 700px) {
-    .topic {
-      grid-template-columns: 136px 1fr;
-      align-items: start;
-      gap: 12px 8px;
-      padding-block: 32px;
-      margin-left: -16px;
-    }
+	@media (min-width: 700px) {
+		.topic {
+			grid-template-columns: 136px 1fr;
+			align-items: start;
+			gap: 12px 8px;
+			padding-block: 32px;
+			margin-left: -16px;
+		}
 
-    .topic__body {
-      display: block;
-    }
+		.topic__body {
+			display: block;
+		}
 
-    .topic h3 {
-      margin: 0 0 0.5em;
-    }
+		.topic h3 {
+			margin: 0 0 0.5em;
+		}
 
-    .topic p {
-      grid-column: auto;
-    }
+		.topic p {
+			grid-column: auto;
+		}
 
-    .topic__badge {
-      width: 136px;
-      height: 136px;
-      margin-top: -28px;
-      border-radius: 50%;
-      background: radial-gradient(circle, color-mix(in srgb, var(--accent) 16%, transparent) 0%, transparent 72%);
-      transition: background 1.4s var(--ease);
-    }
+		.topic__badge {
+			width: 136px;
+			height: 136px;
+			margin-top: -28px;
+			border-radius: 50%;
+			background: radial-gradient(circle, color-mix(in srgb, var(--accent) 16%, transparent) 0%, transparent 72%);
+			transition: background 1.4s var(--ease);
+		}
 
-    .topic :global(.topic__icon) {
-      width: 104px;
-      height: 104px;
-    }
-  }
+		.topic :global(.topic__icon) {
+			width: 104px;
+			height: 104px;
+		}
+	}
 
-  @media (min-width: 900px) {
-    .topics-section {
-      padding-top: var(--section-y);
-      padding-bottom: calc(var(--section-y) + 72px);
-      overflow: visible;
-    }
+	@media (min-width: 900px) {
+		.topics-section {
+			padding-top: var(--section-y);
+			padding-bottom: calc(var(--section-y) + 72px);
+			overflow: visible;
+		}
 
-    /* Две колонки тем шире левой половины: блок заходит на фото до края сетки. */
-    .story__text {
-      margin-right: calc(-46vw + max(var(--gutter), (100vw - var(--container)) / 2));
-      padding-right: 0;
-    }
+		/* Две колонки тем шире левой половины: блок заходит на фото до края сетки. */
+		.story__text {
+			margin-right: calc(-46vw + max(var(--gutter), (100vw - var(--container)) / 2));
+			padding-right: 0;
+		}
 
-    .topics {
-      grid-template-columns: 1fr 1fr;
-    }
+		.topics {
+			grid-template-columns: 1fr 1fr;
+		}
 
-    .topic:nth-last-child(2)::after {
-      display: none;
-    }
+		.topic:nth-last-child(2)::after {
+			display: none;
+		}
 
-    .topic:nth-child(2n) {
-      transform: translateY(72px);
-    }
+		.topic:nth-child(2n) {
+			transform: translateY(72px);
+		}
 
-    .topic:nth-child(2n):not(.is-in) {
-      transform: translateY(100px);
-    }
-  }
+		.topic:nth-child(2n):not(.is-in) {
+			transform: translateY(100px);
+		}
+	}
 </style>

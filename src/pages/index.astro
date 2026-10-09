@@ -1,40 +1,40 @@
 ---
-import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import Story from '../components/Story.astro';
-import Hero from '../components/Hero.astro';
-import About from '../components/About.astro';
-import Topics from '../components/Topics.astro';
-import Services from '../components/Services.astro';
-import Faq from '../components/Faq.astro';
-import Contacts from '../components/Contacts.astro';
-import Footer from '../components/Footer.astro';
-import hero from '../assets/hero.jpg';
-import about from '../assets/about.jpg';
-import services from '../assets/services.jpg';
-import reading from '../assets/topics.jpg';
+import Base from '../layouts/Base.astro'
+import Header from '../components/Header.astro'
+import Story from '../components/Story.astro'
+import Hero from '../components/Hero.astro'
+import About from '../components/About.astro'
+import Topics from '../components/Topics.astro'
+import Services from '../components/Services.astro'
+import Faq from '../components/Faq.astro'
+import Contacts from '../components/Contacts.astro'
+import Footer from '../components/Footer.astro'
+import hero from '../assets/hero.jpg'
+import about from '../assets/about.jpg'
+import services from '../assets/services.jpg'
+import reading from '../assets/topics.jpg'
 ---
 
 <Base>
-  <Header />
-  <main>
-    <Story
-      eager
-      rows={5}
-      shots={[
-        { src: hero },
-        { src: about, trigger: '#about .eyebrow', at: 260 },
-        { src: reading, trigger: '#topics .eyebrow', at: 260 },
-        { src: services, trigger: '#services .eyebrow', at: 260 },
-      ]}
-    >
-      <Hero />
-      <About />
-      <Topics />
-      <Services />
-      <Faq />
-    </Story>
-    <Contacts />
-  </main>
-  <Footer />
+	<Header />
+	<main>
+		<Story
+			eager
+			rows={5}
+			shots={[
+				{ src: hero },
+				{ src: about, trigger: '#about .eyebrow', at: 260 },
+				{ src: reading, trigger: '#topics .eyebrow', at: 260 },
+				{ src: services, trigger: '#services .eyebrow', at: 260 },
+			]}
+		>
+			<Hero />
+			<About />
+			<Topics />
+			<Services />
+			<Faq />
+		</Story>
+		<Contacts />
+	</main>
+	<Footer />
 </Base>
