@@ -1,0 +1,7 @@
+.git
+.astro
+.claude
+.serena
+.DS_Store
+node_modules
+dist
