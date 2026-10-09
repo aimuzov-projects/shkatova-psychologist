@@ -19,7 +19,7 @@ if [[ "$(git branch --show-current)" != main ]]; then
 fi
 
 git push --quiet origin main
-ssh "$HOST" /opt/shkatova/repo/deploy/server.sh
+ssh "$HOST" "git -C /opt/shkatova/repo pull --ff-only --quiet && /opt/shkatova/repo/deploy/server.sh"
 
 sleep 3
 curl -fsS -o /dev/null -w "$SITE_URL → %{http_code}\n" "$SITE_URL/"

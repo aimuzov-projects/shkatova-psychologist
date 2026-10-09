@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-# Выкладка на самом сервере: подтянуть main, собрать и подменить dist.
-# Запускается из deploy.sh, вручную: ssh root@skator.ru /opt/shkatova/repo/deploy/server.sh
+# Выкладка на самом сервере: собрать свежий main и подменить dist.
+# deploy.sh зовёт его уже после git pull, так что скрипт всегда актуальной версии.
 set -euo pipefail
 
 ROOT=/opt/shkatova
 REPO="$ROOT/repo"
 
-git -C "$REPO" pull --ff-only --quiet
 git -C "$REPO" log -1 --oneline
 
 # Node на хосте нет, собираем в одноразовом контейнере.
