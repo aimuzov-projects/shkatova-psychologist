@@ -66,28 +66,14 @@ const pad = (n: number) => String(n).padStart(2, '0')
 				>
 					<div class="slide__inner container selectable">
 						{slide.kind === 'cover' && (
-							<div class:list={['cover', material.cover && 'cover--image']}>
-								<div class="cover__text">
-									<span class="eyebrow">{material.audience} · бесплатно</span>
-									<h1>{material.title}</h1>
-									<p class="lead">{material.intro}</p>
-									<button type="button" class="btn" data-next>
-										Листать
-										<Icon name="arrow" size={18} class="slide__arrow" />
-									</button>
-								</div>
-								{material.cover && (
-									<Picture
-										class="cover__image"
-										src={material.cover}
-										formats={['avif']}
-										fallbackFormat="webp"
-										alt="Силуэт беременной женщины, бережно держащей светящегося малыша с крыльями"
-										widths={[360, 540, 720]}
-										sizes="(min-width: 900px) 320px, 50vw"
-										loading="eager"
-									/>
-								)}
+							<div class="cover">
+								<span class="eyebrow">{material.audience} · бесплатно</span>
+								<h1>{material.title}</h1>
+								<p class="lead">{material.intro}</p>
+								<button type="button" class="btn" data-next>
+									Листать
+									<Icon name="arrow" size={18} class="slide__arrow" />
+								</button>
 							</div>
 						)}
 
@@ -389,19 +375,6 @@ const pad = (n: number) => String(n).padStart(2, '0')
 		font-size: clamp(2rem, 5.2vw, 3.6rem);
 	}
 
-	.cover {
-		display: grid;
-		gap: 24px;
-	}
-
-	.cover :global(.cover__image) {
-		order: -1;
-		width: auto;
-		height: min(24svh, 220px);
-		border-radius: 18px;
-		box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.6);
-	}
-
 	.cover .btn {
 		border: 0;
 		font-family: inherit;
@@ -410,23 +383,6 @@ const pad = (n: number) => String(n).padStart(2, '0')
 
 	.cover .btn :global(.slide__arrow) {
 		transform: rotate(-90deg);
-	}
-
-	@media (min-width: 900px) {
-		/* Ширина колонки явная: в auto-колонке img с max-width: 100% схлопывается. */
-		.cover--image {
-			grid-template-columns: 1fr min(28vw, 320px);
-			align-items: center;
-			gap: 56px;
-		}
-
-		.cover :global(.cover__image) {
-			order: 0;
-			width: 100%;
-			height: auto;
-			max-height: 62svh;
-			object-fit: cover;
-		}
 	}
 
 	/* Фразы и ответы */
@@ -602,5 +558,62 @@ const pad = (n: number) => String(n).padStart(2, '0')
 		transform: scaleX(0);
 		transform-origin: left;
 		transition: background-color 1.4s var(--ease);
+	}
+
+	/* Низкие телефоны вроде iPhone SE: поля и шрифты мельче, слайд влезает целиком. */
+	@media (max-height: 700px) {
+		.deck__top,
+		.deck__nav {
+			padding-block: 8px;
+		}
+
+		.deck__step {
+			width: 40px;
+			height: 40px;
+		}
+
+		.slide__inner {
+			padding-block: 8px;
+		}
+
+		h1,
+		.slide__title {
+			font-size: 1.7rem;
+		}
+
+		.lead,
+		.outro p,
+		.examples li {
+			font-size: 1rem;
+		}
+
+		.phrase,
+		.formula,
+		.reply,
+		.pair__do p {
+			font-size: 1.08rem;
+		}
+
+		.outro p:first-child {
+			font-size: 1.05rem;
+			line-height: 1.28;
+		}
+
+		.outro p:not(:first-child) {
+			font-size: 0.92rem !important;
+			margin-bottom: 0.6em;
+		}
+
+		.outro__actions {
+			margin-top: 12px;
+		}
+
+		.outro .btn {
+			padding: 0.75em 1.4em;
+		}
+
+		.outro__note {
+			margin-top: 12px;
+		}
 	}
 </style>
