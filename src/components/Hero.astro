@@ -1,105 +1,179 @@
 ---
 import { Image } from 'astro:assets';
-import Blob from './Blob.astro';
-import portrait from '../assets/portrait.webp';
+import hero from '../assets/hero.jpg';
+import Icon from './Icon.astro';
 import { person } from '../data/site';
 ---
 
-<section class="hero" id="top">
-  <Blob class="hero__blob hero__blob--a" color="var(--surface)" />
-  <div class="container hero__inner">
-    <div class="hero__text">
-      <span class="eyebrow">{person.role}</span>
-      <h1>{person.name}</h1>
-      <p class="hero__tagline">{person.tagline}</p>
-      <p class="lead">{person.intro}</p>
-      <div class="hero__actions">
-        <a href="#contacts" class="btn">Записаться на консультацию</a>
-        <a href="#services" class="btn btn--ghost">Услуги и цены</a>
-      </div>
-      <p class="hero__note">{person.experience}</p>
-    </div>
-
-    <div class="hero__photo">
-      <Blob class="hero__photo-bg" color="var(--rose)" variant={2} />
-      <Image src={portrait} alt={person.name} widths={[420, 840]} sizes="(min-width: 900px) 420px, 100vw" loading="eager" fetchpriority="high" />
+<section class="hero" id="top" data-stage="night">
+  <div class="hero__photo" aria-hidden="true">
+    <div class="veil" data-veil></div>
+    <div class="px" data-parallax="-0.08">
+      <Image src={hero} alt="" widths={[640, 1280]} sizes="(min-width: 900px) 56vw, 100vw" loading="eager" fetchpriority="high" />
     </div>
   </div>
+
+  <div class="container story__text hero__inner">
+    <div class="hero__text">
+      <span class="eyebrow eyebrow--plain reveal is-in">{person.role} · Тольятти и онлайн</span>
+      <h1 class="reveal is-in" data-delay="1">
+        Спокойна&nbsp;мама<br /><em>—&nbsp;спокоен&nbsp;малыш</em>
+      </h1>
+      <p class="lead reveal is-in" data-delay="2">
+        Бережно рядом от первых недель ожидания до первого класса: беременность, роды, утраты, первые
+        годы с ребёнком.
+      </p>
+      <div class="hero__actions reveal is-in" data-delay="3">
+        <a href="#contacts" class="btn btn--breath"><Icon name="spark" size={18} />Бесплатные 20 минут знакомства</a>
+        <a href="#services" class="btn btn--ghost"><Icon name="sunrise" size={18} />Услуги</a>
+      </div>
+    </div>
+  </div>
+
+  <a href="#about" class="hero__hint" aria-label="К следующему разделу">
+    <span class="mouse"><span class="mouse__wheel"></span></span>
+  </a>
 </section>
 
 <style>
   .hero {
     position: relative;
-    overflow: hidden;
-    padding-block: clamp(48px, 8vw, 104px);
-  }
-
-  .hero :global(.hero__blob--a) {
-    position: absolute;
-    width: 640px;
-    top: -220px;
-    left: -240px;
-    opacity: 0.7;
+    min-height: 100svh;
+    display: grid;
+    align-items: end;
+    padding-block: 0 96px;
+    overflow: clip;
   }
 
   .hero__inner {
     position: relative;
-    display: grid;
-    gap: 48px;
-    align-items: center;
+    z-index: 2;
+  }
+
+  .hero__text {
+    max-width: 620px;
   }
 
   h1 {
-    font-size: clamp(3rem, 9vw, 5.4rem);
-    margin-bottom: 0.2em;
+    font-size: clamp(2.2rem, 5vw, 4.4rem);
   }
 
-  .hero__tagline {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: clamp(1.35rem, 3vw, 1.7rem);
-    line-height: 1.3;
+  h1 em {
+    font-style: normal;
     color: var(--accent);
-    max-width: 30ch;
+    transition: color 1.4s var(--ease);
   }
 
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-block: 32px 20px;
+    margin-top: 36px;
   }
 
-  .hero__note {
-    font-size: 0.9rem;
-    color: var(--muted);
-  }
-
+  /* Фото уходит в ночь по левому краю и снизу, чтобы не спорить с текстом. */
   .hero__photo {
     position: relative;
-    max-width: 420px;
-    margin-inline: auto;
-    width: 100%;
+    z-index: 0;
+    height: min(68svh, 640px);
+    margin-bottom: -6svh;
+    overflow: hidden;
+    mask-image: linear-gradient(to top, transparent 0%, #000 45%);
+    -webkit-mask-image: linear-gradient(to top, transparent 0%, #000 45%);
   }
 
-  .hero__photo :global(.hero__photo-bg) {
+  .hero__photo::before {
+    content: '';
     position: absolute;
-    inset: -8% -10% auto auto;
-    width: 105%;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(to bottom, var(--page-bg, var(--bg)) 0%, transparent 32%);
+    transition: background 1.4s var(--ease);
+  }
+
+  .hero__photo .px {
+    height: 112%;
   }
 
   .hero__photo img {
-    position: relative;
     width: 100%;
-    height: auto;
-    border-radius: 200px 200px var(--radius) var(--radius);
-    box-shadow: var(--shadow);
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 0%;
+  }
+
+  /* Кнопка светится и дышит: 4 секунды ярче, 4 секунды тише. */
+  .btn--breath {
+    animation: glow 8s ease-in-out infinite;
+  }
+
+  /* Мышка по центру низа экрана, прячется после первого скролла. */
+  .hero__hint {
+    position: fixed;
+    z-index: 15;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    color: var(--muted);
+    transition: opacity 0.6s var(--ease), color 1.4s var(--ease);
+  }
+
+  :global(html.scrolled) .hero__hint {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .mouse {
+    display: block;
+    width: 24px;
+    height: 38px;
+    border: 1.5px solid currentColor;
+    border-radius: 12px;
+  }
+
+  .mouse__wheel {
+    display: block;
+    width: 3px;
+    height: 7px;
+    margin: 6px auto 0;
+    border-radius: 2px;
+    background: currentColor;
+    animation: wheel 2s ease-in-out infinite;
+  }
+
+  @keyframes wheel {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    70% {
+      transform: translateY(12px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+  }
+
+  @keyframes glow {
+    0%,
+    100% {
+      box-shadow: 0 0 14px 0 color-mix(in srgb, var(--accent) 35%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 44px 10px color-mix(in srgb, var(--accent) 70%, transparent);
+    }
   }
 
   @media (min-width: 900px) {
-    .hero__inner {
-      grid-template-columns: 1.2fr 1fr;
-      gap: 64px;
+    .hero {
+      align-items: center;
+      padding-block: 120px 96px;
+    }
+
+    .hero__photo {
+      display: none;
     }
   }
 </style>

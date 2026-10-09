@@ -1,82 +1,69 @@
 ---
+import Icon from './Icon.astro';
 import { faq } from '../data/site';
 ---
 
-<section class="section section--tinted" id="faq">
-  <div class="container faq">
-    <div>
-      <span class="eyebrow">Вопросы</span>
-      <h2>Частые вопросы</h2>
-      <p class="lead">Не нашли ответа? Напишите мне — отвечу лично.</p>
-    </div>
+<section class="section" id="faq" data-stage="morning">
+  <div class="container story__text">
+    <span class="eyebrow reveal">Вопросы</span>
+    <h2 class="reveal" data-delay="1">Частые вопросы</h2>
+    <p class="lead reveal" data-delay="2">Не нашли ответа? Напишите мне — отвечу лично.</p>
 
-    <div class="faq__list">
+    <dl class="faq soft-divide">
       {faq.map((item) => (
-        <details>
-          <summary>{item.q}</summary>
-          <p>{item.a}</p>
-        </details>
+        <div class="faq__item reveal">
+          <span class="faq__badge" aria-hidden="true">
+            <Icon name={item.icon} size={30} />
+          </span>
+          <div>
+            <dt>{item.q}</dt>
+            <dd class="muted">{item.a}</dd>
+          </div>
+        </div>
       ))}
-    </div>
+    </dl>
   </div>
 </section>
 
 <style>
   .faq {
+    margin: 40px 0 0;
+  }
+
+  .faq__item {
+    position: relative;
     display: grid;
-    gap: 40px;
+    grid-template-columns: 64px 1fr;
+    gap: 20px;
+    align-items: start;
+    padding-block: 26px;
   }
 
-  details {
-    background: var(--surface-2);
-    border-radius: var(--radius-sm);
-    margin-bottom: 12px;
-  }
-
-  summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    padding: 20px 24px;
-    font-weight: 600;
-    cursor: pointer;
-    list-style: none;
-  }
-
-  summary::-webkit-details-marker {
-    display: none;
-  }
-
-  summary::after {
-    content: '+';
-    flex-shrink: 0;
+  .faq__badge {
     display: grid;
     place-items: center;
-    width: 32px;
-    height: 32px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
-    background: var(--surface);
     color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    transition: color 1.4s var(--ease), background-color 1.4s var(--ease), transform 0.6s var(--ease);
+  }
+
+  .faq__item:hover .faq__badge {
+    transform: scale(1.06) rotate(-4deg);
+  }
+
+  dt {
+    font-family: var(--font-serif);
     font-size: 1.3rem;
-    font-weight: 400;
-    transition: transform 0.25s;
+    line-height: 1.25;
+    margin: 6px 0 8px;
   }
 
-  details[open] summary::after {
-    transform: rotate(45deg);
-  }
-
-  details p {
+  dd {
     margin: 0;
-    padding: 0 24px 22px;
-    color: var(--muted);
-  }
-
-  @media (min-width: 900px) {
-    .faq {
-      grid-template-columns: 1fr 1.5fr;
-      gap: 72px;
-    }
+    font-size: 0.97rem;
+    max-width: 52ch;
   }
 </style>

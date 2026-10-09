@@ -4,8 +4,8 @@ import { person } from '../data/site';
 const year = new Date().getFullYear();
 ---
 
-<footer class="footer">
-  <div class="container footer__inner">
+<footer class="footer soft-rule" data-stage="day">
+  <div class="container footer__inner muted">
     <span>© {year} {person.name}</span>
     <span>Информация на сайте не является медицинской консультацией</span>
   </div>
@@ -14,9 +14,7 @@ const year = new Date().getFullYear();
 <style>
   .footer {
     padding-block: 32px;
-    border-top: 1px solid var(--line);
-    font-size: 0.85rem;
-    color: var(--muted);
+    font-size: 0.82rem;
   }
 
   .footer__inner {

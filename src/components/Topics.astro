@@ -1,65 +1,139 @@
 ---
+import Icon from './Icon.astro';
+import SectionPhoto from './SectionPhoto.astro';
+import reading from '../assets/topics.jpg';
 import { topics } from '../data/site';
 ---
 
-<section class="section" id="topics">
-  <div class="container">
-    <span class="eyebrow">С чем работаю</span>
-    <h2>С какими запросами приходят</h2>
-    <p class="lead">Не обязательно, чтобы «всё было плохо». Прийти можно и с ощущением, что просто нужна опора.</p>
+<section class="section topics-section" id="topics" data-stage="dawn">
+  <SectionPhoto src={reading} position="60% 40%" />
 
-    <ul class="topics">
+  <div class="container story__text">
+    <span class="eyebrow reveal">С чем работаю</span>
+    <h2 class="reveal" data-delay="1">С какими запросами приходят</h2>
+    <p class="lead reveal" data-delay="2">
+      Не обязательно, чтобы «всё было плохо». Прийти можно и с ощущением, что просто нужна опора.
+    </p>
+
+    <ol class="topics">
       {topics.map((t, i) => (
-        <li class="topic">
-          <span class="topic__num">{String(i + 1).padStart(2, '0')}</span>
-          <h3>{t.title}</h3>
-          <p>{t.text}</p>
+        <li class="topic reveal" data-delay={String(i % 2)}>
+          <span class="topic__badge">
+            <Icon name={t.icon} class="topic__icon" size={104} />
+          </span>
+          <div>
+            <h3>{t.title}</h3>
+            <p class="muted">{t.text}</p>
+          </div>
         </li>
       ))}
-    </ul>
+    </ol>
   </div>
 </section>
 
 <style>
+  .topics-section {
+    overflow: clip;
+    padding-top: 0;
+  }
+
+  .story__text {
+    position: relative;
+    z-index: 2;
+  }
+
   .topics {
     list-style: none;
     margin: 48px 0 0;
     padding: 0;
     display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 0 64px;
   }
 
   .topic {
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 28px;
-    transition: transform 0.25s, box-shadow 0.25s;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px 8px;
+    padding-block: 32px;
   }
 
-  .topic:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow);
+  /* Разделитель тает к краям, чтобы не резать сетку по линейке. */
+  .topic::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
+    opacity: 0.6;
+    transition: background 1.4s var(--ease);
   }
 
-  .topic__num {
-    display: inline-grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    margin-bottom: 16px;
-    border-radius: 50% 45% 55% 50%;
-    background: var(--surface);
-    color: var(--accent);
-    font-family: var(--font-serif);
-    font-size: 1.1rem;
-    font-weight: 600;
+  .topic:last-child::after {
+    display: none;
   }
 
   .topic p {
     margin: 0;
-    color: var(--muted);
-    font-size: 0.95rem;
+    font-size: 0.97rem;
+  }
+
+  .topic__badge {
+    display: grid;
+    place-items: center;
+    width: 136px;
+    height: 136px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 16%, transparent) 0%, transparent 72%);
+    transition: background 1.4s var(--ease);
+  }
+
+  .topic :global(.topic__icon) {
+    width: 104px;
+    height: 104px;
+    color: var(--accent);
+    transition: color 1.4s var(--ease);
+  }
+
+  @media (min-width: 700px) {
+    .topic {
+      grid-template-columns: 136px 1fr;
+      align-items: start;
+      margin-left: -16px;
+    }
+
+    .topic__badge {
+      margin-top: -28px;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .topics-section {
+      padding-top: var(--section-y);
+      padding-bottom: calc(var(--section-y) + 72px);
+      overflow: visible;
+    }
+
+    /* Две колонки тем шире левой половины: блок заходит на фото до края сетки. */
+    .story__text {
+      margin-right: calc(-46vw + max(var(--gutter), (100vw - var(--container)) / 2));
+      padding-right: 0;
+    }
+
+    .topics {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .topic:nth-last-child(2)::after {
+      display: none;
+    }
+
+    .topic:nth-child(2n) {
+      transform: translateY(72px);
+    }
+
+    .topic:nth-child(2n):not(.is-in) {
+      transform: translateY(100px);
+    }
   }
 </style>

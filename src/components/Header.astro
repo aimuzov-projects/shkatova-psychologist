@@ -1,18 +1,23 @@
 ---
+import Icon from './Icon.astro';
+import Logo from './Logo.astro';
 import { nav, person } from '../data/site';
 ---
 
 <header class="header">
   <div class="container header__inner">
     <a href="#top" class="logo">
-      <span class="logo__name">{person.name}</span>
-      <span class="logo__role">{person.role}</span>
+      <Logo class="logo__mark" size={40} />
+      <span class="logo__text">
+        <span class="logo__name">{person.name}</span>
+        <span class="logo__role">{person.role}</span>
+      </span>
     </a>
     <nav aria-label="Основное меню">
       <ul class="nav">
         {nav.map((item) => (
           <li>
-            <a href={item.href}>{item.label}</a>
+            <a href={item.href}><Icon name={item.icon} size={16} />{item.label}</a>
           </li>
         ))}
       </ul>
@@ -23,12 +28,25 @@ import { nav, person } from '../data/site';
 
 <style>
   .header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background: rgb(251 246 241 / 0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--line);
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 20;
+    color: var(--fg);
+    /* Подложка с размытием всегда, а не только после прокрутки: меню читается над фото. */
+    background: color-mix(in srgb, var(--page-bg, var(--bg)) 72%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 8px 24px -18px rgb(20 10 20 / 0.18);
+    transition: color 1.4s var(--ease), background-color 1.4s var(--ease);
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
+    opacity: 0.6;
   }
 
   .header__inner {
@@ -36,28 +54,44 @@ import { nav, person } from '../data/site';
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    min-height: 68px;
+    min-height: 76px;
   }
 
   .logo {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 12px;
     text-decoration: none;
-    color: var(--text);
-    line-height: 1.1;
+    line-height: 1.15;
+  }
+
+  .logo :global(.logo__mark) {
+    flex-shrink: 0;
+    color: var(--accent);
+    transition: color 1.4s var(--ease), transform 0.6s var(--ease);
+  }
+
+  .logo:hover :global(.logo__mark) {
+    transform: rotate(-8deg);
+  }
+
+  .logo__text {
+    display: flex;
+    flex-direction: column;
   }
 
   .logo__name {
     font-family: var(--font-serif);
-    font-size: 1.45rem;
-    font-weight: 600;
+    font-size: 1.25rem;
   }
 
   .logo__role {
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
+    display: none;
+    font-size: 0.66rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--muted);
+    transition: color 1.4s var(--ease);
   }
 
   .nav {
@@ -65,22 +99,37 @@ import { nav, person } from '../data/site';
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 28px;
+    gap: 32px;
   }
 
   .nav a {
-    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+  }
+
+  .nav a :global(svg) {
+    color: var(--accent);
+    transition: color 1.4s var(--ease);
   }
 
   .nav a:hover {
-    color: var(--accent);
+    opacity: 1;
   }
 
   .header__cta {
-    padding: 0.6em 1.3em;
-    font-size: 0.9rem;
+    padding: 0.7em 1.4em;
+    font-size: 0.85rem;
+  }
+
+  @media (min-width: 600px) {
+    .logo__role {
+      display: block;
+    }
   }
 
   @media (min-width: 1000px) {

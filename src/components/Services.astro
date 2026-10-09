@@ -1,81 +1,150 @@
 ---
+import Icon from './Icon.astro';
+import SectionPhoto from './SectionPhoto.astro';
 import { services } from '../data/site';
+import photo from '../assets/services.jpg';
 ---
 
-<section class="section section--tinted" id="services">
-  <div class="container">
-    <span class="eyebrow">Услуги и цены</span>
-    <h2>Форматы работы</h2>
-    <p class="lead">Первую встречу можно провести в любом формате — после неё решим, что подходит именно вам.</p>
+<section class="section services-section" id="services" data-stage="rose">
+  <SectionPhoto src={photo} position="50% 15%" />
+
+  <div class="container story__text">
+    <span class="eyebrow reveal">Услуги и цены</span>
+    <h2 class="reveal" data-delay="1">Форматы работы</h2>
+    <p class="lead reveal" data-delay="2">
+      Первую встречу можно провести в любом формате — после неё решим, что подходит именно вам.
+    </p>
 
     <div class="services">
-      {services.map((s) => (
-        <article class:list={['service', { 'service--featured': s.featured }]}>
-          {s.featured && <span class="service__badge">Популярное</span>}
-          <h3>{s.title}</h3>
-          <p class="service__duration">{s.duration}</p>
-          <p class="service__text">{s.text}</p>
-          <p class="service__price">{s.price}</p>
-        </article>
-      ))}
+      <ol class="services__list soft-divide">
+        {services.map((s, i) => (
+          <li class="service reveal" data-delay={String(i % 3)}>
+            <a href="#contacts" class="service__link">
+              <span class="service__icon"><Icon name={s.icon} size={28} /></span>
+              <span class="service__body">
+                <span class="service__title">
+                  {s.title}
+                  {s.featured && <span class="service__badge">бесплатно</span>}
+                </span>
+                <span class="service__text muted">{s.text}</span>
+              </span>
+              <span class="service__meta">
+                <span class="service__price">{s.price}</span>
+                <span class="service__duration muted">{s.duration}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ol>
     </div>
   </div>
 </section>
 
 <style>
+  .services-section {
+    overflow: clip;
+    padding-top: 0;
+  }
+
   .services {
     margin-top: 48px;
+  }
+
+  .story__text {
+    position: relative;
+    z-index: 2;
+  }
+
+  .services__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .service__link {
     display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    grid-template-columns: 44px 1fr;
+    gap: 8px 16px;
+    padding: 26px 12px;
+    margin-inline: -12px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background-color 0.4s var(--ease);
   }
 
-  .service {
+  .service__link:hover,
+  .service__link:focus-visible {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+
+  .service__icon {
+    color: var(--accent);
+    padding-top: 0.2em;
+    transition: color 1.4s var(--ease);
+  }
+
+  .service__title {
     display: flex;
-    flex-direction: column;
-    background: var(--surface-2);
-    border-radius: var(--radius);
-    padding: 32px 28px;
-    box-shadow: var(--shadow);
-  }
-
-  .service--featured {
-    background: var(--accent);
-    color: #fff;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    line-height: 1.15;
   }
 
   .service__badge {
-    align-self: flex-start;
-    margin: -12px 0 12px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.2);
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-
-  .service__duration {
-    font-size: 0.85rem;
-    letter-spacing: 0.08em;
+    font-family: var(--font-sans);
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  .service--featured .service__duration,
-  .service--featured .service__text {
-    color: rgb(255 255 255 / 0.88);
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    transition: background-color 1.4s var(--ease), color 1.4s var(--ease);
   }
 
   .service__text {
-    flex: 1;
-    font-size: 0.95rem;
-    color: var(--muted);
+    display: block;
+    margin-top: 8px;
+    font-size: 0.93rem;
+    max-width: 44ch;
+  }
+
+  .service__meta {
+    grid-column: 2;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
   }
 
   .service__price {
-    margin: 0;
     font-family: var(--font-serif);
-    font-size: 2.1rem;
-    font-weight: 600;
+    font-size: 1.35rem;
+  }
+
+  .service__duration {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 900px) {
+    .services-section {
+      padding-top: var(--section-y);
+    }
+
+    .service__link {
+      grid-template-columns: 52px 1fr auto;
+    }
+
+    .service__meta {
+      grid-column: 3;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      text-align: right;
+    }
   }
 </style>
