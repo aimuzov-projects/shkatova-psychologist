@@ -118,13 +118,13 @@
 
 /* Якоря не прячут заголовок под шапкой. На телефоне шапки за первым экраном нет:
    у секций без фото рубрика встаёт в 24px от верха, без пустой полосы. */
-@media (min-width: 1000px) {
+@media (--lg) {
 	html {
 		scroll-padding-top: 76px;
 	}
 }
 
-@media (max-width: 999px) {
+@media (--below-lg) {
 	.section:not(:has(.section-photo)) {
 		scroll-margin-top: calc(24px - var(--section-y));
 	}
@@ -238,7 +238,7 @@ svg {
 }
 
 /* Текст в левой колонке Story равняется по общей сетке контейнера. */
-@media (min-width: 900px) {
+@media (--md) {
 	.story__text {
 		width: auto;
 		max-width: none;
@@ -391,7 +391,7 @@ svg {
 	transition: background 1.4s var(--ease);
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
 	.reveal {
 		opacity: 1;
 		transform: none;

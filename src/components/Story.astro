@@ -33,7 +33,7 @@ const { shots, rows = 2, eager = false } = Astro.props
 					fallbackFormat="webp"
 					alt=""
 					widths={[480, 640, 1280]}
-					sizes="(min-width: 900px) 46vw, 1px"
+					sizes="(--md) 46vw, 1px"
 					loading={eager && i === 0 ? 'eager' : 'lazy'}
 					fetchpriority={eager && i === 0 ? 'high' : 'auto'}
 				/>
@@ -52,11 +52,12 @@ const { shots, rows = 2, eager = false } = Astro.props
 		}
 	}
 
-	@media (min-width: 900px) {
+	@media (--md) {
 		.story {
 			display: grid;
 			grid-template-columns: minmax(0, 1fr) 46vw;
 
+			/* stylelint-disable-next-line selector-max-type -- секции приходят через slot, общего класса у них нет */
 			& > :global(section) {
 				grid-column: 1;
 			}

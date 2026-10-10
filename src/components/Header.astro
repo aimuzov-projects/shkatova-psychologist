@@ -66,7 +66,7 @@ const base = home ? '' : '/'
 
 	/* Телефон: за первым экраном шапка уезжает вместе со своей кнопкой,
 	   а запись живёт в круглой кнопке, которая выезжает справа в угол. */
-	@media (max-width: 999px) {
+	@media (--below-lg) {
 		:global(.page--past-hero) .header {
 			transform: translateY(-100%);
 		}
@@ -129,14 +129,14 @@ const base = home ? '' : '/'
 		transition: transform 0.6s var(--ease);
 	}
 
-	@media (prefers-reduced-motion: reduce) {
+	@media (--reduced-motion) {
 		.fab,
 		:global(.page--past-hero) .fab {
 			transition: none;
 		}
 	}
 
-	@media (min-width: 1000px) {
+	@media (--lg) {
 		.fab {
 			display: none;
 		}
@@ -233,20 +233,20 @@ const base = home ? '' : '/'
 		font-size: 0.85rem;
 	}
 
-	@media (min-width: 600px) {
+	@media (--sm) {
 		.logo__role {
 			display: block;
 		}
 	}
 
-	@media (min-width: 1000px) {
+	@media (--lg) {
 		.nav {
 			display: flex;
 		}
 	}
 
 	/* Шесть пунктов меню с иконками и подписью под именем влезают только от 1280px. */
-	@media (min-width: 1000px) and (max-width: 1279px) {
+	@media (--lg) and (--below-xl) {
 		.logo__role,
 		.nav :global(.nav__icon) {
 			display: none;

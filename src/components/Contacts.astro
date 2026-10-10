@@ -222,7 +222,7 @@ const items = [
 		}
 	}
 
-	@media (max-width: 599px) {
+	@media (--below-sm) {
 		.ask {
 			grid-template-columns: 1fr;
 			padding: 24px;
@@ -234,7 +234,7 @@ const items = [
 		}
 	}
 
-	@media (min-width: 900px) {
+	@media (--md) {
 		.ask {
 			grid-template-columns: auto 1fr auto;
 			padding: 32px 36px;
@@ -246,7 +246,7 @@ const items = [
 		}
 	}
 
-	@media (prefers-reduced-motion: reduce) {
+	@media (--reduced-motion) {
 		.ask__btn::after {
 			animation: none;
 		}

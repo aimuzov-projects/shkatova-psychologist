@@ -217,7 +217,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	const current = document.querySelector<HTMLElement>('[data-current]')!
 	const prev = document.querySelector<HTMLButtonElement>('[data-prev]')!
 	const nexts = [...document.querySelectorAll<HTMLButtonElement>('[data-next]')]
-	const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+	const reduce = matchMedia('(--reduced-motion)').matches
 	let index = -1
 
 	// Фон проявляется только после загрузки. Из кэша картинка бывает готова раньше скрипта.
@@ -407,6 +407,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		transition: color 1.4s var(--ease);
 	}
 
+	/* stylelint-disable selector-max-type -- сброс тегов на странице слайдов */
 	blockquote {
 		margin: 0;
 	}
@@ -417,6 +418,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		margin: 0;
 		padding: 0;
 	}
+	/* stylelint-enable selector-max-type */
 
 	/* Обложка */
 	.cover__title {

@@ -16,7 +16,7 @@ import { person } from '../data/site'
 				src={hero}
 				alt=""
 				widths={[480, 768, 960, 1280]}
-				sizes="(min-width: 900px) 1px, 100vw"
+				sizes="(--md) 1px, 100vw"
 				loading="eager"
 				fetchpriority="high"
 				class="hero__img"
@@ -87,7 +87,7 @@ import { person } from '../data/site'
 
 	/* На десктопе колонке текста достаётся чуть больше половины экрана: при 5vw строка
 	   "— а вам страшно" к 1440px становилась шире колонки и уходила под фото. */
-	@media (min-width: 900px) {
+	@media (--md) {
 		.hero {
 			&__title {
 				font-size: clamp(2.2rem, 4.2vw, 4rem);
@@ -209,7 +209,7 @@ import { person } from '../data/site'
 	}
 
 	/* На сенсорных экранах мышки нет, а подсказка налезает на кнопку. */
-	@media (pointer: coarse), (max-width: 899px) {
+	@media (pointer: coarse), (--below-md) {
 		.hero__hint {
 			display: none;
 		}
@@ -259,7 +259,7 @@ import { person } from '../data/site'
 		}
 	}
 
-	@media (min-width: 900px) {
+	@media (--md) {
 		.hero {
 			align-items: center;
 			padding-block: 120px 96px;
