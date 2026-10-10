@@ -21,6 +21,8 @@ services:
     logging: *logging
 
   # Секреты лежат в /srv/shkatova-site/.env, образец в .env.example.
+  # Из РФ OpenRouter и Telegram не отвечают, поэтому чат ходит наружу через общий
+  # VPN-выход из server-infra.
   chat:
     build:
       context: ..
@@ -29,11 +31,18 @@ services:
     container_name: shkatova-chat
     restart: unless-stopped
     env_file: ../.env
+    environment:
+      HTTPS_PROXY: http://vpn:3128
+      NODE_USE_ENV_PROXY: '1'
     networks:
       - edge
+      - vpn
     logging: *logging
 
 networks:
   edge:
     name: edge
+    external: true
+  vpn:
+    name: vpn
     external: true
