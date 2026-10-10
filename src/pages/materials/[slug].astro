@@ -217,7 +217,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	const current = document.querySelector<HTMLElement>('[data-current]')!
 	const prev = document.querySelector<HTMLButtonElement>('[data-prev]')!
 	const nexts = [...document.querySelectorAll<HTMLButtonElement>('[data-next]')]
-	const reduce = matchMedia('(--reduced-motion)').matches
+	const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
 	let index = -1
 
 	// Фон проявляется только после загрузки. Из кэша картинка бывает готова раньше скрипта.

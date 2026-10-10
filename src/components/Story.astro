@@ -33,7 +33,7 @@ const { shots, rows = 2, eager = false } = Astro.props
 					fallbackFormat="webp"
 					alt=""
 					widths={[480, 640, 1280]}
-					sizes="(--md) 46vw, 1px"
+					sizes="(min-width: 900px) 46vw, 1px"
 					loading={eager && i === 0 ? 'eager' : 'lazy'}
 					fetchpriority={eager && i === 0 ? 'high' : 'auto'}
 				/>
