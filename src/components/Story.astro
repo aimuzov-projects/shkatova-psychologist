@@ -146,5 +146,12 @@ const { shots, rows = 2, eager = false } = Astro.props
 				opacity: 1;
 			}
 		}
+
+		/* Без скриптов кадры не переключаются: остаётся первый, он и так виден сразу. */
+		&__sticky :global(.story__shot:not([data-trigger])) {
+			@media (--md) and (--no-scripting) {
+				opacity: 1;
+			}
+		}
 	}
 </style>
