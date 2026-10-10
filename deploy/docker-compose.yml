@@ -1,7 +1,13 @@
 # Сайт на сервере projects. Порты 80/443 держит общий Caddy из aimuzov-projects/server-infra,
-# он проксирует домен сюда по сети edge.
+# он проксирует домен сюда по сети edge, а /api/* -- сервису чата.
 
 name: shkatova-site
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: '5m'
+    max-file: '2'
 
 services:
   site:
@@ -12,11 +18,20 @@ services:
     restart: unless-stopped
     networks:
       - edge
-    logging:
-      driver: json-file
-      options:
-        max-size: '5m'
-        max-file: '2'
+    logging: *logging
+
+  # Секреты лежат в /srv/shkatova-site/.env, образец в .env.example.
+  chat:
+    build:
+      context: ..
+      dockerfile: chat/Dockerfile
+    image: shkatova-chat
+    container_name: shkatova-chat
+    restart: unless-stopped
+    env_file: ../.env
+    networks:
+      - edge
+    logging: *logging
 
 networks:
   edge:

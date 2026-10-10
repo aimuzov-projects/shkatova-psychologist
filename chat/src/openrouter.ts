@@ -1,0 +1,57 @@
+import { summaryTool, systemPrompt } from './prompt.ts'
+
+export type Message = { role: 'user' | 'assistant'; content: string }
+
+type ToolCall = { name: string; arguments: string }
+
+const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-sonnet-5.5'
+
+// Ответ модели по кусочкам: текст отдаётся сразу через onText, вызов инструмента
+// приходит частями и склеивается к концу потока.
+export async function complete(messages: Message[], onText: (chunk: string) => void, signal: AbortSignal) {
+	const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+		method: 'POST',
+		signal,
+		headers: {
+			Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+			'Content-Type': 'application/json',
+			'HTTP-Referer': 'https://tatiana-shkatova.ru',
+			'X-Title': 'tatiana-shkatova.ru chat',
+		},
+		body: JSON.stringify({
+			model,
+			stream: true,
+			max_tokens: 1000,
+			messages: [{ role: 'system', content: systemPrompt }, ...messages],
+			tools: [summaryTool],
+		}),
+	})
+	if (!res.ok || !res.body) throw new Error(`OpenRouter ${res.status}: ${(await res.text()).slice(0, 300)}`)
+
+	const calls: ToolCall[] = []
+	let buffer = ''
+	const decoder = new TextDecoder()
+	for await (const bytes of res.body) {
+		buffer += decoder.decode(bytes, { stream: true })
+		const lines = buffer.split('\n')
+		buffer = lines.pop() ?? ''
+		for (const line of lines) {
+			// Строки-комментарии вида ": OPENROUTER PROCESSING" держат соединение, их пропускаем.
+			if (!line.startsWith('data: ')) continue
+			const data = line.slice(6).trim()
+			if (data === '[DONE]') continue
+			const chunk = JSON.parse(data)
+			if (chunk.error) throw new Error(`OpenRouter: ${chunk.error.message ?? JSON.stringify(chunk.error)}`)
+			const delta = chunk.choices?.[0]?.delta
+			if (delta?.content) onText(delta.content)
+			for (const call of delta?.tool_calls ?? []) {
+				const slot = (calls[call.index ?? 0] ??= { name: '', arguments: '' })
+				if (call.function?.name) slot.name += call.function.name
+				if (call.function?.arguments) slot.arguments += call.function.arguments
+			}
+		}
+	}
+
+	const summary = calls.find((call) => call.name === summaryTool.function.name)
+	return summary ? JSON.parse(summary.arguments || '{}') : null
+}
