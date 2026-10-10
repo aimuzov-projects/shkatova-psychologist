@@ -3,8 +3,8 @@ import Icon from '@/components/Icon.astro'
 import Logo from '@/components/Logo.astro'
 import { nav, person } from '@/data/site'
 
-// Вне главной якоря секций ведут на главную.
 type Props = {
+	/** `false` вне главной: якоря шапки ведут на `/#...`. */
 	home?: boolean
 }
 

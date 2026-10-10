@@ -18,7 +18,9 @@ import { person } from '@/data/site'
 const preload = [prataCyr, prataLat, golosCyr, golosCyr500, golosLat, golosLat500, golosLatExt]
 
 type Props = {
+	/** `<title>` и `og:title`, по умолчанию "имя — роль" из `person`. */
 	title?: string
+	/** `meta description` и `og:description`, по умолчанию `person.intro`. */
 	description?: string
 }
 

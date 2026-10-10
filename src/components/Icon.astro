@@ -2,6 +2,7 @@
 // Тонкие линейные иконки в одном стиле, рисуются currentColor.
 type Props = {
 	name: keyof typeof icons
+	/** Сторона в пикселях, по умолчанию 28. Больше 64 -- линия тоньше. */
 	size?: number
 	class?: string
 }
