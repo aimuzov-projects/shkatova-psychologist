@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Выкладка на самом сервере: подтянуть main и пересобрать контейнеры.
-# Её вызывают GitHub Actions на каждый пуш в main и deploy.sh вручную. Для ключа
-# из Actions это единственная разрешённая команда (command= в authorized_keys).
+# Её вызывают GitHub Actions на каждый пуш в main и при ручном запуске workflow.
+# Для ключа из Actions это единственная разрешённая команда (command= в authorized_keys).
 set -euo pipefail
 
 # Тело в блоке: bash дочитает его целиком до того, как git pull подменит этот файл.
