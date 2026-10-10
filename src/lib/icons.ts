@@ -23,6 +23,7 @@ export const icons = {
 	'arrow-up': '<path d="M12 20V4"/><path d="M6 10l6-6 6 6"/>',
 	cross: '<path d="M7 7l10 10M17 7L7 17"/>',
 	check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+	restart: '<path d="M4 12a8 8 0 1 0 8-8 8.7 8.7 0 0 0-6 2.4L4 8.5"/><path d="M4 4v4.5h4.5"/>',
 	arrow: '<path d="M12 4v16"/><path d="M6 14l6 6 6-6"/>',
 	people: '<circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M17.5 14.5a6 6 0 0 1 3.5 5.5"/>',
 }

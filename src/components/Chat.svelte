@@ -275,7 +275,10 @@
 				</button>
 			</form>
 		{/if}
-		<button class="dialog__restart muted" type="button" onclick={restart}>Начать заново</button>
+		<button class="dialog__restart muted" type="button" onclick={restart}>
+			<Icon name="restart" size={14} />
+			Начать заново
+		</button>
 	</section>
 {/if}
 
@@ -369,7 +372,10 @@
 
 		&__restart {
 			cursor: pointer;
-			display: block;
+			display: flex;
+			gap: 6px;
+			align-items: center;
+			width: fit-content;
 			margin: 16px auto 0;
 			padding: 6px 10px;
 			border: 0;
