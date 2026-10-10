@@ -35,5 +35,8 @@
 		"stylelint-config-clean-order": "10.0.0",
 		"stylelint-order": "8.1.1",
 		"typescript": "6.0.3"
+	},
+	"imports": {
+		"#/*": "./src/*"
 	}
 }

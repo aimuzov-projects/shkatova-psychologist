@@ -1,5 +1,5 @@
-import { greeting } from '../../src/data/chat.ts'
-import { contacts, faq, person, services, topics } from '../../src/data/site.ts'
+import { greeting } from '#/data/chat.ts'
+import { contacts, faq, person, services, topics } from '#/data/site.ts'
 
 const list = (items: string[]) => items.map((item) => `- ${item}`).join('\n')
 
