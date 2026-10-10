@@ -14,7 +14,8 @@ import { topics } from '../data/site'
 			С чем ко мне приходят
 		</h2>
 		<p class="lead reveal" data-delay="2">
-			Не обязательно ждать, пока станет совсем плохо. Достаточно того, что вам тяжело и не с кем об этом поговорить.
+			Не обязательно ждать, пока станет совсем плохо. Достаточно того, что вам тяжело и не с кем об этом
+			поговорить.
 		</p>
 
 		<ol class="topics">
@@ -24,8 +25,8 @@ import { topics } from '../data/site'
 						<Icon name={t.icon} class="topic__icon" size={104} />
 					</span>
 					<div class="topic__body">
-						<h3>{t.title}</h3>
-						<p class="muted">{t.text}</p>
+						<h3 class="topic__title">{t.title}</h3>
+						<p class="topic__text muted">{t.text}</p>
 					</div>
 				</li>
 			))}
@@ -37,19 +38,37 @@ import { topics } from '../data/site'
 	.topics-section {
 		overflow: clip;
 		padding-top: 0;
+
+		@media (--md) {
+			overflow: visible;
+			padding-top: var(--section-y);
+			padding-bottom: calc(var(--section-y) + 72px);
+		}
 	}
 
-	.story__text {
-		position: relative;
-		z-index: 2;
+	.story {
+		&__text {
+			position: relative;
+			z-index: 2;
+
+			/* Две колонки тем шире левой половины: блок заходит на фото до края сетки. */
+			@media (--md) {
+				margin-right: calc(-46vw + max(var(--gutter), (100vw - var(--container)) / 2));
+				padding-right: 0;
+			}
+		}
 	}
 
 	.topics {
-		list-style: none;
-		margin: 48px 0 0;
-		padding: 0;
 		display: grid;
 		gap: 0 64px;
+		margin: 48px 0 0;
+		padding: 0;
+		list-style: none;
+
+		@media (--md) {
+			grid-template-columns: 1fr 1fr;
+		}
 	}
 
 	/* На телефоне иконка в строку с заголовком и ростом с него, описание под ними. */
@@ -57,115 +76,105 @@ import { topics } from '../data/site'
 		position: relative;
 		display: grid;
 		grid-template-columns: auto 1fr;
-		align-items: start;
 		gap: 10px 14px;
+		align-items: start;
 		padding-block: 24px;
-	}
 
-	.topic__body {
-		display: contents;
-	}
-
-	.topic h3 {
-		margin: 0;
-	}
-
-	/* Разделитель тает к краям, чтобы не резать сетку по линейке. */
-	.topic::after {
-		content: '';
-		position: absolute;
-		inset: auto 0 0;
-		height: 1px;
-		background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
-		opacity: 0.6;
-		transition: background 1.4s var(--ease);
-	}
-
-	.topic:last-child::after {
-		display: none;
-	}
-
-	.topic p {
-		grid-column: 1 / -1;
-		margin: 0;
-		font-size: 0.97rem;
-	}
-
-	.topic__badge {
-		display: grid;
-		place-items: center;
-	}
-
-	.topic :global(.topic__icon) {
-		width: 1.6rem;
-		height: 1.6rem;
-		color: var(--accent);
-		transition: color 1.4s var(--ease);
-	}
-
-	@media (min-width: 700px) {
-		.topic {
+		@media (min-width: 700px) {
 			grid-template-columns: 136px 1fr;
-			align-items: start;
 			gap: 12px 8px;
-			padding-block: 32px;
+			align-items: start;
 			margin-left: -16px;
+			padding-block: 32px;
 		}
 
-		.topic__body {
-			display: block;
+		&__body {
+			display: contents;
+
+			@media (min-width: 700px) {
+				display: block;
+			}
 		}
 
-		.topic h3 {
-			margin: 0 0 0.5em;
+		&__title {
+			margin: 0;
+
+			@media (min-width: 700px) {
+				margin: 0 0 0.5em;
+			}
 		}
 
-		.topic p {
-			grid-column: auto;
-		}
-
-		.topic__badge {
-			width: 136px;
-			height: 136px;
-			margin-top: -28px;
-			border-radius: 50%;
-			background: radial-gradient(circle, color-mix(in srgb, var(--accent) 16%, transparent) 0%, transparent 72%);
+		/* Разделитель тает к краям, чтобы не резать сетку по линейке. */
+		&::after {
+			content: '';
+			position: absolute;
+			inset: auto 0 0;
+			height: 1px;
+			opacity: 0.6;
+			background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
 			transition: background 1.4s var(--ease);
 		}
 
-		.topic :global(.topic__icon) {
-			width: 104px;
-			height: 104px;
-		}
-	}
-
-	@media (min-width: 900px) {
-		.topics-section {
-			padding-top: var(--section-y);
-			padding-bottom: calc(var(--section-y) + 72px);
-			overflow: visible;
-		}
-
-		/* Две колонки тем шире левой половины: блок заходит на фото до края сетки. */
-		.story__text {
-			margin-right: calc(-46vw + max(var(--gutter), (100vw - var(--container)) / 2));
-			padding-right: 0;
-		}
-
-		.topics {
-			grid-template-columns: 1fr 1fr;
-		}
-
-		.topic:nth-last-child(2)::after {
+		&:last-child::after {
 			display: none;
 		}
 
-		.topic:nth-child(2n) {
-			transform: translateY(72px);
+		&:nth-last-child(2)::after {
+			@media (--md) {
+				display: none;
+			}
 		}
 
-		.topic:nth-child(2n):not(.is-in) {
-			transform: translateY(100px);
+		&:nth-child(2n) {
+			@media (--md) {
+				transform: translateY(72px);
+			}
+		}
+
+		&:nth-child(2n):not(.reveal--in) {
+			@media (--md) {
+				transform: translateY(100px);
+			}
+		}
+
+		&__text {
+			grid-column: 1 / -1;
+			margin: 0;
+			font-size: 0.97rem;
+
+			@media (min-width: 700px) {
+				grid-column: auto;
+			}
+		}
+
+		&__badge {
+			display: grid;
+			place-items: center;
+
+			@media (min-width: 700px) {
+				width: 136px;
+				height: 136px;
+				margin-top: -28px;
+				border-radius: 50%;
+				background: radial-gradient(
+					circle,
+					color-mix(in srgb, var(--accent) 16%, transparent) 0%,
+					transparent 72%
+				);
+				transition: background 1.4s var(--ease);
+			}
+		}
+
+		& :global(.topic__icon) {
+			width: 1.6rem;
+			height: 1.6rem;
+			color: var(--accent);
+			transition: color 1.4s var(--ease);
+
+			@media (min-width: 700px) {
+				width: 104px;
+				height: 104px;
+			}
 		}
 	}
 </style>

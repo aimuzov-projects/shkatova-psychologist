@@ -14,39 +14,40 @@ import { contacts, person } from '../data/site'
 	<main class="chat" data-stage="night">
 		<div class="container chat__inner">
 			<span class="eyebrow">Подготовка к встрече</span>
-			<h1>Расскажите о себе</h1>
+			<h1 class="chat__title">Расскажите о себе</h1>
 
 			<section class="consent" data-consent hidden>
 				<p class="lead">
-					Не всегда легко написать психологу первой. Здесь можно спокойно рассказать, что вас беспокоит, а ассистент
-					задаст несколько вопросов и соберёт главное для Татьяны. Она прочитает и сама напишет вам в течение дня.
+					Не всегда легко написать психологу первой. Здесь можно спокойно рассказать, что вас беспокоит,
+					а ассистент задаст несколько вопросов и соберёт главное для Татьяны. Она прочитает и сама напишет
+					вам в течение дня.
 				</p>
 				<ul class="consent__notes muted">
-					<li>
-						<Icon name="spark" size={20} />
+					<li class="consent__note">
+						<Icon name="spark" size={20} class="consent__icon" />
 						<span>
-							Это ИИ-ассистент, а не психолог: он не даёт советов и не ставит диагнозов, а помогает подготовиться
-							к встрече.
+							Это ИИ-ассистент, а не психолог: он не даёт советов и не ставит диагнозов, а помогает
+							подготовиться к встрече.
 						</span>
 					</li>
-					<li>
-						<Icon name="lock" size={20} />
+					<li class="consent__note">
+						<Icon name="lock" size={20} class="consent__icon" />
 						<span>
-							Разговор обрабатывает ИИ-сервис за пределами России, на сайте переписка не сохраняется. Татьяна получит
-							только итоговую выжимку и только после вашего подтверждения.
+							Разговор обрабатывает ИИ-сервис за пределами России, на сайте переписка не сохраняется.
+							Татьяна получит только итоговую выжимку и только после вашего подтверждения.
 						</span>
 					</li>
-					<li>
-						<Icon name="heart" size={20} />
+					<li class="consent__note">
+						<Icon name="heart" size={20} class="consent__icon" />
 						<span>
 							Если вам сейчас очень плохо или есть мысли навредить себе, звоните{' '}
 							<a class="icon-link" href="tel:112">
-								<Icon name="phone" size={16} />
+								<Icon name="phone" size={16} class="icon-link__icon" />
 								112
 							</a>{' '}
 							или на бесплатный телефон доверия{' '}
 							<a class="icon-link" href="tel:88002000122">
-								<Icon name="phone" size={16} />
+								<Icon name="phone" size={16} class="icon-link__icon" />
 								8-800-2000-122
 							</a>
 							.
@@ -54,12 +55,12 @@ import { contacts, person } from '../data/site'
 					</li>
 				</ul>
 				<label class="consent__check">
-					<input type="checkbox" data-agree />
+					<input type="checkbox" class="consent__checkbox" data-agree />
 					<span>
 						Даю согласие на обработку моих персональных данных, в том числе сведений о здоровье, на условиях{' '}
 						<a class="icon-link icon-link--after" href="/privacy" target="_blank">
 							политики конфиденциальности
-							<Icon name="arrow-out" size={16} />
+							<Icon name="arrow-out" size={16} class="icon-link__icon" />
 						</a>
 					</span>
 				</label>
@@ -79,12 +80,12 @@ import { contacts, person } from '../data/site'
 					<p class="muted" data-fallback hidden>
 						Не получилось передать разговор автоматически. Пожалуйста, напишите Татьяне напрямую:{' '}
 						<a class="icon-link" href={contacts.telegram.href} target="_blank" rel="noopener noreferrer">
-							<Icon name="plane" size={16} />
+							<Icon name="plane" size={16} class="icon-link__icon" />
 							Telegram
 						</a>{' '}
 						или{' '}
 						<a class="icon-link" href={contacts.whatsapp.href} target="_blank" rel="noopener noreferrer">
-							<Icon name="chat" size={16} />
+							<Icon name="chat" size={16} class="icon-link__icon" />
 							WhatsApp
 						</a>
 						.
@@ -95,6 +96,7 @@ import { contacts, person } from '../data/site'
 
 				<form class="composer" data-form>
 					<textarea
+						class="composer__input"
 						data-input
 						rows="1"
 						maxlength={limits.userChars}
@@ -187,7 +189,7 @@ import { contacts, person } from '../data/site'
 	const setBusy = (busy: boolean) => {
 		input.disabled = busy
 		send.disabled = busy
-		log.classList.toggle('is-typing', busy)
+		log.classList.toggle('dialog__log--typing', busy)
 	}
 
 	async function ask(text: string) {
@@ -313,120 +315,142 @@ import { contacts, person } from '../data/site'
 	.chat {
 		min-height: 100dvh;
 		padding-block: calc(var(--section-y) + 64px) 32px;
+
+		&__inner {
+			max-width: calc(760px + var(--gutter) * 2);
+		}
+
+		&__title {
+			font-size: clamp(2.4rem, 6vw, 3.6rem);
+		}
 	}
 
-	.chat__inner {
-		max-width: calc(760px + var(--gutter) * 2);
-	}
+	.consent {
+		&__notes {
+			display: grid;
+			gap: 16px;
+			margin: 32px 0;
+			padding: 0;
+			font-size: 0.95rem;
+			list-style: none;
+		}
 
-	h1 {
-		font-size: clamp(2.4rem, 6vw, 3.6rem);
-	}
+		&__note {
+			display: grid;
+			grid-template-columns: 20px 1fr;
+			gap: 14px;
+			align-items: start;
+		}
 
-	.consent__notes {
-		list-style: none;
-		margin: 32px 0;
-		padding: 0;
-		display: grid;
-		gap: 16px;
-		font-size: 0.95rem;
-	}
+		& :global(.consent__icon) {
+			margin-top: 3px;
+			color: var(--accent);
+		}
 
-	.consent__notes li {
-		display: grid;
-		grid-template-columns: 20px 1fr;
-		gap: 14px;
-		align-items: start;
-	}
+		&__check {
+			cursor: pointer;
+			display: grid;
+			grid-template-columns: 20px 1fr;
+			gap: 14px;
+			margin-bottom: 28px;
+			font-size: 0.95rem;
+		}
 
-	.consent__notes > li > :global(svg) {
-		margin-top: 3px;
-		color: var(--accent);
+		&__checkbox {
+			width: 20px;
+			height: 20px;
+			margin: 3px 0 0;
+			accent-color: var(--accent);
+		}
 	}
 
 	/* Иконка у ссылки не отрывается от текста при переносе строки. */
 	.icon-link {
 		white-space: nowrap;
+
+		& :global(.icon-link__icon) {
+			display: inline-block;
+			margin-inline-end: 0.25em;
+			vertical-align: -0.15em;
+		}
+
+		&--after :global(.icon-link__icon) {
+			margin-inline: 0.25em 0;
+		}
 	}
 
-	.icon-link :global(svg) {
-		display: inline-block;
-		vertical-align: -0.15em;
-		margin-inline-end: 0.25em;
-	}
-
-	.icon-link--after :global(svg) {
-		margin-inline: 0.25em 0;
-	}
-
-	.consent__check {
-		display: grid;
-		grid-template-columns: 20px 1fr;
-		gap: 14px;
-		margin-bottom: 28px;
-		font-size: 0.95rem;
+	.btn {
 		cursor: pointer;
-	}
-
-	.consent__check input {
-		width: 20px;
-		height: 20px;
-		margin: 3px 0 0;
-		accent-color: var(--accent);
-	}
-
-	.btn:disabled {
-		opacity: 0.45;
-		cursor: not-allowed;
-		transform: none;
-	}
-
-	button.btn {
 		border: 0;
 		font-family: inherit;
-		cursor: pointer;
+
+		&:disabled {
+			cursor: not-allowed;
+			transform: none;
+			opacity: 0.45;
+		}
 	}
 
-	.dialog__log {
-		list-style: none;
-		margin: 24px 0 0;
-		padding: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 14px;
-	}
+	.dialog {
+		&__log {
+			display: flex;
+			flex-direction: column;
+			gap: 14px;
+			margin: 24px 0 0;
+			padding: 0;
+			list-style: none;
+		}
 
-	.dialog__log :global(.msg) {
-		max-width: 88%;
-		white-space: pre-wrap;
-		overflow-wrap: anywhere;
-		-webkit-user-select: text;
-		user-select: text;
-	}
+		&__log :global(.msg) {
+			-webkit-user-select: text;
+			user-select: text;
+			max-width: 88%;
+			overflow-wrap: anywhere;
+			white-space: pre-wrap;
+		}
 
-	.dialog__log :global(.msg--assistant) {
-		align-self: flex-start;
-	}
+		&__log :global(.msg--assistant) {
+			align-self: flex-start;
+		}
 
-	.dialog__log :global(.msg--user) {
-		align-self: flex-end;
-		padding: 12px 18px;
-		border-radius: 20px 20px 6px 20px;
-		background: color-mix(in srgb, var(--fg) 10%, transparent);
-		box-shadow: inset 0 0 0 1px var(--line);
-	}
+		&__log :global(.msg--user) {
+			align-self: flex-end;
+			padding: 12px 18px;
+			border-radius: 20px 20px 6px 20px;
+			background: color-mix(in srgb, var(--fg) 10%, transparent);
+			box-shadow: inset 0 0 0 1px var(--line);
+		}
 
-	/* Три мерцающие точки, пока ассистент думает. */
-	.dialog__log :global(.msg--typing)::after {
-		content: '• • •';
-		letter-spacing: 0.1em;
-		color: var(--muted);
-		animation: typing 1.4s ease-in-out infinite;
-	}
+		/* Три мерцающие точки, пока ассистент думает. */
+		&__log :global(.msg--typing)::after {
+			content: '• • •';
+			color: var(--muted);
+			letter-spacing: 0.1em;
+			animation: typing 1.4s ease-in-out infinite;
+		}
 
-	@keyframes typing {
-		50% {
-			opacity: 0.3;
+		&__error {
+			margin: 20px 0 0;
+			color: var(--accent);
+		}
+
+		&__finish {
+			margin-top: 28px;
+			padding-top: 20px;
+			border-top: 1px solid var(--line);
+		}
+
+		&__restart {
+			cursor: pointer;
+			display: block;
+			margin: 16px auto 0;
+			padding: 6px 10px;
+			border: 0;
+			font: inherit;
+			font-size: 0.85rem;
+			text-decoration: underline;
+			text-underline-offset: 3px;
+			background: none;
 		}
 	}
 
@@ -434,8 +458,8 @@ import { contacts, person } from '../data/site'
 		position: sticky;
 		bottom: 16px;
 		display: flex;
-		align-items: flex-end;
 		gap: 10px;
+		align-items: flex-end;
 		margin-top: 28px;
 		padding: 8px 8px 8px 20px;
 		border-radius: 28px;
@@ -443,70 +467,52 @@ import { contacts, person } from '../data/site'
 		box-shadow:
 			inset 0 0 0 1px var(--line),
 			0 12px 40px rgb(0 0 0 / 0.25);
+
+		&__input {
+			resize: none;
+			flex: 1;
+			min-height: 40px;
+			max-height: 40vh;
+			padding: 8px 0;
+			border: 0;
+			font: inherit;
+			line-height: 1.5;
+			color: var(--fg);
+			background: none;
+			outline: none;
+		}
+
+		&__input::placeholder {
+			color: var(--muted);
+		}
+
+		&__send {
+			cursor: pointer;
+			display: grid;
+			flex: none;
+			place-items: center;
+			width: 44px;
+			height: 44px;
+			border: 0;
+			border-radius: 50%;
+			color: var(--btn-fg);
+			background: var(--btn-bg);
+			transition: background-color 0.4s var(--ease);
+		}
+
+		&__send:hover {
+			background: var(--btn-hover);
+		}
+
+		&__send:disabled {
+			cursor: default;
+			opacity: 0.45;
+		}
 	}
 
-	.composer textarea {
-		flex: 1;
-		min-height: 40px;
-		max-height: 40vh;
-		padding: 8px 0;
-		border: 0;
-		resize: none;
-		background: none;
-		color: var(--fg);
-		font: inherit;
-		line-height: 1.5;
-		outline: none;
-	}
-
-	.composer textarea::placeholder {
-		color: var(--muted);
-	}
-
-	.composer__send {
-		flex: none;
-		display: grid;
-		place-items: center;
-		width: 44px;
-		height: 44px;
-		border: 0;
-		border-radius: 50%;
-		background: var(--btn-bg);
-		color: var(--btn-fg);
-		cursor: pointer;
-		transition: background-color 0.4s var(--ease);
-	}
-
-	.composer__send:hover {
-		background: var(--btn-hover);
-	}
-
-	.composer__send:disabled {
-		opacity: 0.45;
-		cursor: default;
-	}
-
-	.dialog__error {
-		margin: 20px 0 0;
-		color: var(--accent);
-	}
-
-	.dialog__finish {
-		margin-top: 28px;
-		padding-top: 20px;
-		border-top: 1px solid var(--line);
-	}
-
-	.dialog__restart {
-		display: block;
-		margin: 16px auto 0;
-		padding: 6px 10px;
-		border: 0;
-		background: none;
-		font: inherit;
-		font-size: 0.85rem;
-		text-decoration: underline;
-		text-underline-offset: 3px;
-		cursor: pointer;
+	@keyframes typing {
+		50% {
+			opacity: 0.3;
+		}
 	}
 </style>

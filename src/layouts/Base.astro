@@ -26,7 +26,7 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 ---
 
 <!doctype html>
-<html lang="ru" data-stage="night">
+<html lang="ru" class="page" data-stage="night">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -134,7 +134,7 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 				(entries) => {
 					for (const e of entries) {
 						if (!e.isIntersecting) continue
-						e.target.classList.add('is-in')
+						e.target.classList.add('reveal--in')
 						revealObserver.unobserve(e.target)
 					}
 				},
@@ -156,7 +156,8 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 					const box = (el.parentElement as HTMLElement).getBoundingClientRect()
 					return (box.top + box.height / 2 - mid) * Number(el.dataset.parallax)
 				})
-				return () => parallax.forEach((el, i) => (el.style.transform = `translate3d(0, ${offsets[i].toFixed(1)}px, 0)`))
+				return () =>
+					parallax.forEach((el, i) => (el.style.transform = `translate3d(0, ${offsets[i].toFixed(1)}px, 0)`))
 			}
 
 			// Активно последнее фото, чья линия пройдена; вуаль густеет до следующего.
@@ -181,12 +182,14 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 					let opacity: string | null = null
 					if (veil && active >= 0) {
 						const end =
-							active + 1 < passed.length ? passed[active] - passed[active + 1] : passed[active] + box.bottom - vh
+							active + 1 < passed.length
+								? passed[active] - passed[active + 1]
+								: passed[active] + box.bottom - vh
 						const progress = Math.min(1, Math.max(0, passed[active] / Math.max(1, end)))
 						opacity = (0.35 + 0.45 * progress).toFixed(3)
 					}
 					return () => {
-						shots.forEach(({ el }, i) => el.classList.toggle('is-active', i === active))
+						shots.forEach(({ el }, i) => el.classList.toggle('story__shot--active', i === active))
 						if (veil && opacity) veil.style.opacity = opacity
 					}
 				})
@@ -235,7 +238,8 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 				bgStops = [{ y: 0, color: items[0].color }]
 				items.slice(1).forEach((b, i) => {
 					const a = items[i]
-					if (a.lightText === b.lightText) bgStops.push({ y: a.mid, color: a.color }, { y: b.mid, color: b.color })
+					if (a.lightText === b.lightText)
+						bgStops.push({ y: a.mid, color: a.color }, { y: b.mid, color: b.color })
 					else {
 						// Полоса перехода не шире отступов, чтобы не заходить под текст.
 						const seam = Math.min(a.padBottom, b.padTop, 90)
@@ -276,7 +280,7 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 				if (next === atContacts) return null
 				atContacts = next
 				return () => {
-					root.classList.toggle('at-contacts', atContacts)
+					root.classList.toggle('page--at-contacts', atContacts)
 					fab.setAttribute('href', atContacts ? '#top' : '#contacts')
 					fab.setAttribute('aria-label', atContacts ? 'Наверх' : 'Записаться')
 				}
@@ -287,7 +291,7 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 				const next = hero.getBoundingClientRect().bottom < 80
 				if (next === pastHero) return null
 				pastHero = next
-				return () => root.classList.toggle('past-hero', pastHero)
+				return () => root.classList.toggle('page--past-hero', pastHero)
 			}
 
 			const frame = (extra: (Write | null)[] = []) => {
@@ -299,7 +303,7 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 					measureSectionVeils(),
 					reduce ? null : measureParallax(),
 				]
-				root.classList.toggle('scrolled', scrollY > 40)
+				root.classList.toggle('page--scrolled', scrollY > 40)
 				writes.forEach((write) => write?.())
 				updatePageBg()
 			}

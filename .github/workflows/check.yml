@@ -1,0 +1,23 @@
+name: Check
+
+# На main проверки зовёт деплой перед выкладкой, отдельный прогон там был бы вторым.
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+  workflow_call:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint:css
+      - run: npm run check

@@ -27,7 +27,7 @@ import { materials } from '../data/materials'
 							<span class="material__text muted">{m.short}</span>
 							<span class="material__more">
 								Смотреть
-								<Icon name="arrow-out" size={18} />
+								<Icon name="arrow-out" class="material__arrow" size={18} />
 							</span>
 						</span>
 					</a>
@@ -39,83 +39,83 @@ import { materials } from '../data/materials'
 
 <style>
 	.materials {
-		list-style: none;
 		margin: 40px 0 0;
 		padding: 0;
+		list-style: none;
 	}
 
 	.material {
 		display: grid;
 		grid-template-columns: auto 1fr;
-		align-items: start;
 		gap: 12px 16px;
-		padding: 26px 12px;
+		align-items: start;
 		margin-inline: -12px;
+		padding: 26px 12px;
 		border-radius: 12px;
 		text-decoration: none;
 		transition: background-color 0.4s var(--ease);
-	}
 
-	.material:hover,
-	.material:focus-visible {
-		background: color-mix(in srgb, var(--accent) 10%, transparent);
-	}
+		&:hover,
+		&:focus-visible {
+			background: color-mix(in srgb, var(--accent) 10%, transparent);
+		}
 
-	.material__icon {
-		display: grid;
-		place-items: center;
-		width: 52px;
-		height: 52px;
-		border-radius: 50%;
-		color: var(--accent);
-		background: color-mix(in srgb, var(--accent) 12%, transparent);
-		transition:
-			color 1.4s var(--ease),
-			background-color 1.4s var(--ease);
-	}
+		&__icon {
+			display: grid;
+			place-items: center;
+			width: 52px;
+			height: 52px;
+			border-radius: 50%;
+			color: var(--accent);
+			background: color-mix(in srgb, var(--accent) 12%, transparent);
+			transition:
+				color 1.4s var(--ease),
+				background-color 1.4s var(--ease);
+		}
 
-	.material__body {
-		display: flex;
-		flex-direction: column;
-		gap: 6px;
-	}
+		&__body {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
 
-	.material__audience {
-		font-size: 0.74rem;
-		font-weight: 500;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: var(--accent);
-		transition: color 1.4s var(--ease);
-	}
+		&__audience {
+			font-size: 0.74rem;
+			font-weight: 500;
+			color: var(--accent);
+			text-transform: uppercase;
+			letter-spacing: 0.18em;
+			transition: color 1.4s var(--ease);
+		}
 
-	.material__title {
-		font-family: var(--font-serif);
-		font-size: 1.45rem;
-		line-height: 1.2;
-	}
+		&__title {
+			font-family: var(--font-serif);
+			font-size: 1.45rem;
+			line-height: 1.2;
+		}
 
-	.material__text {
-		font-size: 0.95rem;
-		max-width: 48ch;
-	}
+		&__text {
+			max-width: 48ch;
+			font-size: 0.95rem;
+		}
 
-	.material__more {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		margin-top: 4px;
-		font-size: 0.9rem;
-		font-weight: 500;
-	}
+		&__more {
+			display: inline-flex;
+			gap: 6px;
+			align-items: center;
+			margin-top: 4px;
+			font-size: 0.9rem;
+			font-weight: 500;
+		}
 
-	.material__more :global(svg) {
-		color: var(--accent);
-		transition: transform 0.5s var(--ease);
-	}
+		& :global(.material__arrow) {
+			color: var(--accent);
+			transition: transform 0.5s var(--ease);
+		}
 
-	.material:hover .material__more :global(svg),
-	.material:focus-visible .material__more :global(svg) {
-		transform: translate(3px, -3px);
+		&:hover :global(.material__arrow),
+		&:focus-visible :global(.material__arrow) {
+			transform: translate(3px, -3px);
+		}
 	}
 </style>

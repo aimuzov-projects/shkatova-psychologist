@@ -50,12 +50,20 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 <Base title={`${material.title} — ${person.name}`} description={material.description}>
 	<main class="deck">
 		<div class="deck__bg" aria-hidden="true">
-			<Picture src={sea} formats={['avif']} fallbackFormat="webp" alt="" widths={[480, 768]} sizes="100vw" />
+			<Picture
+				src={sea}
+				formats={['avif']}
+				fallbackFormat="webp"
+				alt=""
+				widths={[480, 768]}
+				sizes="100vw"
+				class="deck__bg-img"
+			/>
 			<div class="deck__veil"></div>
 		</div>
 
 		<div class="deck__progress" aria-hidden="true">
-			<span data-progress></span>
+			<span class="deck__progress-bar" data-progress></span>
 		</div>
 
 		<header class="deck__top container">
@@ -80,7 +88,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 						{slide.kind === 'cover' && (
 							<div class="cover">
 								<span class="eyebrow">{material.audience} · бесплатно</span>
-								<h1>{material.title}</h1>
+								<h1 class="cover__title">{material.title}</h1>
 								<p class="lead">{material.intro}</p>
 								<button type="button" class="btn" data-next>
 									Листать
@@ -95,7 +103,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 								{slide.block.type === 'phrases' && (
 									<ol class="phrases">
 										{slide.block.items.map((item) => (
-											<li>
+											<li class="phrases__item">
 												<span class="label">{item.label}</span>
 												<blockquote class="phrase">{quote(item.text)}</blockquote>
 											</li>
@@ -105,7 +113,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 								{slide.block.type === 'replies' && (
 									<ol class="replies soft-divide">
 										{slide.block.items.map((item) => (
-											<li>
+											<li class="replies__item">
 												<span class="muted">{item.label}</span>
 												<blockquote class="reply">{quote(item.text)}</blockquote>
 											</li>
@@ -122,9 +130,13 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 										<p class="label examples-title">{slide.block.examplesTitle}</p>
 										<ul class="examples">
 											{slide.block.examples.map((text) => (
-												<li>
+												<li class="examples__item">
 													{slots(quote(text)).map((p) =>
-														p.slot ? <mark class={`fill fill--${p.slot}`}>{p.text}</mark> : p.text,
+														p.slot ? (
+															<mark class={`fill fill--${p.slot}`}>{p.text}</mark>
+														) : (
+															p.text
+														),
 													)}
 												</li>
 											))}
@@ -146,14 +158,14 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 										<Icon name="cross" size={18} />
 										{slide.block.dontLabel}
 									</span>
-									<p>{slide.item.dont}</p>
+									<p class="pair__dont-text">{slide.item.dont}</p>
 								</div>
 								<div class="pair__do">
 									<span class="label">
 										<Icon name="check" size={18} />
 										{slide.block.doLabel}
 									</span>
-									<p>{slide.item.do}</p>
+									<p class="pair__do-text">{slide.item.do}</p>
 								</div>
 							</div>
 						)}
@@ -161,7 +173,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 						{slide.kind === 'outro' && (
 							<div class="outro">
 								{material.outro.map((text) => (
-									<p>{text}</p>
+									<p class="outro__text">{text}</p>
 								))}
 								<div class="outro__actions">
 									{chatEnabled && (
@@ -175,9 +187,9 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 										Контакты
 									</a>
 								</div>
-								<p class="outro__note muted">
-									Первая встреча — 20 минут онлайн, бесплатно. Напишите слово «Гармония», и мы подберём время.{' '}
-									<a href="/#about">Обо мне</a>
+								<p class="outro__text outro__note muted">
+									Первая встреча — 20 минут онлайн, бесплатно. Напишите слово «Гармония»,
+									и мы подберём время. <a href="/#about">Обо мне</a>
 								</p>
 							</div>
 						)}
@@ -211,7 +223,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	// Фон проявляется только после загрузки. Из кэша картинка бывает готова раньше скрипта.
 	const bg = document.querySelector<HTMLElement>('.deck__bg')!
 	const bgImg = bg.querySelector('img')!
-	const showBg = () => bg.classList.add('is-loaded')
+	const showBg = () => bg.classList.add('deck__bg--loaded')
 	if (bgImg.complete && bgImg.naturalWidth) showBg()
 	else bgImg.addEventListener('load', showBg, { once: true })
 
@@ -274,8 +286,8 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 <style>
 	:global(html),
 	:global(body) {
-		height: 100%;
 		overflow: hidden;
+		height: 100%;
 	}
 
 	:global(body) {
@@ -283,157 +295,246 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	}
 
 	.deck {
-		position: relative;
 		isolation: isolate;
+		position: relative;
 		display: grid;
 		grid-template-rows: auto minmax(0, 1fr) auto;
 		height: 100svh;
-	}
 
-	.deck__bg {
-		position: absolute;
-		inset: 0;
-		z-index: -1;
-		overflow: hidden;
-	}
+		&__bg {
+			position: absolute;
+			z-index: -1;
+			inset: 0;
+			overflow: hidden;
+		}
 
-	.deck__bg :global(img) {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		opacity: 0;
-		transition: opacity 1.4s var(--ease);
-	}
+		& :global(.deck__bg-img) {
+			width: 100%;
+			height: 100%;
+			opacity: 0;
+			object-fit: cover;
+			transition: opacity 1.4s var(--ease);
+		}
 
-	.deck__bg.is-loaded :global(img) {
-		opacity: 1;
-	}
+		&__bg--loaded :global(.deck__bg-img) {
+			opacity: 1;
+		}
 
-	.deck__veil {
-		position: absolute;
-		inset: 0;
-		background: var(--bg);
-		opacity: 0.78;
-		transition: background-color 1.4s var(--ease);
-	}
+		&__veil {
+			position: absolute;
+			inset: 0;
+			opacity: 0.78;
+			background: var(--bg);
+			transition: background-color 1.4s var(--ease);
+		}
 
-	.deck__top,
-	.deck__nav {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 16px;
-		padding-block: 16px;
-	}
+		&__top,
+		&__nav {
+			display: flex;
+			gap: 16px;
+			align-items: center;
+			justify-content: space-between;
+			padding-block: 16px;
 
-	.deck__back {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		font-size: 0.9rem;
-		text-decoration: none;
-		opacity: 0.85;
-	}
+			/* Низкие телефоны вроде iPhone SE: поля и шрифты мельче, слайд влезает целиком.
+			   Тот же запрос ниже повторяется у слайда, заголовков, текстов и кнопок. */
+			@media (max-height: 700px) {
+				padding-block: 8px;
+			}
+		}
 
-	.deck__back:hover {
-		opacity: 1;
-	}
+		&__back {
+			display: inline-flex;
+			gap: 8px;
+			align-items: center;
+			font-size: 0.9rem;
+			text-decoration: none;
+			opacity: 0.85;
+		}
 
-	.deck__back :global(.deck__back-icon) {
-		transform: rotate(-90deg);
-		color: var(--accent);
-	}
+		&__back:hover {
+			opacity: 1;
+		}
 
-	.deck__counter {
-		font-family: var(--font-serif);
-		font-variant-numeric: tabular-nums;
-		color: var(--muted);
-	}
+		&__back :global(.deck__back-icon) {
+			transform: rotate(-90deg);
+			color: var(--accent);
+		}
 
-	.deck__track {
-		display: flex;
-		overflow-x: auto;
-		overflow-y: hidden;
-		scroll-snap-type: x mandatory;
-		overscroll-behavior-x: contain;
-		scrollbar-width: none;
-	}
+		&__counter {
+			font-family: var(--font-serif);
+			font-variant-numeric: tabular-nums;
+			color: var(--muted);
+		}
 
-	.deck__track::-webkit-scrollbar {
-		display: none;
-	}
+		&__track {
+			scrollbar-width: none;
+			scroll-snap-type: x mandatory;
+			overflow-x: auto;
+			overflow-y: hidden;
+			overscroll-behavior-x: contain;
+			display: flex;
+		}
 
-	.deck__track:focus {
-		outline: none;
+		&__track::-webkit-scrollbar {
+			display: none;
+		}
+
+		&__track:focus {
+			outline: none;
+		}
+
+		/* Навигация */
+		&__step {
+			cursor: pointer;
+			display: grid;
+			flex-shrink: 0;
+			place-items: center;
+			width: 48px;
+			height: 48px;
+			border: 0;
+			border-radius: 50%;
+			color: var(--btn-fg);
+			background: var(--btn-bg);
+			transition:
+				opacity 0.4s var(--ease),
+				transform 0.4s var(--ease);
+
+			@media (max-height: 700px) {
+				width: 40px;
+				height: 40px;
+			}
+		}
+
+		&__step:hover:not(:disabled) {
+			transform: scale(1.06);
+		}
+
+		&__step:disabled {
+			cursor: default;
+			opacity: 0.25;
+		}
+
+		&__step :global(.deck__step-prev) {
+			transform: rotate(90deg);
+		}
+
+		&__step :global(.deck__step-next) {
+			transform: rotate(-90deg);
+		}
+
+		/* Тонкая полоса во всю ширину по верхнему краю: сколько уже пролистано. */
+		&__progress {
+			position: absolute;
+			z-index: 1;
+			inset: 0 0 auto;
+			height: 3px;
+			background: var(--line);
+		}
+
+		&__progress-bar {
+			transform-origin: left;
+			transform: scaleX(0);
+			display: block;
+			height: 100%;
+			background: var(--accent);
+			transition: background-color 1.4s var(--ease);
+		}
 	}
 
 	.slide {
-		flex: 0 0 100%;
-		display: flex;
-		overflow-y: auto;
+		scrollbar-width: thin;
 		scroll-snap-align: start;
 		scroll-snap-stop: always;
-		scrollbar-width: thin;
-	}
+		overflow-y: auto;
+		display: flex;
+		flex: 0 0 100%;
 
-	/* Короткий слайд стоит по центру, длинный на маленьком экране прокручивается внутри. */
-	.slide__inner {
-		max-width: calc(820px + var(--gutter) * 2);
-		margin-block: auto;
-		padding-block: 24px;
+		/* Короткий слайд стоит по центру, длинный на маленьком экране прокручивается внутри. */
+		&__inner {
+			max-width: calc(820px + var(--gutter) * 2);
+			margin-block: auto;
+			padding-block: 24px;
+
+			@media (max-height: 700px) {
+				padding-block: 8px;
+			}
+		}
+
+		&__title {
+			margin-bottom: clamp(20px, 4svh, 40px);
+			font-size: clamp(1.9rem, 4.4vw, 3rem);
+
+			@media (max-height: 700px) {
+				font-size: 1.7rem;
+			}
+		}
 	}
 
 	.label {
 		display: inline-flex;
-		align-items: center;
 		gap: 8px;
+		align-items: center;
 		font-size: 0.78rem;
 		font-weight: 500;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
 		color: var(--accent);
+		text-transform: uppercase;
+		letter-spacing: 0.18em;
 		transition: color 1.4s var(--ease);
 	}
 
+	/* stylelint-disable selector-max-type -- сброс тегов на странице слайдов */
 	blockquote {
 		margin: 0;
 	}
 
 	ol,
 	ul {
-		list-style: none;
 		margin: 0;
 		padding: 0;
+		list-style: none;
 	}
+	/* stylelint-enable selector-max-type */
 
 	/* Обложка */
-	h1 {
-		font-size: clamp(2rem, 5.2vw, 3.6rem);
+	.cover {
+		&__title {
+			font-size: clamp(2rem, 5.2vw, 3.6rem);
+
+			@media (max-height: 700px) {
+				font-size: 1.7rem;
+			}
+		}
+
+		& .btn {
+			cursor: pointer;
+			border: 0;
+			font-family: inherit;
+		}
+
+		& .btn :global(.slide__arrow) {
+			transform: rotate(-90deg);
+		}
 	}
 
-	.cover .btn {
-		border: 0;
-		font-family: inherit;
-		cursor: pointer;
-	}
-
-	.cover .btn :global(.slide__arrow) {
-		transform: rotate(-90deg);
+	.lead {
+		@media (max-height: 700px) {
+			font-size: 1rem;
+		}
 	}
 
 	/* Фразы и ответы */
-	.slide__title {
-		font-size: clamp(1.9rem, 4.4vw, 3rem);
-		margin-bottom: clamp(20px, 4svh, 40px);
+	.phrases {
+		&__item + &__item {
+			margin-top: clamp(16px, 3.5svh, 32px);
+		}
 	}
 
-	.phrases li + li {
-		margin-top: clamp(16px, 3.5svh, 32px);
-	}
-
+	/* Общий набор крупных реплик. Стоит раньше .phrase, .formula и .pair, чтобы их
+	   собственные line-height и мелкий шрифт низких экранов перекрывали этот. */
 	.phrase,
 	.formula,
-	.pair__do p {
+	.pair__do-text {
 		font-family: var(--font-serif);
 		font-size: clamp(1.2rem, 2.6vw, 1.7rem);
 		line-height: 1.35;
@@ -443,10 +544,16 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		margin-top: 8px;
 		padding-left: 20px;
 		border-left: 1px solid var(--accent);
+
+		@media (max-height: 700px) {
+			font-size: 1.08rem;
+		}
 	}
 
-	.replies li {
-		padding-block: clamp(12px, 2.4svh, 22px);
+	.replies {
+		&__item {
+			padding-block: clamp(12px, 2.4svh, 22px);
+		}
 	}
 
 	.reply {
@@ -454,259 +561,206 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		font-family: var(--font-serif);
 		font-size: clamp(1.1rem, 2.2vw, 1.4rem);
 		line-height: 1.4;
+
+		@media (max-height: 700px) {
+			font-size: 1.08rem;
+		}
 	}
 
 	.formula {
 		padding: 20px 24px;
 		border-radius: 16px;
-		background: color-mix(in srgb, var(--accent) 14%, transparent);
 		/* Строки с плашками разведены, иначе плашки соседних строк налезают друг на друга. */
 		line-height: 1.9;
+		background: color-mix(in srgb, var(--accent) 14%, transparent);
+
+		@media (max-height: 700px) {
+			font-size: 1.08rem;
+		}
 	}
 
 	/* Места формулы -- плашки своего цвета, а в примерах тем же цветом подчёркнуто
 	   то, что их заполняет. Цвета светлые, поэтому только рамка и лёгкая заливка:
 	   сплошной фон съел бы белый текст. */
-	.slot--1,
-	.fill--1 {
-		--slot: #ffd3a1;
-	}
-
-	.slot--2,
-	.fill--2 {
-		--slot: #c4d8ff;
-	}
-
 	.slot {
 		padding: 0.02em 0.4em 0.08em;
 		border-radius: 0.35em;
-		background: color-mix(in srgb, var(--slot) 28%, transparent);
-		box-shadow: inset 0 0 0 1.5px var(--slot);
 		color: #fff;
 		white-space: nowrap;
-	}
+		background: color-mix(in srgb, var(--slot) 28%, transparent);
+		box-shadow: inset 0 0 0 1.5px var(--slot);
 
-	.examples li {
-		line-height: 1.8;
+		&--1 {
+			--slot: #ffd3a1;
+		}
+
+		&--2 {
+			--slot: #c4d8ff;
+		}
 	}
 
 	.fill {
 		padding: 0.05em 0.2em;
 		border-radius: 0.25em;
-		background: color-mix(in srgb, var(--slot) 28%, transparent);
-		box-shadow: inset 0 -2px 0 var(--slot);
 		color: #fff;
+		background: color-mix(in srgb, var(--slot) 28%, transparent);
 		-webkit-box-decoration-break: clone;
 		box-decoration-break: clone;
+		box-shadow: inset 0 -2px 0 var(--slot);
+
+		&--1 {
+			--slot: #ffd3a1;
+		}
+
+		&--2 {
+			--slot: #c4d8ff;
+		}
 	}
 
 	.examples-title {
 		margin: 28px 0 12px;
 	}
 
-	.examples li {
-		font-size: 1.1rem;
-	}
+	.examples {
+		&__item {
+			font-size: 1.1rem;
+			line-height: 1.8;
 
-	.examples li + li {
-		margin-top: 12px;
+			@media (max-height: 700px) {
+				font-size: 1rem;
+			}
+		}
+
+		&__item + &__item {
+			margin-top: 12px;
+		}
 	}
 
 	/* Ошибка и чем её заменить */
 	.pair {
 		display: grid;
 		gap: 20px;
-	}
 
-	.pair .eyebrow {
-		margin-bottom: 0;
-	}
+		& .eyebrow {
+			margin-bottom: 0;
+		}
 
-	.pair__num {
-		font-family: var(--font-serif);
-		font-size: clamp(3rem, 8vw, 5rem);
-		line-height: 1;
-		color: var(--accent);
-		transition: color 1.4s var(--ease);
-	}
+		&__num {
+			font-family: var(--font-serif);
+			font-size: clamp(3rem, 8vw, 5rem);
+			line-height: 1;
+			color: var(--accent);
+			transition: color 1.4s var(--ease);
+		}
 
-	.pair__num .muted {
-		font-size: 0.4em;
-	}
+		&__num .muted {
+			font-size: 0.4em;
+		}
 
-	/* Ошибка -- в красноватой плашке и зачёркнута, замена -- в плашке цвета акцента:
-	   с одного взгляда ясно, что говорить нельзя, а что можно. */
-	.pair__dont,
-	.pair__do {
-		display: grid;
-		gap: 8px;
-		padding: 16px 18px;
-		border-radius: 14px;
-		background: color-mix(in srgb, var(--tone) 14%, transparent);
-		box-shadow: inset 3px 0 0 var(--tone);
-	}
+		/* Ошибка -- в красноватой плашке и зачёркнута, замена -- в плашке цвета акцента:
+		   с одного взгляда ясно, что говорить нельзя, а что можно. */
+		&__dont,
+		&__do {
+			display: grid;
+			gap: 8px;
+			padding: 16px 18px;
+			border-radius: 14px;
+			background: color-mix(in srgb, var(--tone) 14%, transparent);
+			box-shadow: inset 3px 0 0 var(--tone);
+		}
 
-	/* Под ошибкой тёмно-красная подложка, а не светлая: на утренних слайдах светлая
-	   сливается с фоном. */
-	.pair__dont {
-		--tone: #ffa093;
-		background: color-mix(in srgb, #6e1a1f 32%, transparent);
-	}
+		/* Под ошибкой тёмно-красная подложка, а не светлая: на утренних слайдах светлая
+		   сливается с фоном. */
+		&__dont {
+			--tone: #ffa093;
+			background: color-mix(in srgb, #6e1a1f 32%, transparent);
+		}
 
-	.pair__do {
-		--tone: var(--accent);
-	}
+		&__do {
+			--tone: var(--accent);
+		}
 
-	.pair__dont p,
-	.pair__do p {
-		margin: 0;
-	}
+		&__dont-text,
+		&__do-text {
+			margin: 0;
+		}
 
-	.pair__dont .label {
-		color: var(--tone);
-	}
+		&__do-text {
+			@media (max-height: 700px) {
+				font-size: 1.08rem;
+			}
+		}
 
-	.pair__dont p {
-		font-size: 1.1rem;
-		color: var(--muted);
-		text-decoration: line-through;
-		text-decoration-color: color-mix(in srgb, var(--tone) 35%, transparent);
-		text-decoration-thickness: 1.5px;
+		&__dont .label {
+			color: var(--tone);
+		}
+
+		&__dont-text {
+			font-size: 1.1rem;
+			color: var(--muted);
+			text-decoration: line-through;
+			text-decoration-color: color-mix(in srgb, var(--tone) 35%, transparent);
+			text-decoration-thickness: 1.5px;
+		}
 	}
 
 	/* Финал */
-	.outro p:first-child {
-		font-family: var(--font-serif);
-		font-size: clamp(1.15rem, 2.6vw, 1.75rem);
-		line-height: 1.3;
-	}
+	.outro {
+		&__text:first-child {
+			font-family: var(--font-serif);
+			font-size: clamp(1.15rem, 2.6vw, 1.75rem);
+			line-height: 1.3;
 
-	.outro p {
-		font-size: 1.1rem;
-	}
-
-	.outro__actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
-		margin-top: 20px;
-	}
-
-	.outro__actions .btn {
-		padding: 0.85em 1.4em;
-	}
-
-	.outro__note {
-		margin-top: 24px;
-		font-size: 0.95rem !important;
-	}
-
-	/* Навигация */
-	.deck__step {
-		display: grid;
-		place-items: center;
-		width: 48px;
-		height: 48px;
-		flex-shrink: 0;
-		border: 0;
-		border-radius: 50%;
-		background: var(--btn-bg);
-		color: var(--btn-fg);
-		cursor: pointer;
-		transition:
-			opacity 0.4s var(--ease),
-			transform 0.4s var(--ease);
-	}
-
-	.deck__step:hover:not(:disabled) {
-		transform: scale(1.06);
-	}
-
-	.deck__step:disabled {
-		opacity: 0.25;
-		cursor: default;
-	}
-
-	.deck__step :global(.deck__step-prev) {
-		transform: rotate(90deg);
-	}
-
-	.deck__step :global(.deck__step-next) {
-		transform: rotate(-90deg);
-	}
-
-	/* Тонкая полоса во всю ширину по верхнему краю: сколько уже пролистано. */
-	.deck__progress {
-		position: absolute;
-		inset: 0 0 auto;
-		z-index: 1;
-		height: 3px;
-		background: var(--line);
-	}
-
-	.deck__progress span {
-		display: block;
-		height: 100%;
-		background: var(--accent);
-		transform: scaleX(0);
-		transform-origin: left;
-		transition: background-color 1.4s var(--ease);
-	}
-
-	/* Низкие телефоны вроде iPhone SE: поля и шрифты мельче, слайд влезает целиком. */
-	@media (max-height: 700px) {
-		.deck__top,
-		.deck__nav {
-			padding-block: 8px;
+			@media (max-height: 700px) {
+				font-size: 1.05rem;
+				line-height: 1.28;
+			}
 		}
 
-		.deck__step {
-			width: 40px;
-			height: 40px;
+		&__text {
+			font-size: 1.1rem;
+
+			@media (max-height: 700px) {
+				font-size: 1rem;
+			}
 		}
 
-		.slide__inner {
-			padding-block: 8px;
+		&__text:not(:first-child) {
+			@media (max-height: 700px) {
+				margin-bottom: 0.6em;
+				font-size: 0.92rem !important;
+			}
 		}
 
-		h1,
-		.slide__title {
-			font-size: 1.7rem;
+		&__actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin-top: 20px;
+
+			@media (max-height: 700px) {
+				margin-top: 12px;
+			}
 		}
 
-		.lead,
-		.outro p,
-		.examples li {
-			font-size: 1rem;
+		&__actions .btn {
+			padding: 0.85em 1.4em;
 		}
 
-		.phrase,
-		.formula,
-		.reply,
-		.pair__do p {
-			font-size: 1.08rem;
+		/* Та же специфичность, что у &__actions .btn: должно идти после него. */
+		& .btn {
+			@media (max-height: 700px) {
+				padding: 0.75em 1.4em;
+			}
 		}
 
-		.outro p:first-child {
-			font-size: 1.05rem;
-			line-height: 1.28;
-		}
+		&__note {
+			margin-top: 24px;
+			font-size: 0.95rem !important;
 
-		.outro p:not(:first-child) {
-			font-size: 0.92rem !important;
-			margin-bottom: 0.6em;
-		}
-
-		.outro__actions {
-			margin-top: 12px;
-		}
-
-		.outro .btn {
-			padding: 0.75em 1.4em;
-		}
-
-		.outro__note {
-			margin-top: 12px;
+			@media (max-height: 700px) {
+				margin-top: 12px;
+			}
 		}
 	}
 </style>

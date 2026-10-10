@@ -25,8 +25,8 @@ const base = home ? '' : '/'
 			<ul class="nav">
 				{nav.map((item) => (
 					<li>
-						<a href={base + item.href}>
-							<Icon name={item.icon} size={16} />
+						<a href={base + item.href} class="nav__link">
+							<Icon name={item.icon} size={16} class="nav__icon" />
 							{item.label}
 						</a>
 					</li>
@@ -51,8 +51,8 @@ const base = home ? '' : '/'
 <style>
 	.header {
 		position: fixed;
-		inset: 0 0 auto;
 		z-index: 20;
+		inset: 0 0 auto;
 		color: var(--fg);
 		/* Подложка с размытием всегда, а не только после прокрутки: меню читается над фото. */
 		background: color-mix(in srgb, var(--bg) 72%, transparent);
@@ -62,192 +62,189 @@ const base = home ? '' : '/'
 			color 1.4s var(--ease),
 			background-color 1.4s var(--ease),
 			transform 1s cubic-bezier(0.65, 0, 0.35, 1);
-	}
 
-	/* Телефон: за первым экраном шапка уезжает вместе со своей кнопкой,
-	   а запись живёт в круглой кнопке, которая выезжает справа в угол. */
-	@media (max-width: 999px) {
-		:global(html.past-hero) .header {
-			transform: translateY(-100%);
+		/* Телефон: за первым экраном шапка уезжает вместе со своей кнопкой,
+		   а запись живёт в круглой кнопке, которая выезжает справа в угол. */
+		:global(.page--past-hero) & {
+			@media (--below-lg) {
+				transform: translateY(-100%);
+			}
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: auto 0 0;
+			height: 1px;
+			opacity: 0.6;
+			background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
+		}
+
+		&__inner {
+			display: flex;
+			gap: 24px;
+			align-items: center;
+			justify-content: space-between;
+			min-height: 76px;
+		}
+
+		&__cta {
+			padding: 0.7em 1.4em;
+			font-size: 0.85rem;
 		}
 	}
 
 	.fab {
+		pointer-events: none;
 		position: fixed;
+		z-index: 30;
 		right: 16px;
 		bottom: calc(16px + env(safe-area-inset-bottom));
-		z-index: 30;
+		transform: translateX(calc(100% + 16px + env(safe-area-inset-right)));
 		display: grid;
 		place-items: center;
 		width: 56px;
 		height: 56px;
 		color: var(--btn-fg);
-		transform: translateX(calc(100% + 16px + env(safe-area-inset-right)));
 		visibility: hidden;
-		pointer-events: none;
 		transition:
 			transform 0.6s var(--ease),
 			visibility 0s 0.6s;
-	}
 
-	.fab__bg {
-		position: absolute;
-		inset: 0;
-		border-radius: 999px;
-		background: var(--btn-bg);
-		box-shadow: 0 10px 30px -12px rgb(20 10 20 / 0.45);
-	}
-
-	.fab__icons {
-		position: relative;
-		display: grid;
-	}
-
-	/* У контактов записываться уже некуда: календарь уступает место стрелке наверх. */
-	.fab :global(.fab__icon) {
-		grid-area: 1 / 1;
-		transition:
-			opacity 0.3s var(--ease),
-			transform 0.45s var(--ease);
-	}
-
-	.fab :global(.fab__icon--up),
-	:global(html.at-contacts) .fab :global(.fab__icon--book) {
-		opacity: 0;
-		transform: rotate(-90deg) scale(0.6);
-	}
-
-	:global(html.at-contacts) .fab :global(.fab__icon--up) {
-		opacity: 1;
-		transform: none;
-	}
-
-	:global(html.past-hero) .fab {
-		transform: none;
-		visibility: visible;
-		pointer-events: auto;
-		transition: transform 0.6s var(--ease);
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.fab,
-		:global(html.past-hero) .fab {
+		@media (--reduced-motion) {
 			transition: none;
 		}
-	}
 
-	@media (min-width: 1000px) {
-		.fab {
+		@media (--lg) {
 			display: none;
 		}
-	}
 
-	.header::after {
-		content: '';
-		position: absolute;
-		inset: auto 0 0;
-		height: 1px;
-		background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
-		opacity: 0.6;
-	}
+		&__bg {
+			position: absolute;
+			inset: 0;
+			border-radius: 999px;
+			background: var(--btn-bg);
+			box-shadow: 0 10px 30px -12px rgb(20 10 20 / 0.45);
+		}
 
-	.header__inner {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 24px;
-		min-height: 76px;
+		&__icons {
+			position: relative;
+			display: grid;
+		}
+
+		/* У контактов записываться уже некуда: календарь уступает место стрелке наверх. */
+		& :global(.fab__icon) {
+			grid-area: 1 / 1;
+			transition:
+				opacity 0.3s var(--ease),
+				transform 0.45s var(--ease);
+		}
+
+		& :global(.fab__icon--up),
+		:global(.page--at-contacts) & :global(.fab__icon--book) {
+			transform: rotate(-90deg) scale(0.6);
+			opacity: 0;
+		}
+
+		:global(.page--at-contacts) & :global(.fab__icon--up) {
+			transform: none;
+			opacity: 1;
+		}
+
+		:global(.page--past-hero) & {
+			pointer-events: auto;
+			transform: none;
+			visibility: visible;
+			transition: transform 0.6s var(--ease);
+
+			@media (--reduced-motion) {
+				transition: none;
+			}
+		}
 	}
 
 	.logo {
 		display: flex;
-		align-items: center;
 		gap: 12px;
-		text-decoration: none;
+		align-items: center;
 		line-height: 1.15;
-	}
+		text-decoration: none;
 
-	.logo :global(.logo__mark) {
-		flex-shrink: 0;
-		color: var(--accent);
-		transition:
-			color 1.4s var(--ease),
-			transform 0.6s var(--ease);
-	}
+		& :global(.logo__mark) {
+			flex-shrink: 0;
+			color: var(--accent);
+			transition:
+				color 1.4s var(--ease),
+				transform 0.6s var(--ease);
+		}
 
-	.logo:hover :global(.logo__mark) {
-		transform: rotate(-8deg);
-	}
+		&:hover :global(.logo__mark) {
+			transform: rotate(-8deg);
+		}
 
-	.logo__text {
-		display: flex;
-		flex-direction: column;
-	}
+		&__text {
+			display: flex;
+			flex-direction: column;
+		}
 
-	.logo__name {
-		font-family: var(--font-serif);
-		font-size: 1.25rem;
-	}
+		&__name {
+			font-family: var(--font-serif);
+			font-size: 1.25rem;
+		}
 
-	.logo__role {
-		display: none;
-		font-size: 0.66rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: var(--muted);
-		transition: color 1.4s var(--ease);
+		&__role {
+			display: none;
+			font-size: 0.66rem;
+			color: var(--muted);
+			text-transform: uppercase;
+			letter-spacing: 0.18em;
+			transition: color 1.4s var(--ease);
+
+			@media (--sm) {
+				display: block;
+			}
+
+			/* Шесть пунктов меню с иконками и подписью под именем влезают только от 1280px. */
+			@media (--lg) and (--below-xl) {
+				display: none;
+			}
+		}
 	}
 
 	.nav {
 		display: none;
-		list-style: none;
+		gap: 24px;
 		margin: 0;
 		padding: 0;
-		gap: 24px;
-	}
+		list-style: none;
 
-	.nav a {
-		display: inline-flex;
-		white-space: nowrap;
-		align-items: center;
-		gap: 7px;
-		text-decoration: none;
-		font-size: 0.9rem;
-		opacity: 0.8;
-		transition: opacity 0.3s;
-	}
-
-	.nav a :global(svg) {
-		color: var(--accent);
-		transition: color 1.4s var(--ease);
-	}
-
-	.nav a:hover {
-		opacity: 1;
-	}
-
-	.header__cta {
-		padding: 0.7em 1.4em;
-		font-size: 0.85rem;
-	}
-
-	@media (min-width: 600px) {
-		.logo__role {
-			display: block;
-		}
-	}
-
-	@media (min-width: 1000px) {
-		.nav {
+		@media (--lg) {
 			display: flex;
 		}
-	}
 
-	/* Шесть пунктов меню с иконками и подписью под именем влезают только от 1280px. */
-	@media (min-width: 1000px) and (max-width: 1279px) {
-		.logo__role,
-		.nav a :global(svg) {
-			display: none;
+		&__link {
+			display: inline-flex;
+			gap: 7px;
+			align-items: center;
+			font-size: 0.9rem;
+			text-decoration: none;
+			white-space: nowrap;
+			opacity: 0.8;
+			transition: opacity 0.3s;
+		}
+
+		& :global(.nav__icon) {
+			color: var(--accent);
+			transition: color 1.4s var(--ease);
+
+			/* Шесть пунктов меню с иконками и подписью под именем влезают только от 1280px. */
+			@media (--lg) and (--below-xl) {
+				display: none;
+			}
+		}
+
+		&__link:hover {
+			opacity: 1;
 		}
 	}
 </style>
