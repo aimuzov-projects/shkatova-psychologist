@@ -48,6 +48,40 @@ const base = home ? '' : '/'
 	</span>
 </a>
 
+<script>
+	import { everyFrame } from '#/lib/frame.ts'
+
+	// Телефон: первый экран прокручен -- шапка уезжает, а справа в угол выезжает
+	// круглая кнопка записи. Состояния лежат на <html>, анимация -- в стилях ниже.
+	const root = document.documentElement
+	const hero = document.querySelector<HTMLElement>('#top')
+	const fab = document.querySelector<HTMLElement>('.fab')
+	const contacts = document.querySelector<HTMLElement>('#contacts')
+
+	let pastHero = false
+	if (hero)
+		everyFrame(() => {
+			const next = hero.getBoundingClientRect().bottom < 80
+			if (next === pastHero) return null
+			pastHero = next
+			return () => root.classList.toggle('page--past-hero', pastHero)
+		})
+
+	// У контактов записываться уже некуда: кнопка ведёт наверх.
+	let atContacts = false
+	if (fab && contacts)
+		everyFrame(() => {
+			const next = contacts.getBoundingClientRect().top < innerHeight * 0.5
+			if (next === atContacts) return null
+			atContacts = next
+			return () => {
+				root.classList.toggle('page--at-contacts', atContacts)
+				fab.setAttribute('href', atContacts ? '#top' : '#contacts')
+				fab.setAttribute('aria-label', atContacts ? 'Наверх' : 'Записаться')
+			}
+		})
+</script>
+
 <style>
 	.header {
 		position: fixed;
