@@ -1,3 +1,4 @@
+import svelte from '@astrojs/svelte'
 import { defineConfig } from 'astro/config'
 
 export default defineConfig({
@@ -5,6 +6,8 @@ export default defineConfig({
 	site: 'https://tatiana-shkatova.ru',
 	// CSS всего несколько КБ: внутри HTML он не блокирует первую отрисовку отдельным запросом.
 	build: { inlineStylesheets: 'always' },
+	// Svelte только у чата: остальной сайт -- статичный HTML с ванильными скриптами.
+	integrations: [svelte()],
 	// На проде /api отдаёт Caddy сервису чата, в разработке его роль играет прокси Vite.
 	vite: { server: { proxy: { '/api': 'http://localhost:8787' } } },
 })
