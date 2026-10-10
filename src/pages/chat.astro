@@ -7,33 +7,33 @@ import { contacts, person } from '../data/site'
 ---
 
 <Base
-	title={`Расскажите о себе — ${person.name}`}
-	description="Не знаете, с чего начать? Расскажите о себе ассистенту, и Татьяна придёт на первую встречу, уже понимая ваш запрос."
+	title={`Расскажите о себе — ${person.name}`}
+	description="Не знаете, с чего начать? Расскажите о себе ассистенту, и Татьяна придёт на первую встречу, уже понимая ваш запрос."
 >
 	<Header home={false} />
 	<main class="chat" data-stage="night">
 		<div class="container chat__inner">
-			<span class="eyebrow">Подготовка к встрече</span>
-			<h1>Расскажите о&nbsp;себе</h1>
+			<span class="eyebrow">Подготовка к встрече</span>
+			<h1>Расскажите о себе</h1>
 
 			<section class="consent" data-consent hidden>
 				<p class="lead">
-					Не всегда легко написать психологу первой. Здесь можно спокойно рассказать, что вас беспокоит, а ассистент
-					задаст несколько вопросов и соберёт главное для Татьяны. Она прочитает и сама напишет вам в течение дня.
+					Не всегда легко написать психологу первой. Здесь можно спокойно рассказать, что вас беспокоит, а ассистент
+					задаст несколько вопросов и соберёт главное для Татьяны. Она прочитает и сама напишет вам в течение дня.
 				</p>
 				<ul class="consent__notes muted">
 					<li>
 						<Icon name="spark" size={20} />
 						<span>
-							Это ИИ-ассистент, а не психолог: он не даёт советов и не ставит диагнозов, а помогает подготовиться к
-							встрече.
+							Это ИИ-ассистент, а не психолог: он не даёт советов и не ставит диагнозов, а помогает подготовиться
+							к встрече.
 						</span>
 					</li>
 					<li>
 						<Icon name="lock" size={20} />
 						<span>
-							Разговор обрабатывает ИИ-сервис за пределами России, на сайте переписка не сохраняется. Татьяна получит
-							только итоговую выжимку и только после вашего подтверждения.
+							Разговор обрабатывает ИИ-сервис за пределами России, на сайте переписка не сохраняется. Татьяна получит
+							только итоговую выжимку и только после вашего подтверждения.
 						</span>
 					</li>
 					<li>
@@ -44,7 +44,7 @@ import { contacts, person } from '../data/site'
 								<Icon name="phone" size={16} />
 								112
 							</a>{' '}
-							или на бесплатный телефон доверия{' '}
+							или на бесплатный телефон доверия{' '}
 							<a class="icon-link" href="tel:88002000122">
 								<Icon name="phone" size={16} />
 								8-800-2000-122
@@ -56,7 +56,7 @@ import { contacts, person } from '../data/site'
 				<label class="consent__check">
 					<input type="checkbox" data-agree />
 					<span>
-						Даю согласие на обработку моих персональных данных, в том числе сведений о здоровье, на условиях{' '}
+						Даю согласие на обработку моих персональных данных, в том числе сведений о здоровье, на условиях{' '}
 						<a class="icon-link icon-link--after" href="/privacy" target="_blank">
 							политики конфиденциальности
 							<Icon name="arrow-out" size={16} />
@@ -77,7 +77,7 @@ import { contacts, person } from '../data/site'
 				<div class="dialog__finish" data-finish hidden>
 					<p data-finish-text></p>
 					<p class="muted" data-fallback hidden>
-						Не получилось передать разговор автоматически. Пожалуйста, напишите Татьяне напрямую:{' '}
+						Не получилось передать разговор автоматически. Пожалуйста, напишите Татьяне напрямую:{' '}
 						<a class="icon-link" href={contacts.telegram.href} target="_blank" rel="noopener noreferrer">
 							<Icon name="plane" size={16} />
 							Telegram
@@ -115,12 +115,12 @@ import { contacts, person } from '../data/site'
 
 <script>
 	import { greeting, limits } from '../data/chat'
-	import { typographText as typo } from '../lib/typograph'
+	import { typograph } from '../lib/typograph'
 
 	type Message = { role: 'user' | 'assistant'; content: string }
 	type State = { consent: boolean; messages: Message[]; done: boolean; delivered: boolean }
 
-	const farewell = 'Спасибо, что рассказали. Татьяна прочитает и напишет вам в течение дня.'
+	const farewell = 'Спасибо, что рассказали. Татьяна прочитает и напишет вам в течение дня.'
 
 	// Переписка живёт только во вкладке: рефреш её не теряет, закрытие стирает.
 	const key = 'chat'
@@ -153,8 +153,8 @@ import { contacts, person } from '../data/site'
 	const bubble = (role: Message['role'], text: string) => {
 		const li = document.createElement('li')
 		li.className = `msg msg--${role}`
-		// Типограф на сборке сюда не дотягивается. Текст клиентки остаётся как написан.
-		li.textContent = role === 'assistant' ? typo(text) : text
+		// Текст клиентки остаётся как написан.
+		li.textContent = role === 'assistant' ? typograph(text) : text
 		log.append(li)
 		return li
 	}
@@ -170,7 +170,7 @@ import { contacts, person } from '../data/site'
 		form.hidden = true
 		finish.hidden = false
 		$('[data-finish-text]').textContent = state.delivered
-			? typo('Разговор передан Татьяне. Если захотите что-то добавить, можно написать ей напрямую.')
+			? 'Разговор передан Татьяне. Если захотите что-то добавить, можно написать ей напрямую.'
 			: ''
 		$<HTMLElement>('[data-fallback]').hidden = state.delivered
 	}
@@ -209,7 +209,7 @@ import { contacts, person } from '../data/site'
 			})
 			if (!res.ok || !res.body) {
 				const body = await res.json().catch(() => null)
-				throw new Error(body?.error ?? 'Не получилось отправить сообщение, попробуйте ещё раз')
+				throw new Error(body?.error ?? 'Не получилось отправить сообщение, попробуйте ещё раз')
 			}
 			let buffer = ''
 			const decoder = new TextDecoder()
@@ -226,20 +226,20 @@ import { contacts, person } from '../data/site'
 					if (event === 'delta') {
 						reply += data.text
 						typing.classList.remove('msg--typing')
-						typing.textContent = typo(reply.trimStart())
+						typing.textContent = typograph(reply.trimStart())
 						scrollDown()
 					} else if (event === 'done') done = data
 					else if (event === 'error') throw new Error(data.error)
 				}
 			}
-			if (!reply.trim() && !done) throw new Error('Ассистент не ответил, попробуйте отправить сообщение ещё раз')
+			if (!reply.trim() && !done) throw new Error('Ассистент не ответил, попробуйте отправить сообщение ещё раз')
 		} catch (e) {
 			// Неудачное сообщение возвращается в поле ввода, чтобы история не сломалась.
 			state.messages.pop()
 			typing.remove()
 			log.lastElementChild?.remove()
 			input.value = text
-			error.textContent = typo((e as Error).message)
+			error.textContent = typograph((e as Error).message)
 			error.hidden = false
 			setBusy(false)
 			resize()
@@ -248,7 +248,7 @@ import { contacts, person } from '../data/site'
 
 		reply = reply.trim() || farewell
 		typing.classList.remove('msg--typing')
-		typing.textContent = typo(reply)
+		typing.textContent = typograph(reply)
 		state.messages.push({ role: 'assistant', content: reply })
 		if (done) {
 			state.done = true
@@ -274,9 +274,8 @@ import { contacts, person } from '../data/site'
 		const text = input.value.trim()
 		if (!text || input.disabled) return
 		if (state.messages.length + 2 > limits.messages) {
-			error.textContent = typo(
-				'Разговор получился длинным. Напишите, пожалуйста, Татьяне напрямую — она обязательно ответит.',
-			)
+			error.textContent =
+				'Разговор получился длинным. Напишите, пожалуйста, Татьяне напрямую — она обязательно ответит.'
 			error.hidden = false
 			return
 		}
@@ -297,7 +296,7 @@ import { contacts, person } from '../data/site'
 	input.addEventListener('input', resize)
 
 	$('[data-restart]').addEventListener('click', () => {
-		if (state.messages.length && !state.done && !confirm(typo('Начать разговор заново? Написанное сотрётся.'))) return
+		if (state.messages.length && !state.done && !confirm('Начать разговор заново? Написанное сотрётся.')) return
 		Object.assign(state, { messages: [], done: false, delivered: false })
 		save()
 		form.hidden = false

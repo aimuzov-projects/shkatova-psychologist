@@ -1,8 +1,7 @@
-// Типограф по готовому HTML: неразрывные пробелы там, где перенос строки рвёт смысл.
-// Правит только текст между тегами, содержимое script, style, pre и code не трогает.
+// Типограф для текста, который приходит в чат на лету: ответы ассистента и ошибки сервера.
+// Остальной текст сайта набран в исходниках, сюда он не попадает.
 
-const NBSP = '\u00a0'
-const NNBSP = '\u202f'
+const NBSP = ' '
 
 const PARTICLE = String.raw`(?:ли|же|бы)(?![\p{L}\d])`
 
@@ -18,74 +17,33 @@ const abbr = /(?<![\p{L}\d])(т|г|гг|ул|пр|д|кв|см|стр|им|св|
 // Инициалы держатся друг за друга и за фамилию: "А. С. Пушкин".
 const initial = /(?<!\p{L})(\p{Lu}\.)\s+(?=\p{Lu})/gu
 const numero = /([№§])\s*(?=\d)/g
-// Тире не начинает строку, если перед ним слово в том же текстовом узле.
-const dash = /(?<=[^\s<>])\s+(?=—)/g
+// Тире не начинает строку.
+const dash = /(?<=\S)[ \t]+(?=—)/g
 // Число не отрывается от единицы: "20 минут", "2 499 ₽", "5 °C".
-const unit = /(?<=\d)\s+(?=[\p{L}₽%°$€])/gu
-// Разряды тысяч -- узким неразрывным: "1 920", "2 499". Слитные числа от пяти знаков
-// разбиваются: "12000" -> "12 000". Четырёхзначные остаются слитно: это чаще год.
+const unit = /(?<=\d)[ \t]+(?=[\p{L}₽%°$€])/gu
+// Разряды тысяч: "1 920", "2 499". Слитные числа от пяти знаков разбиваются:
+// "12000" -> "12 000". Четырёхзначные остаются слитно: это чаще год.
 const thousands = /(?<=\d) (?=\d{3}(?!\d))/g
 const long = /(?<![\d+.,])\d{5,}(?![\d.,])/g
-const minus = /(?<=^|[\s(])-(?=\d)/g
 // Телефон -- одно целое: разряды в нём не трогаем, а пробелы делаем неразрывными.
 const phone = /(?:\+7|(?<!\d)8)(?:[\s()-]*\d){10}(?!\d)/g
 
-// Если текстовый узел кончается коротким словом, а дальше строчный тег (ссылка,
-// выделение), пробел перед тегом тоже должен держать. Так же с тире после такого тега.
-const INLINE = 'a|abbr|b|del|em|i|mark|q|s|small|span|strong|sub|sup|time|u'
-const inlineOpen = new RegExp(`^<(?:${INLINE})\\b`, 'i')
-const inlineClose = new RegExp(`^</(?:${INLINE})>`, 'i')
-
-// Атрибут с ">" внутри порвёт разбор: в разметке сайта таких нет.
-const raw = /(<!--[\s\S]*?-->|<(script|style|pre|code|textarea)\b[\s\S]*?<\/\2>|<[^>]*>)/i
-
-export function typograph(html: string): string {
-	const parts = html.split(new RegExp(raw.source, 'gi'))
-	const out: string[] = []
-	let prev: string | undefined
-
-	// split с группами кладёт в массив и имя тега из второй группы: его пропускаем.
-	for (let i = 0; i < parts.length; i += 3) {
-		const text = parts[i] ?? ''
-		const tag = parts[i + 1]
-		const before = tag !== undefined && inlineOpen.test(tag)
-		const after = prev !== undefined && inlineClose.test(prev)
-		out.push(fix(text, before, after))
-		if (tag !== undefined) out.push(tag)
-		prev = tag
-	}
-
-	return out.join('')
-}
-
-// Для текста без разметки, который страница выводит сама через textContent.
-export function typographText(text: string): string {
-	return fix(text, false, false)
-}
-
-function fix(text: string, beforeInline: boolean, afterInline: boolean): string {
-	if (!/\p{L}/u.test(text)) return text
-
+export function typograph(text: string): string {
 	const parts = split(text.replace(/\.{3}/g, '…'), phone)
-	let s = parts
+	return parts
 		.map((part, i) => {
 			if (i % 2) return part.replace(/\s+/g, NBSP)
 			const fixed = words(part)
-			// Перед телефоном короткое слово висит так же, как перед ссылкой.
+			// Перед телефоном короткое слово висит так же, как в конце строки.
 			return i < parts.length - 1 ? fixed.replace(shortAtEnd, `$1${NBSP}`) : fixed
 		})
 		.join('')
-
-	if (beforeInline) s = s.replace(shortAtEnd, `$1${NBSP}`)
-	if (afterInline) s = s.replace(/^\s+(?=—)/, NBSP)
-	return s
 }
 
 function words(s: string): string {
 	return s
-		.replace(long, (n) => n.replace(/\B(?=(\d{3})+$)/g, NNBSP))
-		.replace(thousands, NNBSP)
-		.replace(minus, '−')
+		.replace(long, (n) => n.replace(/\B(?=(\d{3})+$)/g, NBSP))
+		.replace(thousands, NBSP)
 		.replace(numero, `$1${NBSP}`)
 		.replace(unit, NBSP)
 		.replace(dash, NBSP)
