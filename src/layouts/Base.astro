@@ -211,6 +211,8 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description =
 			// перетекает от середины к середине; если тон текста меняется -- только в зазоре.
 			const sections = [...document.querySelectorAll<HTMLElement>('body [data-stage]')]
 			const isLight = (hex: string) => {
+				// В сборке минификатор сокращает цвета: #ffffff приходит как #fff.
+				if (hex.length < 7) hex = '#' + [...hex.slice(1, 4)].map((c) => c + c).join('')
 				const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16))
 				return 0.2126 * r + 0.7152 * g + 0.0722 * b > 140
 			}

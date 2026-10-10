@@ -1,10 +1,16 @@
 ---
 import { person } from '../data/site'
 
+interface Props {
+	// Стадия страницы: на внутренних страницах футер не должен перекрашивать фон.
+	stage?: string
+}
+
+const { stage = 'day' } = Astro.props
 const year = new Date().getFullYear()
 ---
 
-<footer class="footer soft-rule" data-stage="day">
+<footer class="footer soft-rule" data-stage={stage}>
 	<div class="container footer__inner muted">
 		<span>
 			© {year} {person.name}
