@@ -1,6 +1,17 @@
-# shkatova-site
+<p align="center">
+	<a href="https://tatiana-shkatova.ru"><img src=".github/assets/banner.jpg" alt="Tatiana Shkatova, perinatal and child psychologist" width="100%"></a>
+</p>
 
-**English** · [Русский](README.ru.md)
+<p align="center">
+	<a href="https://github.com/aimuzov-projects/shkatova-site/actions/workflows/deploy.yml"><img src="https://img.shields.io/github/actions/workflow/status/aimuzov-projects/shkatova-site/deploy.yml?branch=main&label=deploy" alt="Deploy"></a>
+	<a href="https://tatiana-shkatova.ru"><img src="https://img.shields.io/website?url=https%3A%2F%2Ftatiana-shkatova.ru&label=site" alt="Site status"></a>
+	<a href="package.json"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Faimuzov-projects%2Fshkatova-site%2Fmain%2Fpackage.json&query=%24.engines.node&label=node&logo=nodedotjs&logoColor=white&color=5fa04e" alt="Node"></a>
+	<a href="https://astro.build"><img src="https://img.shields.io/github/package-json/dependency-version/aimuzov-projects/shkatova-site/astro?logo=astro&logoColor=white&color=bc52ee" alt="Astro"></a>
+	<a href="https://svelte.dev"><img src="https://img.shields.io/github/package-json/dependency-version/aimuzov-projects/shkatova-site/svelte?logo=svelte&logoColor=white&color=ff3e00" alt="Svelte"></a>
+	<a href="LICENSE"><img src="https://img.shields.io/github/license/aimuzov-projects/shkatova-site" alt="License"></a>
+</p>
+
+<p align="center"><b>English</b> · <a href="README.ru.md">Русский</a></p>
 
 Website of Tatiana Shkatova, a perinatal psychologist: [tatiana-shkatova.ru](https://tatiana-shkatova.ru). The site itself is in Russian.
 
