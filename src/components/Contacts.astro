@@ -67,17 +67,17 @@ const items = [
 
 <style>
 	.links {
-		list-style: none;
 		margin: 56px 0 0;
 		padding: 0;
+		list-style: none;
 
 		&__link {
 			display: grid;
 			grid-template-columns: 1fr auto;
-			align-items: center;
 			gap: 6px 20px;
-			padding: 22px 12px;
+			align-items: center;
 			margin-inline: -12px;
+			padding: 22px 12px;
 			border-radius: 12px;
 			text-decoration: none;
 			transition: background-color 0.4s var(--ease);
@@ -90,11 +90,11 @@ const items = [
 
 		/* Стрелка выезжает слева и встаёт на место, подчёркивание растёт от левого края. */
 		&__go {
+			transform: translate(-8px, 8px);
 			grid-column: 2;
 			grid-row: 1 / span 2;
 			color: var(--accent);
 			opacity: 0;
-			transform: translate(-8px, 8px);
 			transition:
 				opacity 0.4s var(--ease),
 				transform 0.5s var(--ease),
@@ -103,8 +103,8 @@ const items = [
 
 		&__link:hover .links__go,
 		&__link:focus-visible .links__go {
-			opacity: 1;
 			transform: none;
+			opacity: 1;
 		}
 
 		&__value {
@@ -112,9 +112,9 @@ const items = [
 			font-family: var(--font-serif);
 			font-size: clamp(1.4rem, 3.4vw, 2.2rem);
 			line-height: 1.2;
-			background: linear-gradient(currentColor, currentColor) no-repeat left bottom / 0 1px;
 			/* Телефон рвётся на дефисах, а неразрывный пробел их не держит. */
 			white-space: nowrap;
+			background: linear-gradient(currentColor, currentColor) no-repeat left bottom / 0 1px;
 			transition: background-size 0.5s var(--ease);
 		}
 
@@ -133,11 +133,11 @@ const items = [
 
 		&__title {
 			display: inline-flex;
-			align-items: center;
 			gap: 12px;
+			align-items: center;
 			font-size: 0.78rem;
-			letter-spacing: 0.18em;
 			text-transform: uppercase;
+			letter-spacing: 0.18em;
 		}
 	}
 
@@ -150,17 +150,28 @@ const items = [
 		margin-top: 40px;
 		padding: 28px;
 		border-radius: 28px;
+		text-decoration: none;
 		background: color-mix(in srgb, var(--fg) 12%, transparent);
 		box-shadow: inset 0 0 0 1px var(--line);
-		text-decoration: none;
 		transition:
 			background-color 0.5s var(--ease),
 			transform 0.5s var(--ease);
 
+		@media (--below-sm) {
+			grid-template-columns: 1fr;
+			padding: 24px;
+		}
+
+		@media (--md) {
+			grid-template-columns: auto 1fr auto;
+			gap: 28px;
+			padding: 32px 36px;
+		}
+
 		&:hover,
 		&:focus-visible {
-			background: color-mix(in srgb, var(--fg) 18%, transparent);
 			transform: translateY(-2px);
+			background: color-mix(in srgb, var(--fg) 18%, transparent);
 		}
 
 		&__icon {
@@ -169,8 +180,8 @@ const items = [
 			width: 56px;
 			height: 56px;
 			border-radius: 50%;
-			background: color-mix(in srgb, var(--accent) 22%, transparent);
 			color: var(--accent);
+			background: color-mix(in srgb, var(--accent) 22%, transparent);
 		}
 
 		&__text {
@@ -185,8 +196,8 @@ const items = [
 		}
 
 		&__lead {
-			color: var(--muted);
 			max-width: 52ch;
+			color: var(--muted);
 			transition: color 1.4s var(--ease);
 		}
 
@@ -197,8 +208,8 @@ const items = [
 			box-shadow: 0 0 14px 0 color-mix(in srgb, var(--accent) 35%, transparent);
 
 			@media (--below-sm) {
-				justify-self: stretch;
 				justify-content: center;
+				justify-self: stretch;
 			}
 
 			@media (--md) {
@@ -207,13 +218,13 @@ const items = [
 		}
 
 		&__btn::after {
+			pointer-events: none;
 			content: '';
 			position: absolute;
 			inset: 0;
 			border-radius: inherit;
-			box-shadow: 0 0 44px 10px color-mix(in srgb, var(--accent) 70%, transparent);
 			opacity: 0;
-			pointer-events: none;
+			box-shadow: 0 0 44px 10px color-mix(in srgb, var(--accent) 70%, transparent);
 			animation: ask-glow 8s ease-in-out infinite;
 
 			@media (--reduced-motion) {
@@ -223,17 +234,6 @@ const items = [
 
 		&:hover .ask__btn {
 			background: var(--btn-hover);
-		}
-
-		@media (--below-sm) {
-			grid-template-columns: 1fr;
-			padding: 24px;
-		}
-
-		@media (--md) {
-			grid-template-columns: auto 1fr auto;
-			padding: 32px 36px;
-			gap: 28px;
 		}
 	}
 

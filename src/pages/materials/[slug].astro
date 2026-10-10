@@ -286,8 +286,8 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 <style>
 	:global(html),
 	:global(body) {
-		height: 100%;
 		overflow: hidden;
+		height: 100%;
 	}
 
 	:global(body) {
@@ -295,24 +295,24 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	}
 
 	.deck {
-		position: relative;
 		isolation: isolate;
+		position: relative;
 		display: grid;
 		grid-template-rows: auto minmax(0, 1fr) auto;
 		height: 100svh;
 
 		&__bg {
 			position: absolute;
-			inset: 0;
 			z-index: -1;
+			inset: 0;
 			overflow: hidden;
 		}
 
 		& :global(.deck__bg-img) {
 			width: 100%;
 			height: 100%;
-			object-fit: cover;
 			opacity: 0;
+			object-fit: cover;
 			transition: opacity 1.4s var(--ease);
 		}
 
@@ -323,17 +323,17 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		&__veil {
 			position: absolute;
 			inset: 0;
-			background: var(--bg);
 			opacity: 0.78;
+			background: var(--bg);
 			transition: background-color 1.4s var(--ease);
 		}
 
 		&__top,
 		&__nav {
 			display: flex;
+			gap: 16px;
 			align-items: center;
 			justify-content: space-between;
-			gap: 16px;
 			padding-block: 16px;
 
 			/* Низкие телефоны вроде iPhone SE: поля и шрифты мельче, слайд влезает целиком.
@@ -345,8 +345,8 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 
 		&__back {
 			display: inline-flex;
-			align-items: center;
 			gap: 8px;
+			align-items: center;
 			font-size: 0.9rem;
 			text-decoration: none;
 			opacity: 0.85;
@@ -368,12 +368,12 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		}
 
 		&__track {
-			display: flex;
+			scrollbar-width: none;
+			scroll-snap-type: x mandatory;
 			overflow-x: auto;
 			overflow-y: hidden;
-			scroll-snap-type: x mandatory;
 			overscroll-behavior-x: contain;
-			scrollbar-width: none;
+			display: flex;
 		}
 
 		&__track::-webkit-scrollbar {
@@ -386,16 +386,16 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 
 		/* Навигация */
 		&__step {
+			cursor: pointer;
 			display: grid;
+			flex-shrink: 0;
 			place-items: center;
 			width: 48px;
 			height: 48px;
-			flex-shrink: 0;
 			border: 0;
 			border-radius: 50%;
-			background: var(--btn-bg);
 			color: var(--btn-fg);
-			cursor: pointer;
+			background: var(--btn-bg);
 			transition:
 				opacity 0.4s var(--ease),
 				transform 0.4s var(--ease);
@@ -411,8 +411,8 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		}
 
 		&__step:disabled {
-			opacity: 0.25;
 			cursor: default;
+			opacity: 0.25;
 		}
 
 		&__step :global(.deck__step-prev) {
@@ -426,29 +426,29 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		/* Тонкая полоса во всю ширину по верхнему краю: сколько уже пролистано. */
 		&__progress {
 			position: absolute;
-			inset: 0 0 auto;
 			z-index: 1;
+			inset: 0 0 auto;
 			height: 3px;
 			background: var(--line);
 		}
 
 		&__progress-bar {
+			transform-origin: left;
+			transform: scaleX(0);
 			display: block;
 			height: 100%;
 			background: var(--accent);
-			transform: scaleX(0);
-			transform-origin: left;
 			transition: background-color 1.4s var(--ease);
 		}
 	}
 
 	.slide {
-		flex: 0 0 100%;
-		display: flex;
-		overflow-y: auto;
+		scrollbar-width: thin;
 		scroll-snap-align: start;
 		scroll-snap-stop: always;
-		scrollbar-width: thin;
+		overflow-y: auto;
+		display: flex;
+		flex: 0 0 100%;
 
 		/* Короткий слайд стоит по центру, длинный на маленьком экране прокручивается внутри. */
 		&__inner {
@@ -462,8 +462,8 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		}
 
 		&__title {
-			font-size: clamp(1.9rem, 4.4vw, 3rem);
 			margin-bottom: clamp(20px, 4svh, 40px);
+			font-size: clamp(1.9rem, 4.4vw, 3rem);
 
 			@media (max-height: 700px) {
 				font-size: 1.7rem;
@@ -473,13 +473,13 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 
 	.label {
 		display: inline-flex;
-		align-items: center;
 		gap: 8px;
+		align-items: center;
 		font-size: 0.78rem;
 		font-weight: 500;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
 		color: var(--accent);
+		text-transform: uppercase;
+		letter-spacing: 0.18em;
 		transition: color 1.4s var(--ease);
 	}
 
@@ -490,9 +490,9 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 
 	ol,
 	ul {
-		list-style: none;
 		margin: 0;
 		padding: 0;
+		list-style: none;
 	}
 	/* stylelint-enable selector-max-type */
 
@@ -507,9 +507,9 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		}
 
 		& .btn {
+			cursor: pointer;
 			border: 0;
 			font-family: inherit;
-			cursor: pointer;
 		}
 
 		& .btn :global(.slide__arrow) {
@@ -570,9 +570,9 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	.formula {
 		padding: 20px 24px;
 		border-radius: 16px;
-		background: color-mix(in srgb, var(--accent) 14%, transparent);
 		/* Строки с плашками разведены, иначе плашки соседних строк налезают друг на друга. */
 		line-height: 1.9;
+		background: color-mix(in srgb, var(--accent) 14%, transparent);
 
 		@media (max-height: 700px) {
 			font-size: 1.08rem;
@@ -585,10 +585,10 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	.slot {
 		padding: 0.02em 0.4em 0.08em;
 		border-radius: 0.35em;
-		background: color-mix(in srgb, var(--slot) 28%, transparent);
-		box-shadow: inset 0 0 0 1.5px var(--slot);
 		color: #fff;
 		white-space: nowrap;
+		background: color-mix(in srgb, var(--slot) 28%, transparent);
+		box-shadow: inset 0 0 0 1.5px var(--slot);
 
 		&--1 {
 			--slot: #ffd3a1;
@@ -602,11 +602,11 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	.fill {
 		padding: 0.05em 0.2em;
 		border-radius: 0.25em;
-		background: color-mix(in srgb, var(--slot) 28%, transparent);
-		box-shadow: inset 0 -2px 0 var(--slot);
 		color: #fff;
+		background: color-mix(in srgb, var(--slot) 28%, transparent);
 		-webkit-box-decoration-break: clone;
 		box-decoration-break: clone;
+		box-shadow: inset 0 -2px 0 var(--slot);
 
 		&--1 {
 			--slot: #ffd3a1;
@@ -623,8 +623,8 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 
 	.examples {
 		&__item {
-			line-height: 1.8;
 			font-size: 1.1rem;
+			line-height: 1.8;
 
 			@media (max-height: 700px) {
 				font-size: 1rem;
@@ -727,8 +727,8 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 
 		&__text:not(:first-child) {
 			@media (max-height: 700px) {
-				font-size: 0.92rem !important;
 				margin-bottom: 0.6em;
+				font-size: 0.92rem !important;
 			}
 		}
 

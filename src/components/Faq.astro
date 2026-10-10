@@ -38,14 +38,14 @@ import { faq } from '../data/site'
 			position: relative;
 			display: grid;
 			grid-template-columns: auto 1fr;
-			align-items: start;
 			gap: 8px 12px;
+			align-items: start;
 			padding-block: 22px;
 
 			@media (--md) {
 				grid-template-columns: 64px 1fr;
-				align-items: start;
 				gap: 20px;
+				align-items: start;
 				padding-block: 26px;
 			}
 		}
@@ -102,9 +102,9 @@ import { faq } from '../data/site'
 
 		&__a {
 			grid-column: 1 / -1;
+			max-width: 52ch;
 			margin: 0;
 			font-size: 0.97rem;
-			max-width: 52ch;
 
 			@media (--md) {
 				grid-column: auto;

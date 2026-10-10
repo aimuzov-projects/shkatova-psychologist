@@ -1,4 +1,6 @@
 import stylelint from 'stylelint'
+import { propertyGroups } from 'stylelint-config-clean-order'
+import order from 'stylelint-order'
 
 // Только BEM: имена классов по схеме block__elem--mod и никаких тегов внутри блоков.
 const name = '[a-z][a-z0-9]*(?:-[a-z0-9]+)*'
@@ -37,9 +39,13 @@ const bemClass = stylelint.createPlugin(ruleName, (on) => (root, result) => {
 
 export default {
 	customSyntax: 'postcss-html',
-	plugins: [bemClass],
+	plugins: [bemClass, order],
 	rules: {
 		[ruleName]: true,
+		// Блок читается сверху вниз: свои свойства, его адаптив, потом элементы.
+		'order/order': ['custom-properties', 'declarations', { type: 'at-rule', name: 'media' }, 'rules'],
+		// Группы clean-order (позиция, раскладка, размеры, текст, вид, анимации), но без пустых строк между ними.
+		'order/properties-order': [propertyGroups.map((properties) => ({ properties })), { unspecified: 'bottom' }],
 		'selector-max-type': [
 			0,
 			{ ignoreTypes: ['html', 'body'], message: 'Тег внутри блока: дайте элементу класс block__elem' },

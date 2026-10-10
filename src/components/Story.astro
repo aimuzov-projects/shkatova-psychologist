@@ -46,6 +46,10 @@ const { shots, rows = 2, eager = false } = Astro.props
 
 <style>
 	.story {
+		@media (--md) {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) 46vw;
+		}
 		/* На телефоне колонки нет: секции показывают свои фото сами. */
 		&__photos {
 			display: none;
@@ -67,16 +71,16 @@ const { shots, rows = 2, eager = false } = Astro.props
 			@media (--md) {
 				position: sticky;
 				top: 0;
-				height: 100svh;
 				overflow: hidden;
-				mask-image:
-					linear-gradient(to right, transparent 0%, #000 30%),
-					linear-gradient(to top, transparent 0%, #000 28%);
+				height: 100svh;
 				-webkit-mask-image:
 					linear-gradient(to right, transparent 0%, #000 30%),
 					linear-gradient(to top, transparent 0%, #000 28%);
-				mask-composite: intersect;
+				mask-image:
+					linear-gradient(to right, transparent 0%, #000 30%),
+					linear-gradient(to top, transparent 0%, #000 28%);
 				-webkit-mask-composite: source-in;
+				mask-composite: intersect;
 			}
 		}
 
@@ -86,9 +90,9 @@ const { shots, rows = 2, eager = false } = Astro.props
 				inset: 0;
 				width: 100%;
 				height: 100%;
+				opacity: 0;
 				object-fit: cover;
 				object-position: 55% 30%;
-				opacity: 0;
 				transition: opacity 1.4s var(--ease);
 			}
 		}
@@ -97,11 +101,6 @@ const { shots, rows = 2, eager = false } = Astro.props
 			@media (--md) {
 				opacity: 1;
 			}
-		}
-
-		@media (--md) {
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) 46vw;
 		}
 	}
 </style>

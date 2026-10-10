@@ -327,12 +327,12 @@ import { contacts, person } from '../data/site'
 
 	.consent {
 		&__notes {
-			list-style: none;
-			margin: 32px 0;
-			padding: 0;
 			display: grid;
 			gap: 16px;
+			margin: 32px 0;
+			padding: 0;
 			font-size: 0.95rem;
+			list-style: none;
 		}
 
 		&__note {
@@ -348,12 +348,12 @@ import { contacts, person } from '../data/site'
 		}
 
 		&__check {
+			cursor: pointer;
 			display: grid;
 			grid-template-columns: 20px 1fr;
 			gap: 14px;
 			margin-bottom: 28px;
 			font-size: 0.95rem;
-			cursor: pointer;
 		}
 
 		&__checkbox {
@@ -370,8 +370,8 @@ import { contacts, person } from '../data/site'
 
 		& :global(.icon-link__icon) {
 			display: inline-block;
-			vertical-align: -0.15em;
 			margin-inline-end: 0.25em;
+			vertical-align: -0.15em;
 		}
 
 		&--after :global(.icon-link__icon) {
@@ -380,33 +380,33 @@ import { contacts, person } from '../data/site'
 	}
 
 	.btn {
+		cursor: pointer;
 		border: 0;
 		font-family: inherit;
-		cursor: pointer;
 
 		&:disabled {
-			opacity: 0.45;
 			cursor: not-allowed;
 			transform: none;
+			opacity: 0.45;
 		}
 	}
 
 	.dialog {
 		&__log {
-			list-style: none;
-			margin: 24px 0 0;
-			padding: 0;
 			display: flex;
 			flex-direction: column;
 			gap: 14px;
+			margin: 24px 0 0;
+			padding: 0;
+			list-style: none;
 		}
 
 		&__log :global(.msg) {
-			max-width: 88%;
-			white-space: pre-wrap;
-			overflow-wrap: anywhere;
 			-webkit-user-select: text;
 			user-select: text;
+			max-width: 88%;
+			overflow-wrap: anywhere;
+			white-space: pre-wrap;
 		}
 
 		&__log :global(.msg--assistant) {
@@ -424,8 +424,8 @@ import { contacts, person } from '../data/site'
 		/* Три мерцающие точки, пока ассистент думает. */
 		&__log :global(.msg--typing)::after {
 			content: '• • •';
-			letter-spacing: 0.1em;
 			color: var(--muted);
+			letter-spacing: 0.1em;
 			animation: typing 1.4s ease-in-out infinite;
 		}
 
@@ -441,16 +441,16 @@ import { contacts, person } from '../data/site'
 		}
 
 		&__restart {
+			cursor: pointer;
 			display: block;
 			margin: 16px auto 0;
 			padding: 6px 10px;
 			border: 0;
-			background: none;
 			font: inherit;
 			font-size: 0.85rem;
 			text-decoration: underline;
 			text-underline-offset: 3px;
-			cursor: pointer;
+			background: none;
 		}
 	}
 
@@ -458,8 +458,8 @@ import { contacts, person } from '../data/site'
 		position: sticky;
 		bottom: 16px;
 		display: flex;
-		align-items: flex-end;
 		gap: 10px;
+		align-items: flex-end;
 		margin-top: 28px;
 		padding: 8px 8px 8px 20px;
 		border-radius: 28px;
@@ -469,16 +469,16 @@ import { contacts, person } from '../data/site'
 			0 12px 40px rgb(0 0 0 / 0.25);
 
 		&__input {
+			resize: none;
 			flex: 1;
 			min-height: 40px;
 			max-height: 40vh;
 			padding: 8px 0;
 			border: 0;
-			resize: none;
-			background: none;
-			color: var(--fg);
 			font: inherit;
 			line-height: 1.5;
+			color: var(--fg);
+			background: none;
 			outline: none;
 		}
 
@@ -487,16 +487,16 @@ import { contacts, person } from '../data/site'
 		}
 
 		&__send {
-			flex: none;
+			cursor: pointer;
 			display: grid;
+			flex: none;
 			place-items: center;
 			width: 44px;
 			height: 44px;
 			border: 0;
 			border-radius: 50%;
-			background: var(--btn-bg);
 			color: var(--btn-fg);
-			cursor: pointer;
+			background: var(--btn-bg);
 			transition: background-color 0.4s var(--ease);
 		}
 
@@ -505,8 +505,8 @@ import { contacts, person } from '../data/site'
 		}
 
 		&__send:disabled {
-			opacity: 0.45;
 			cursor: default;
+			opacity: 0.45;
 		}
 	}
 

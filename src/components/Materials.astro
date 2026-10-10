@@ -39,18 +39,18 @@ import { materials } from '../data/materials'
 
 <style>
 	.materials {
-		list-style: none;
 		margin: 40px 0 0;
 		padding: 0;
+		list-style: none;
 	}
 
 	.material {
 		display: grid;
 		grid-template-columns: auto 1fr;
-		align-items: start;
 		gap: 12px 16px;
-		padding: 26px 12px;
+		align-items: start;
 		margin-inline: -12px;
+		padding: 26px 12px;
 		border-radius: 12px;
 		text-decoration: none;
 		transition: background-color 0.4s var(--ease);
@@ -82,9 +82,9 @@ import { materials } from '../data/materials'
 		&__audience {
 			font-size: 0.74rem;
 			font-weight: 500;
-			letter-spacing: 0.18em;
-			text-transform: uppercase;
 			color: var(--accent);
+			text-transform: uppercase;
+			letter-spacing: 0.18em;
 			transition: color 1.4s var(--ease);
 		}
 
@@ -95,14 +95,14 @@ import { materials } from '../data/materials'
 		}
 
 		&__text {
-			font-size: 0.95rem;
 			max-width: 48ch;
+			font-size: 0.95rem;
 		}
 
 		&__more {
 			display: inline-flex;
-			align-items: center;
 			gap: 6px;
+			align-items: center;
 			margin-top: 4px;
 			font-size: 0.9rem;
 			font-weight: 500;

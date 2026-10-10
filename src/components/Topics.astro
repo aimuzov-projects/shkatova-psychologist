@@ -40,9 +40,9 @@ import { topics } from '../data/site'
 		padding-top: 0;
 
 		@media (--md) {
+			overflow: visible;
 			padding-top: var(--section-y);
 			padding-bottom: calc(var(--section-y) + 72px);
-			overflow: visible;
 		}
 	}
 
@@ -60,11 +60,11 @@ import { topics } from '../data/site'
 	}
 
 	.topics {
-		list-style: none;
-		margin: 48px 0 0;
-		padding: 0;
 		display: grid;
 		gap: 0 64px;
+		margin: 48px 0 0;
+		padding: 0;
+		list-style: none;
 
 		@media (--md) {
 			grid-template-columns: 1fr 1fr;
@@ -76,9 +76,17 @@ import { topics } from '../data/site'
 		position: relative;
 		display: grid;
 		grid-template-columns: auto 1fr;
-		align-items: start;
 		gap: 10px 14px;
+		align-items: start;
 		padding-block: 24px;
+
+		@media (min-width: 700px) {
+			grid-template-columns: 136px 1fr;
+			gap: 12px 8px;
+			align-items: start;
+			margin-left: -16px;
+			padding-block: 32px;
+		}
 
 		&__body {
 			display: contents;
@@ -102,8 +110,8 @@ import { topics } from '../data/site'
 			position: absolute;
 			inset: auto 0 0;
 			height: 1px;
-			background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
 			opacity: 0.6;
+			background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
 			transition: background 1.4s var(--ease);
 		}
 
@@ -167,14 +175,6 @@ import { topics } from '../data/site'
 				width: 104px;
 				height: 104px;
 			}
-		}
-
-		@media (min-width: 700px) {
-			grid-template-columns: 136px 1fr;
-			align-items: start;
-			gap: 12px 8px;
-			padding-block: 32px;
-			margin-left: -16px;
 		}
 	}
 </style>

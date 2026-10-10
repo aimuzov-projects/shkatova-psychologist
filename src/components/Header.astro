@@ -51,8 +51,8 @@ const base = home ? '' : '/'
 <style>
 	.header {
 		position: fixed;
-		inset: 0 0 auto;
 		z-index: 20;
+		inset: 0 0 auto;
 		color: var(--fg);
 		/* Подложка с размытием всегда, а не только после прокрутки: меню читается над фото. */
 		background: color-mix(in srgb, var(--bg) 72%, transparent);
@@ -76,15 +76,15 @@ const base = home ? '' : '/'
 			position: absolute;
 			inset: auto 0 0;
 			height: 1px;
-			background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
 			opacity: 0.6;
+			background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
 		}
 
 		&__inner {
 			display: flex;
+			gap: 24px;
 			align-items: center;
 			justify-content: space-between;
-			gap: 24px;
 			min-height: 76px;
 		}
 
@@ -95,21 +95,29 @@ const base = home ? '' : '/'
 	}
 
 	.fab {
+		pointer-events: none;
 		position: fixed;
+		z-index: 30;
 		right: 16px;
 		bottom: calc(16px + env(safe-area-inset-bottom));
-		z-index: 30;
+		transform: translateX(calc(100% + 16px + env(safe-area-inset-right)));
 		display: grid;
 		place-items: center;
 		width: 56px;
 		height: 56px;
 		color: var(--btn-fg);
-		transform: translateX(calc(100% + 16px + env(safe-area-inset-right)));
 		visibility: hidden;
-		pointer-events: none;
 		transition:
 			transform 0.6s var(--ease),
 			visibility 0s 0.6s;
+
+		@media (--reduced-motion) {
+			transition: none;
+		}
+
+		@media (--lg) {
+			display: none;
+		}
 
 		&__bg {
 			position: absolute;
@@ -134,41 +142,33 @@ const base = home ? '' : '/'
 
 		& :global(.fab__icon--up),
 		:global(.page--at-contacts) & :global(.fab__icon--book) {
-			opacity: 0;
 			transform: rotate(-90deg) scale(0.6);
+			opacity: 0;
 		}
 
 		:global(.page--at-contacts) & :global(.fab__icon--up) {
-			opacity: 1;
 			transform: none;
+			opacity: 1;
 		}
 
 		:global(.page--past-hero) & {
+			pointer-events: auto;
 			transform: none;
 			visibility: visible;
-			pointer-events: auto;
 			transition: transform 0.6s var(--ease);
 
 			@media (--reduced-motion) {
 				transition: none;
 			}
 		}
-
-		@media (--reduced-motion) {
-			transition: none;
-		}
-
-		@media (--lg) {
-			display: none;
-		}
 	}
 
 	.logo {
 		display: flex;
-		align-items: center;
 		gap: 12px;
-		text-decoration: none;
+		align-items: center;
 		line-height: 1.15;
+		text-decoration: none;
 
 		& :global(.logo__mark) {
 			flex-shrink: 0;
@@ -195,9 +195,9 @@ const base = home ? '' : '/'
 		&__role {
 			display: none;
 			font-size: 0.66rem;
-			letter-spacing: 0.18em;
-			text-transform: uppercase;
 			color: var(--muted);
+			text-transform: uppercase;
+			letter-spacing: 0.18em;
 			transition: color 1.4s var(--ease);
 
 			@media (--sm) {
@@ -213,18 +213,22 @@ const base = home ? '' : '/'
 
 	.nav {
 		display: none;
-		list-style: none;
+		gap: 24px;
 		margin: 0;
 		padding: 0;
-		gap: 24px;
+		list-style: none;
+
+		@media (--lg) {
+			display: flex;
+		}
 
 		&__link {
 			display: inline-flex;
-			white-space: nowrap;
-			align-items: center;
 			gap: 7px;
-			text-decoration: none;
+			align-items: center;
 			font-size: 0.9rem;
+			text-decoration: none;
+			white-space: nowrap;
 			opacity: 0.8;
 			transition: opacity 0.3s;
 		}
@@ -241,10 +245,6 @@ const base = home ? '' : '/'
 
 		&__link:hover {
 			opacity: 1;
-		}
-
-		@media (--lg) {
-			display: flex;
 		}
 	}
 </style>
