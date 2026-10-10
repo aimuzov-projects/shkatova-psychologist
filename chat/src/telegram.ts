@@ -32,14 +32,31 @@ export function formatSummary(summary: Summary) {
 }
 
 export async function sendSummary(summary: Summary) {
-	const { TELEGRAM_BOT_TOKEN: token, TELEGRAM_CHAT_ID: chatId } = process.env
-	if (!token || !chatId) throw new Error('TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не заданы')
-	for (const text of formatSummary(summary)) {
-		const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' }),
-		})
-		if (!res.ok) throw new Error(`Telegram ${res.status}: ${(await res.text()).slice(0, 300)}`)
+	const { TELEGRAM_BOT_TOKEN: token, TELEGRAM_CHAT_ID: chatIds = '' } = process.env
+	const recipients = chatIds
+		.split(',')
+		.map((id) => id.trim())
+		.filter(Boolean)
+	if (!token || !recipients.length) throw new Error('TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не заданы')
+	const messages = formatSummary(summary)
+
+	const sendTo = async (chatId: string) => {
+		for (const text of messages) {
+			const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' }),
+			})
+			if (!res.ok) throw new Error(`Telegram ${res.status}: ${(await res.text()).slice(0, 300)}`)
+		}
 	}
+
+	// Выжимка считается доставленной, если дошла хотя бы одному получателю:
+	// посетителю незачем видеть ошибку, когда психолог её уже получил.
+	const results = await Promise.allSettled(recipients.map(sendTo))
+	const failures = results.flatMap((result, i) =>
+		result.status === 'rejected' ? [`${recipients[i]}: ${(result.reason as Error).message}`] : [],
+	)
+	if (failures.length === recipients.length) throw new Error(failures.join('; '))
+	for (const failure of failures) console.error('summary delivery failed for', failure)
 }
