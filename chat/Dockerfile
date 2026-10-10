@@ -1,7 +1,7 @@
 # Сервис чата: Node запускает TypeScript сам, зависимостей нет, сборка не нужна.
 # Контекст сборки -- корень репо: промпт берёт данные о Татьяне из src/data.
 
-FROM node:24-alpine
+FROM node:26.11.1-alpine
 WORKDIR /app
 ENV NODE_ENV=production
 COPY package.json ./
