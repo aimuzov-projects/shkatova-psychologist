@@ -10,5 +10,6 @@ export const limits = {
 	userChars: 2000,
 }
 
-// Вход в чат на главной. Выключен, пока сервер в РФ не достучится до модели.
-export const enabled = false
+// Вход в чат на главной и в материалах. До модели сервер в РФ ходит через VPN-выход
+// из server-infra: если он ляжет, чат тут можно выключить.
+export const enabled = true
