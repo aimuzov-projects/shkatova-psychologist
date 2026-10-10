@@ -4,7 +4,8 @@ import { Picture } from 'astro:assets'
 import Base from '../../layouts/Base.astro'
 import Icon from '../../components/Icon.astro'
 import { materials, type Material, type MaterialBlock } from '../../data/materials'
-import { contacts, person } from '../../data/site'
+import { person } from '../../data/site'
+import { enabled as chatEnabled } from '../../data/chat'
 import sea from '../../assets/materials/sea.png'
 
 export const getStaticPaths = (() =>
@@ -159,13 +160,15 @@ const slots = (text: string) =>
 									<p>{text}</p>
 								))}
 								<div class="outro__actions">
-									<a href={contacts.telegram.href} class="btn" target="_blank" rel="noopener noreferrer">
-										<Icon name="plane" size={18} />
-										Записаться в Telegram
-									</a>
-									<a href={contacts.whatsapp.href} class="btn btn--ghost" target="_blank" rel="noopener noreferrer">
-										<Icon name="chat" size={18} />
-										WhatsApp
+									{chatEnabled && (
+										<a href="/chat/" class="btn">
+											<Icon name="chat" size={18} />
+											Рассказать о себе ассистенту
+										</a>
+									)}
+									<a href="/#contacts" class={chatEnabled ? 'btn btn--ghost' : 'btn'}>
+										<Icon name="phone" size={18} />
+										Контакты
 									</a>
 								</div>
 								<p class="outro__note muted">
