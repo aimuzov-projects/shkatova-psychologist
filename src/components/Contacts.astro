@@ -18,8 +18,25 @@ const items = [
 		</h2>
 		<p class="lead reveal" data-delay="2">
 			Напишите в удобный мессенджер слово «Гармония» — отвечу в течение дня и подберём время для бесплатных 20 минут
-			знакомства. Если сложно сформулировать запрос, просто напишите «хочу на консультацию».
+			знакомства.
 		</p>
+
+		<a href="/chat" class="ask reveal" data-delay="3">
+			<span class="ask__icon" aria-hidden="true">
+				<Icon name="chat" size={26} />
+			</span>
+			<span class="ask__text">
+				<span class="ask__title">Сложно сформулировать запрос?</span>
+				<span class="ask__lead">
+					Расскажите о себе моему ассистенту — в своём темпе, без звонков и неловкости. Он бережно расспросит, а я
+					прочитаю и сама напишу вам, уже понимая, что вас волнует.
+				</span>
+			</span>
+			<span class="btn ask__btn">
+				Рассказать о себе
+				<Icon name="arrow-out" size={18} />
+			</span>
+		</a>
 
 		<ul class="links soft-divide reveal" data-delay="3">
 			{items.map((i) => (
@@ -116,6 +133,114 @@ const items = [
 		font-family: var(--font-serif);
 		font-size: clamp(1.4rem, 3.4vw, 2.2rem);
 		line-height: 1.2;
+	}
+
+	/* Вход в чат: карточка целиком кликабельна, кнопка дышит как главная в Hero. */
+	.ask {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 18px 20px;
+		align-items: center;
+		margin-top: 40px;
+		padding: 28px;
+		border-radius: 28px;
+		background: color-mix(in srgb, var(--fg) 12%, transparent);
+		box-shadow: inset 0 0 0 1px var(--line);
+		text-decoration: none;
+		transition:
+			background-color 0.5s var(--ease),
+			transform 0.5s var(--ease);
+	}
+
+	.ask:hover,
+	.ask:focus-visible {
+		background: color-mix(in srgb, var(--fg) 18%, transparent);
+		transform: translateY(-2px);
+	}
+
+	.ask__icon {
+		display: grid;
+		place-items: center;
+		width: 56px;
+		height: 56px;
+		border-radius: 50%;
+		background: color-mix(in srgb, var(--accent) 22%, transparent);
+		color: var(--accent);
+	}
+
+	.ask__text {
+		display: grid;
+		gap: 6px;
+	}
+
+	.ask__title {
+		font-family: var(--font-serif);
+		font-size: clamp(1.5rem, 3vw, 2rem);
+		line-height: 1.15;
+	}
+
+	.ask__lead {
+		color: var(--muted);
+		max-width: 52ch;
+		transition: color 1.4s var(--ease);
+	}
+
+	.ask__btn {
+		position: relative;
+		grid-column: 1 / -1;
+		justify-self: start;
+		box-shadow: 0 0 14px 0 color-mix(in srgb, var(--accent) 35%, transparent);
+	}
+
+	.ask__btn::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		box-shadow: 0 0 44px 10px color-mix(in srgb, var(--accent) 70%, transparent);
+		opacity: 0;
+		pointer-events: none;
+		animation: ask-glow 8s ease-in-out infinite;
+	}
+
+	.ask:hover .ask__btn {
+		background: var(--btn-hover);
+	}
+
+	@keyframes ask-glow {
+		50% {
+			opacity: 1;
+		}
+	}
+
+	@media (max-width: 599px) {
+		.ask {
+			grid-template-columns: 1fr;
+			padding: 24px;
+		}
+
+		.ask__btn {
+			justify-self: stretch;
+			justify-content: center;
+		}
+	}
+
+	@media (min-width: 900px) {
+		.ask {
+			grid-template-columns: auto 1fr auto;
+			padding: 32px 36px;
+			gap: 28px;
+		}
+
+		.ask__btn {
+			grid-column: auto;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ask__btn::after {
+			animation: none;
+		}
 	}
 
 	.contacts__address {

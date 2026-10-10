@@ -1,0 +1,483 @@
+---
+import Base from '../layouts/Base.astro'
+import Header from '../components/Header.astro'
+import Icon from '../components/Icon.astro'
+import { greeting, limits } from '../data/chat'
+import { contacts, person } from '../data/site'
+---
+
+<Base
+	title={`Расскажите о себе — ${person.name}`}
+	description="Не знаете, с чего начать? Расскажите о себе ассистенту, и Татьяна придёт на первую встречу, уже понимая ваш запрос."
+>
+	<Header home={false} />
+	<main class="chat" data-stage="night">
+		<div class="container chat__inner">
+			<span class="eyebrow">Подготовка к встрече</span>
+			<h1>Расскажите о&nbsp;себе</h1>
+
+			<section class="consent" data-consent hidden>
+				<p class="lead">
+					Не всегда легко написать психологу первой. Здесь можно спокойно рассказать, что вас беспокоит, а ассистент
+					бережно расспросит и соберёт главное для Татьяны. Она прочитает и сама напишет вам в течение дня.
+				</p>
+				<ul class="consent__notes muted">
+					<li>
+						<Icon name="spark" size={20} />
+						<span>
+							Это ИИ-ассистент, а не психолог: он не даёт советов и не ставит диагнозов, а помогает подготовиться к
+							встрече.
+						</span>
+					</li>
+					<li>
+						<Icon name="lock" size={20} />
+						<span>
+							Разговор обрабатывает ИИ-сервис за пределами России, на сайте переписка не сохраняется. Татьяна получит
+							только итоговую выжимку и только после вашего подтверждения.
+						</span>
+					</li>
+					<li>
+						<Icon name="heart" size={20} />
+						<span>
+							Если вам сейчас очень плохо или есть мысли навредить себе, звоните <a href="tel:112">112</a> или на
+							бесплатный телефон доверия <a href="tel:88002000122">8-800-2000-122</a>.
+						</span>
+					</li>
+				</ul>
+				<label class="consent__check">
+					<input type="checkbox" data-agree />
+					<span>
+						Даю согласие на обработку моих персональных данных, в том числе сведений о здоровье, на условиях{' '}
+						<a href="/privacy" target="_blank">
+							политики конфиденциальности
+						</a>
+					</span>
+				</label>
+				<button class="btn" type="button" data-start disabled>
+					<Icon name="chat" size={18} />
+					Начать разговор
+				</button>
+			</section>
+
+			<section class="dialog" data-dialog hidden>
+				<ol class="dialog__log" data-log aria-live="polite">
+					<li class="msg msg--assistant">{greeting}</li>
+				</ol>
+
+				<div class="dialog__finish" data-finish hidden>
+					<p data-finish-text></p>
+					<p class="muted" data-fallback hidden>
+						Не получилось передать разговор автоматически. Пожалуйста, напишите Татьяне напрямую:
+						<a href={contacts.telegram.href} target="_blank" rel="noopener noreferrer">
+							Telegram
+						</a>{' '}
+						или
+						<a href={contacts.whatsapp.href} target="_blank" rel="noopener noreferrer">
+							WhatsApp
+						</a>
+						.
+					</p>
+				</div>
+
+				<p class="dialog__error" data-error role="alert" hidden></p>
+
+				<form class="composer" data-form>
+					<textarea
+						data-input
+						rows="1"
+						maxlength={limits.userChars}
+						placeholder="Напишите, как получится…"
+						aria-label="Ваше сообщение"
+					></textarea>
+					<button class="composer__send" type="submit" aria-label="Отправить" data-send>
+						<Icon name="arrow-up" size={20} />
+					</button>
+				</form>
+				<button class="dialog__restart muted" type="button" data-restart>
+					Начать заново
+				</button>
+			</section>
+		</div>
+	</main>
+</Base>
+
+<script>
+	import { greeting, limits } from '../data/chat'
+
+	type Message = { role: 'user' | 'assistant'; content: string }
+	type State = { consent: boolean; messages: Message[]; done: boolean; delivered: boolean }
+
+	const farewell = 'Спасибо, что рассказали. Татьяна прочитает и напишет вам в течение дня.'
+
+	// Переписка живёт только во вкладке: рефреш её не теряет, закрытие стирает.
+	const key = 'chat'
+	const load = (): State => {
+		try {
+			const saved = JSON.parse(sessionStorage.getItem(key) ?? 'null')
+			if (saved && Array.isArray(saved.messages)) return saved
+		} catch {}
+		return { consent: false, messages: [], done: false, delivered: false }
+	}
+	const state = load()
+	const save = () => {
+		try {
+			sessionStorage.setItem(key, JSON.stringify(state))
+		} catch {}
+	}
+
+	const $ = <T extends Element>(selector: string) => document.querySelector<T>(selector)!
+	const consent = $<HTMLElement>('[data-consent]')
+	const agree = $<HTMLInputElement>('[data-agree]')
+	const start = $<HTMLButtonElement>('[data-start]')
+	const dialog = $<HTMLElement>('[data-dialog]')
+	const log = $<HTMLOListElement>('[data-log]')
+	const form = $<HTMLFormElement>('[data-form]')
+	const input = $<HTMLTextAreaElement>('[data-input]')
+	const send = $<HTMLButtonElement>('[data-send]')
+	const error = $<HTMLElement>('[data-error]')
+	const finish = $<HTMLElement>('[data-finish]')
+
+	const bubble = (role: Message['role'], text: string) => {
+		const li = document.createElement('li')
+		li.className = `msg msg--${role}`
+		li.textContent = text
+		log.append(li)
+		return li
+	}
+
+	const scrollDown = () => scrollTo({ top: document.body.scrollHeight })
+
+	const resize = () => {
+		input.style.height = 'auto'
+		input.style.height = `${input.scrollHeight}px`
+	}
+
+	const showFinish = () => {
+		form.hidden = true
+		finish.hidden = false
+		$('[data-finish-text]').textContent = state.delivered
+			? 'Разговор передан Татьяне. Если захотите что-то добавить, можно написать ей напрямую.'
+			: ''
+		$<HTMLElement>('[data-fallback]').hidden = state.delivered
+	}
+
+	const render = () => {
+		consent.hidden = state.consent
+		dialog.hidden = !state.consent
+		log.replaceChildren()
+		bubble('assistant', greeting)
+		state.messages.forEach((m) => bubble(m.role, m.content))
+		if (state.done) showFinish()
+	}
+
+	const setBusy = (busy: boolean) => {
+		input.disabled = busy
+		send.disabled = busy
+		log.classList.toggle('is-typing', busy)
+	}
+
+	async function ask(text: string) {
+		error.hidden = true
+		state.messages.push({ role: 'user', content: text })
+		bubble('user', text)
+		setBusy(true)
+		const typing = bubble('assistant', '')
+		typing.classList.add('msg--typing')
+		scrollDown()
+
+		let reply = ''
+		let done: { delivered: boolean } | null = null
+		try {
+			const res = await fetch('/api/chat', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ messages: state.messages }),
+			})
+			if (!res.ok || !res.body) {
+				const body = await res.json().catch(() => null)
+				throw new Error(body?.error ?? 'Не получилось отправить сообщение, попробуйте ещё раз')
+			}
+			let buffer = ''
+			const decoder = new TextDecoder()
+			const reader = res.body.getReader()
+			for (;;) {
+				const { value, done: end } = await reader.read()
+				if (end) break
+				buffer += decoder.decode(value, { stream: true })
+				const events = buffer.split('\n\n')
+				buffer = events.pop() ?? ''
+				for (const raw of events) {
+					const event = raw.match(/^event: (.+)$/m)?.[1]
+					const data = JSON.parse(raw.match(/^data: (.+)$/m)?.[1] ?? '{}')
+					if (event === 'delta') {
+						reply += data.text
+						typing.classList.remove('msg--typing')
+						typing.textContent = reply.trimStart()
+						scrollDown()
+					} else if (event === 'done') done = data
+					else if (event === 'error') throw new Error(data.error)
+				}
+			}
+			if (!reply.trim() && !done) throw new Error('Ассистент не ответил, попробуйте отправить сообщение ещё раз')
+		} catch (e) {
+			// Неудачное сообщение возвращается в поле ввода, чтобы история не сломалась.
+			state.messages.pop()
+			typing.remove()
+			log.lastElementChild?.remove()
+			input.value = text
+			error.textContent = (e as Error).message
+			error.hidden = false
+			setBusy(false)
+			resize()
+			return
+		}
+
+		reply = reply.trim() || farewell
+		typing.classList.remove('msg--typing')
+		typing.textContent = reply
+		state.messages.push({ role: 'assistant', content: reply })
+		if (done) {
+			state.done = true
+			state.delivered = done.delivered
+			showFinish()
+		}
+		save()
+		setBusy(false)
+		if (!done) input.focus()
+		scrollDown()
+	}
+
+	agree.addEventListener('change', () => (start.disabled = !agree.checked))
+	start.addEventListener('click', () => {
+		state.consent = true
+		save()
+		render()
+		input.focus()
+	})
+
+	form.addEventListener('submit', (e) => {
+		e.preventDefault()
+		const text = input.value.trim()
+		if (!text || input.disabled) return
+		if (state.messages.length + 2 > limits.messages) {
+			error.textContent =
+				'Разговор получился длинным. Напишите, пожалуйста, Татьяне напрямую — она обязательно ответит.'
+			error.hidden = false
+			return
+		}
+		input.value = ''
+		resize()
+		ask(text)
+	})
+
+	// На компьютере Enter отправляет, Shift+Enter переносит строку.
+	// На телефоне Enter -- перенос.
+	const touch = matchMedia('(pointer: coarse)').matches
+	input.addEventListener('keydown', (e) => {
+		if (e.key === 'Enter' && !e.shiftKey && !touch && !e.isComposing) {
+			e.preventDefault()
+			form.requestSubmit()
+		}
+	})
+	input.addEventListener('input', resize)
+
+	$('[data-restart]').addEventListener('click', () => {
+		if (state.messages.length && !state.done && !confirm('Начать разговор заново? Написанное сотрётся.')) return
+		Object.assign(state, { messages: [], done: false, delivered: false })
+		save()
+		form.hidden = false
+		finish.hidden = true
+		error.hidden = true
+		render()
+		input.focus()
+	})
+
+	render()
+</script>
+
+<style>
+	.chat {
+		min-height: 100dvh;
+		padding-block: calc(var(--section-y) + 64px) 32px;
+	}
+
+	.chat__inner {
+		max-width: calc(760px + var(--gutter) * 2);
+	}
+
+	h1 {
+		font-size: clamp(2.4rem, 6vw, 3.6rem);
+	}
+
+	.consent__notes {
+		list-style: none;
+		margin: 32px 0;
+		padding: 0;
+		display: grid;
+		gap: 16px;
+		font-size: 0.95rem;
+	}
+
+	.consent__notes li {
+		display: grid;
+		grid-template-columns: 20px 1fr;
+		gap: 14px;
+		align-items: start;
+	}
+
+	.consent__notes :global(svg) {
+		margin-top: 3px;
+		color: var(--accent);
+	}
+
+	.consent__check {
+		display: grid;
+		grid-template-columns: 20px 1fr;
+		gap: 14px;
+		margin-bottom: 28px;
+		font-size: 0.95rem;
+		cursor: pointer;
+	}
+
+	.consent__check input {
+		width: 20px;
+		height: 20px;
+		margin: 3px 0 0;
+		accent-color: var(--accent);
+	}
+
+	.btn:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+		transform: none;
+	}
+
+	button.btn {
+		border: 0;
+		font-family: inherit;
+		cursor: pointer;
+	}
+
+	.dialog__log {
+		list-style: none;
+		margin: 24px 0 0;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+	}
+
+	.dialog__log :global(.msg) {
+		max-width: 88%;
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
+		-webkit-user-select: text;
+		user-select: text;
+	}
+
+	.dialog__log :global(.msg--assistant) {
+		align-self: flex-start;
+	}
+
+	.dialog__log :global(.msg--user) {
+		align-self: flex-end;
+		padding: 12px 18px;
+		border-radius: 20px 20px 6px 20px;
+		background: color-mix(in srgb, var(--fg) 10%, transparent);
+		box-shadow: inset 0 0 0 1px var(--line);
+	}
+
+	/* Три мерцающие точки, пока ассистент думает. */
+	.dialog__log :global(.msg--typing)::after {
+		content: '• • •';
+		letter-spacing: 0.1em;
+		color: var(--muted);
+		animation: typing 1.4s ease-in-out infinite;
+	}
+
+	@keyframes typing {
+		50% {
+			opacity: 0.3;
+		}
+	}
+
+	.composer {
+		position: sticky;
+		bottom: 16px;
+		display: flex;
+		align-items: flex-end;
+		gap: 10px;
+		margin-top: 28px;
+		padding: 8px 8px 8px 20px;
+		border-radius: 28px;
+		background: color-mix(in srgb, var(--bg) 82%, var(--fg));
+		box-shadow:
+			inset 0 0 0 1px var(--line),
+			0 12px 40px rgb(0 0 0 / 0.25);
+	}
+
+	.composer textarea {
+		flex: 1;
+		min-height: 40px;
+		max-height: 40vh;
+		padding: 8px 0;
+		border: 0;
+		resize: none;
+		background: none;
+		color: var(--fg);
+		font: inherit;
+		line-height: 1.5;
+		outline: none;
+	}
+
+	.composer textarea::placeholder {
+		color: var(--muted);
+	}
+
+	.composer__send {
+		flex: none;
+		display: grid;
+		place-items: center;
+		width: 44px;
+		height: 44px;
+		border: 0;
+		border-radius: 50%;
+		background: var(--btn-bg);
+		color: var(--btn-fg);
+		cursor: pointer;
+		transition: background-color 0.4s var(--ease);
+	}
+
+	.composer__send:hover {
+		background: var(--btn-hover);
+	}
+
+	.composer__send:disabled {
+		opacity: 0.45;
+		cursor: default;
+	}
+
+	.dialog__error {
+		margin: 20px 0 0;
+		color: var(--accent);
+	}
+
+	.dialog__finish {
+		margin-top: 28px;
+		padding-top: 20px;
+		border-top: 1px solid var(--line);
+	}
+
+	.dialog__restart {
+		display: block;
+		margin: 16px auto 0;
+		padding: 6px 10px;
+		border: 0;
+		background: none;
+		font: inherit;
+		font-size: 0.85rem;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+		cursor: pointer;
+	}
+</style>
