@@ -43,7 +43,7 @@ const { shots, rows = 2, eager = false } = Astro.props
 					fetchpriority={eager && i === 0 ? 'high' : 'auto'}
 				/>
 			))}
-			<div class="veil" data-veil="story"></div>
+			<div class="veil" data-veil="story" />
 		</div>
 	</div>
 	<slot />
