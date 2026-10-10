@@ -114,126 +114,73 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 		<slot />
 
 		<script>
+			import { everyFrame, onResize, reduceMotion } from '#/lib/frame.ts'
+
+			// Здесь только то, что касается страницы целиком. Эффекты отдельных секций живут
+			// в своих компонентах и регистрируются в общем кадре #/lib/frame.ts.
 			const root = document.documentElement
-			const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
 
-			// Якорь в адресе ломает рефреш: браузер восстанавливает прокрутку, а потом плавно
-			// едет к якорю. Поэтому ссылки внутри страницы крутят сами и адрес не трогают.
-			document.addEventListener('click', (e) => {
-				const link = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]')
-				if (!link || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return
-				const target = document.getElementById(link.hash.slice(1))
-				if (!target) return
-				e.preventDefault()
-				const behavior = reduce ? 'auto' : 'smooth'
-				if (target.id === 'top') scrollTo({ top: 0, behavior })
-				else target.scrollIntoView({ behavior })
-			})
-
-			// Стадия суток: секция, занявшая середину экрана, красит всю страницу.
-			const stageObserver = new IntersectionObserver(
-				(entries) => {
-					for (const e of entries) {
-						if (e.isIntersecting) root.dataset.stage = (e.target as HTMLElement).dataset.stage ?? 'night'
-					}
-				},
-				{ rootMargin: '-45% 0px -45% 0px' },
-			)
-			document.querySelectorAll<HTMLElement>('[data-stage]').forEach((el) => stageObserver.observe(el))
-
-			const revealObserver = new IntersectionObserver(
-				(entries) => {
-					for (const e of entries) {
-						if (!e.isIntersecting) continue
-						e.target.classList.add('reveal--in')
-						revealObserver.unobserve(e.target)
-					}
-				},
-				{ threshold: 0.15 },
-			)
-			document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el))
-
-			// Каждый measure* только читает геометрию и возвращает запись в DOM. Кадр сначала
-			// меряет всё, потом всё пишет: чтение после записи заставляло бы браузер
-			// раскладывать страницу заново на каждый замер.
-			type Write = () => void
-
-			// Параллакс: сдвиг пропорционален расстоянию обёртки до центра экрана.
-			const parallax = [...document.querySelectorAll<HTMLElement>('[data-parallax]')]
-			let ticking = false
-			const measureParallax = (): Write => {
-				const mid = innerHeight / 2
-				const offsets = parallax.map((el) => {
-					const box = (el.parentElement as HTMLElement).getBoundingClientRect()
-					return (box.top + box.height / 2 - mid) * Number(el.dataset.parallax)
+			/**
+			 * Ссылки на якоря внутри страницы крутят сами и адрес не трогают: якорь в адресе
+			 * ломает рефреш, браузер восстанавливает прокрутку, а потом ещё и плавно едет к якорю.
+			 */
+			function initAnchorScroll() {
+				document.addEventListener('click', (e) => {
+					const link = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]')
+					if (!link || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return
+					const target = document.getElementById(link.hash.slice(1))
+					if (!target) return
+					e.preventDefault()
+					const behavior = reduceMotion ? 'auto' : 'smooth'
+					if (target.id === 'top') scrollTo({ top: 0, behavior })
+					else target.scrollIntoView({ behavior })
 				})
-				return () =>
-					parallax.forEach((el, i) => (el.style.transform = `translate3d(0, ${offsets[i].toFixed(1)}px, 0)`))
 			}
 
-			// Активно последнее фото, чья линия пройдена; вуаль густеет до следующего.
-			const stories = [...document.querySelectorAll<HTMLElement>('.story')].map((story) => ({
-				story,
-				veil: story.querySelector<HTMLElement>('[data-veil="story"]'),
-				shots: [...story.querySelectorAll<HTMLElement>('.story__shot')].map((el) => ({
-					el,
-					trigger: el.dataset.trigger ? document.querySelector<HTMLElement>(el.dataset.trigger) : null,
-					at: Number(el.dataset.at ?? 0),
-				})),
-			}))
-			const measureStories = (): Write => {
-				const vh = innerHeight
-				const writes = stories.map(({ story, veil, shots }): Write => {
-					const box = story.getBoundingClientRect()
-					const passed = shots.map(({ trigger, at }) =>
-						trigger ? (at <= 1 ? vh * at : at) - trigger.getBoundingClientRect().top : -box.top,
-					)
-					let active = -1
-					passed.forEach((p, i) => p >= 0 && (active = i))
-					let opacity: string | null = null
-					if (veil && active >= 0) {
-						const end =
-							active + 1 < passed.length
-								? passed[active] - passed[active + 1]
-								: passed[active] + box.bottom - vh
-						const progress = Math.min(1, Math.max(0, passed[active] / Math.max(1, end)))
-						opacity = (0.35 + 0.45 * progress).toFixed(3)
-					}
-					return () => {
-						shots.forEach(({ el }, i) => el.classList.toggle('story__shot--active', i === active))
-						if (veil && opacity) veil.style.opacity = opacity
-					}
-				})
-				return () => writes.forEach((write) => write())
+			/** Стадия суток: секция, занявшая середину экрана, ставит свою `data-stage` на `<html>`. */
+			function initStages() {
+				const observer = new IntersectionObserver(
+					(entries) => {
+						for (const e of entries) {
+							if (e.isIntersecting)
+								root.dataset.stage = (e.target as HTMLElement).dataset.stage ?? 'night'
+						}
+					},
+					{ rootMargin: '-45% 0px -45% 0px' },
+				)
+				document.querySelectorAll<HTMLElement>('[data-stage]').forEach((el) => observer.observe(el))
 			}
 
-			// На телефоне у секций свои фото: вуаль густеет, пока секция уезжает вверх.
-			const sectionVeils = [...document.querySelectorAll<HTMLElement>('[data-veil]:not([data-veil="story"])')]
-			const measureSectionVeils = (): Write => {
-				const vh = innerHeight
-				const opacities = sectionVeils.map((veil) => {
-					const section = veil.closest('section')
-					if (!section) return null
-					const box = section.getBoundingClientRect()
-					const progress = Math.min(1, Math.max(0, -box.top / (box.height - vh * 0.5)))
-					return (0.35 + 0.45 * progress).toFixed(3)
-				})
-				return () => sectionVeils.forEach((veil, i) => opacities[i] && (veil.style.opacity = opacities[i]))
+			/** Блоки `.reveal` проявляются один раз, когда показались на экране хотя бы на 15%. */
+			function initReveal() {
+				const observer = new IntersectionObserver(
+					(entries) => {
+						for (const e of entries) {
+							if (!e.isIntersecting) continue
+							e.target.classList.add('reveal--in')
+							observer.unobserve(e.target)
+						}
+					},
+					{ threshold: 0.15 },
+				)
+				document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
 			}
 
-			// Фон -- один градиент по всей странице. Если у соседей текст одного тона, цвет
-			// перетекает от середины к середине; если тон текста меняется -- только в зазоре.
-			const sections = [...document.querySelectorAll<HTMLElement>('body [data-stage]')]
-			const isLight = (hex: string) => {
-				// В сборке минификатор сокращает цвета: #ffffff приходит как #fff.
+			type Stop = { y: number; color: string }
+
+			/** Светлый ли цвет, по яркости. В сборке минификатор сокращает цвета: `#ffffff` приходит как `#fff`. */
+			function isLight(hex: string) {
 				if (hex.length < 7) hex = '#' + hex.slice(1, 4).replace(/./g, '$&$&')
 				const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16))
 				return 0.2126 * r + 0.7152 * g + 0.0722 * b > 140
 			}
-			let bgStops: { y: number; color: string }[] = []
-			const measureBackground = (): Write => {
-				// У страницы-презентации секций нет, фон красит она сама.
-				if (!sections.length) return () => {}
+
+			/**
+			 * Опорные точки градиента по секциям. Если у соседей текст одного тона, цвет перетекает
+			 * от середины к середине; если тон меняется -- только в зазоре, не шире отступов,
+			 * чтобы не заходить под текст.
+			 */
+			function measureStops(sections: HTMLElement[]): Stop[] {
 				const items = sections.map((el) => {
 					const box = el.getBoundingClientRect()
 					const style = getComputedStyle(el)
@@ -246,95 +193,70 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 						lightText: isLight(style.getPropertyValue('--fg').trim()),
 					}
 				})
-				bgStops = [{ y: 0, color: items[0].color }]
+				const stops = [{ y: 0, color: items[0].color }]
 				items.slice(1).forEach((b, i) => {
 					const a = items[i]
 					if (a.lightText === b.lightText)
-						bgStops.push({ y: a.mid, color: a.color }, { y: b.mid, color: b.color })
+						stops.push({ y: a.mid, color: a.color }, { y: b.mid, color: b.color })
 					else {
-						// Полоса перехода не шире отступов, чтобы не заходить под текст.
 						const seam = Math.min(a.padBottom, b.padTop, 90)
-						bgStops.push({ y: b.top - seam, color: a.color }, { y: b.top + seam, color: b.color })
+						stops.push({ y: b.top - seam, color: a.color }, { y: b.top + seam, color: b.color })
 					}
 				})
-				const list = bgStops.map(({ y, color }) => `${color} ${Math.round(y)}px`).join(', ')
-				return () =>
-					(document.body.style.backgroundImage = `linear-gradient(in oklab to bottom, ${list}, ${items.at(-1)!.color})`)
+				return stops
 			}
-			// Тот же цвет в точке страницы: им красятся шапка и вуали на фото.
-			const colorAt = (y: number) => {
-				const next = bgStops.findIndex((stop) => stop.y > y)
-				if (next === -1) return bgStops.at(-1)!.color
-				if (next === 0) return bgStops[0].color
-				const a = bgStops[next - 1]
-				const b = bgStops[next]
+
+			/** Цвет градиента в точке страницы `y`: до первой точки и после последней цвет не меняется. */
+			function colorAt(stops: Stop[], y: number) {
+				const next = stops.findIndex((stop) => stop.y > y)
+				if (next === -1) return stops.at(-1)!.color
+				if (next === 0) return stops[0].color
+				const a = stops[next - 1]
+				const b = stops[next]
 				const t = (y - a.y) / (b.y - a.y || 1)
 				return `color-mix(in oklab, ${b.color} ${(t * 100).toFixed(1)}%, ${a.color})`
 			}
-			// Цвет нужен только затемнению на фото в колонке: переменная на <html>
-			// пересчитывала бы стили всей страницы на каждом кадре.
-			const storyVeil = document.querySelector<HTMLElement>('[data-veil="story"]')
-			const updatePageBg = () => {
-				if (storyVeil && bgStops.length) storyVeil.style.backgroundColor = colorAt(scrollY + innerHeight / 2)
+
+			/**
+			 * Фон страницы -- один градиент через все секции, пересчитывается после раскладки.
+			 * Тем же цветом в середине экрана красится затемнение на фото в колонке Story: переменная
+			 * на `<html>` пересчитывала бы стили всей страницы на каждом кадре. У страницы-презентации
+			 * секций нет, фон она красит сама.
+			 */
+			function initBackground() {
+				const sections = [...document.querySelectorAll<HTMLElement>('body [data-stage]')]
+				if (!sections.length) return
+				let stops: Stop[] = []
+
+				onResize(() => {
+					stops = measureStops(sections)
+					const list = stops.map(({ y, color }) => `${color} ${Math.round(y)}px`).join(', ')
+					// Ниже последней точки фон держит цвет последней секции.
+					const last = stops.at(-1)!.color
+					return () =>
+						(document.body.style.backgroundImage = `linear-gradient(in oklab to bottom, ${list}, ${last})`)
+				})
+
+				const storyVeil = document.querySelector<HTMLElement>('[data-veil="story"]')
+				if (storyVeil)
+					everyFrame(() => {
+						const y = scrollY + innerHeight / 2
+						return () => stops.length && (storyVeil.style.backgroundColor = colorAt(stops, y))
+					})
 			}
 
-			// Телефон: первый экран прокручен -- шапка уезжает, а справа в угол
-			// выезжает круглая кнопка записи (сама анимация -- в стилях Header.astro).
-			const hero = document.querySelector<HTMLElement>('#top')
-			const fab = document.querySelector<HTMLElement>('.fab')
-			let pastHero = false
-			const contactsSection = document.querySelector<HTMLElement>('#contacts')
-			let atContacts = false
-			const measureFab = (): Write | null => {
-				if (!fab || !contactsSection) return null
-				const next = contactsSection.getBoundingClientRect().top < innerHeight * 0.5
-				if (next === atContacts) return null
-				atContacts = next
-				return () => {
-					root.classList.toggle('page--at-contacts', atContacts)
-					fab.setAttribute('href', atContacts ? '#top' : '#contacts')
-					fab.setAttribute('aria-label', atContacts ? 'Наверх' : 'Записаться')
-				}
-			}
-
-			const measureHeader = (): Write | null => {
-				if (!hero) return null
-				const next = hero.getBoundingClientRect().bottom < 80
-				if (next === pastHero) return null
-				pastHero = next
-				return () => root.classList.toggle('page--past-hero', pastHero)
-			}
-
-			const frame = (extra: (Write | null)[] = []) => {
-				const writes = [
-					...extra,
-					measureHeader(),
-					measureFab(),
-					measureStories(),
-					measureSectionVeils(),
-					reduce ? null : measureParallax(),
-				]
-				root.classList.toggle('page--scrolled', scrollY > 40)
-				writes.forEach((write) => write?.())
-				updatePageBg()
-			}
-
-			const onScroll = () => {
-				if (ticking) return
-				ticking = true
-				requestAnimationFrame(() => {
-					frame()
-					ticking = false
+			/** Класс `page--scrolled` на `<html>`, как только страницу сдвинули больше чем на 40px. */
+			function initScrolledFlag() {
+				everyFrame(() => {
+					const scrolled = scrollY > 40
+					return () => root.classList.toggle('page--scrolled', scrolled)
 				})
 			}
-			addEventListener('scroll', onScroll, { passive: true })
 
-			// Первый кадр и пересчёт после ресайза делает ResizeObserver: он срабатывает уже
-			// после раскладки, так что замеры не заставляют браузер раскладывать страницу заранее.
-			new ResizeObserver(() => frame([measureBackground()])).observe(document.body)
-
-			const glow = document.querySelector<HTMLElement>('.glow')
-			if (glow && !reduce && matchMedia('(pointer: fine)').matches) {
+			/** Пятно света `.glow` за курсором. Только мышь и только без "уменьшения движения". */
+			function initCursorGlow() {
+				const glow = document.querySelector<HTMLElement>('.glow')
+				if (!glow || reduceMotion || !matchMedia('(pointer: fine)').matches) return
 				addEventListener(
 					'pointermove',
 					(e) => {
@@ -344,6 +266,13 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 					{ passive: true },
 				)
 			}
+
+			initAnchorScroll()
+			initStages()
+			initReveal()
+			initBackground()
+			initScrolledFlag()
+			initCursorGlow()
 		</script>
 	</body>
 </html>
