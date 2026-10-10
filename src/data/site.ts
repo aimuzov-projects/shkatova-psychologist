@@ -1,4 +1,5 @@
 import type { IconName } from '#/components/Icon.astro'
+import { formatPhone, phoneHref } from '#/lib/phone.ts'
 
 export const person = {
 	name: 'Татьяна Шкатова',
@@ -152,10 +153,13 @@ export const faq: { icon: IconName; q: string; a: string }[] = [
 	},
 ]
 
+// В HTML номер выводится закодированным, см. #/lib/phone.ts. Здесь он открытым текстом для промпта ассистента.
+const phone = '79000000000'
+
 export const contacts = {
 	telegram: { label: '@tatiana_shkatova', href: 'https://t.me/tatiana_shkatova' },
-	whatsapp: { label: '+7 (900) 000-00-00', href: 'https://wa.me/79000000000' },
-	phone: { label: '+7 (900) 000-00-00', href: 'tel:+79000000000' },
+	whatsapp: { label: formatPhone(phone), href: phoneHref.whatsapp(phone), phone },
+	phone: { label: formatPhone(phone), href: phoneHref.tel(phone), phone },
 	vk: { label: 'Сообщество ВКонтакте', href: 'https://vk.me/public216949602' },
 	address: 'Тольятти · онлайн из любого города',
 }

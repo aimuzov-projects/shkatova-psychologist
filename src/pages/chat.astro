@@ -4,6 +4,7 @@ import Header from '#/components/Header.astro'
 import Icon from '#/components/Icon.astro'
 import { greeting, limits } from '#/data/chat.ts'
 import { contacts, person } from '#/data/site.ts'
+import { encodePhone } from '#/lib/phone.ts'
 ---
 
 <Base
@@ -22,11 +23,6 @@ import { contacts, person } from '#/data/site.ts'
 					<a class="icon-link" href={contacts.telegram.href} target="_blank" rel="noopener noreferrer">
 						<Icon name="plane" size={16} class="icon-link__icon" />
 						Telegram
-					</a>{' '}
-					или{' '}
-					<a class="icon-link" href={contacts.whatsapp.href} target="_blank" rel="noopener noreferrer">
-						<Icon name="chat" size={16} class="icon-link__icon" />
-						WhatsApp
 					</a>
 					, она ответит в течение дня.
 				</p>
@@ -100,7 +96,13 @@ import { contacts, person } from '#/data/site.ts'
 							Telegram
 						</a>{' '}
 						или{' '}
-						<a class="icon-link" href={contacts.whatsapp.href} target="_blank" rel="noopener noreferrer">
+						<a
+							class="icon-link"
+							data-phone={encodePhone(contacts.whatsapp.phone)}
+							data-phone-href="whatsapp"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
 							<Icon name="chat" size={16} class="icon-link__icon" />
 							WhatsApp
 						</a>
@@ -132,6 +134,7 @@ import { contacts, person } from '#/data/site.ts'
 </Base>
 
 <script>
+	import '#/lib/phone-reveal.ts'
 	import { greeting, limits } from '#/data/chat.ts'
 	import { typograph } from '#/lib/typograph.ts'
 

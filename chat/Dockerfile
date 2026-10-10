@@ -6,6 +6,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 COPY package.json ./
 COPY src/data ./src/data
+COPY src/lib/phone.ts ./src/lib/phone.ts
 COPY chat/src ./chat/src
 USER node
 EXPOSE 8787
