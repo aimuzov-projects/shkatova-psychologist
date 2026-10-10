@@ -1,6 +1,23 @@
 ---
 import Icon from '#/components/Icon.astro'
-import { materials } from '#/data/materials.ts'
+import { materials, type MaterialBlock } from '#/data/materials.ts'
+
+// Превью памятки -- первый слайд в двух-трёх строках: заголовок и пара пунктов из него.
+const previewItems = (block: MaterialBlock) => {
+	switch (block.type) {
+		case 'phrases':
+		case 'replies':
+			return block.items.slice(0, 2)
+		case 'dont-do':
+			return [
+				{ label: block.dontLabel, text: block.items[0].dont },
+				{ label: block.doLabel, text: block.items[0].do },
+			]
+		case 'formula':
+			// {N:текст} в примерах -- разметка подсветки слотов, в превью она не нужна.
+			return [{ label: block.examplesTitle, text: block.examples[0].replace(/\{\d+:([^}]*)\}/g, '$1') }]
+	}
+}
 ---
 
 <section class="section" id="materials" data-stage="rose">
@@ -16,7 +33,7 @@ import { materials } from '#/data/materials.ts'
 
 		<ul class="materials soft-divide">
 			{materials.map((m, i) => (
-				<li class="reveal" data-delay={String(i)}>
+				<li class="materials__item reveal" data-delay={String(i)}>
 					<a href={`/materials/${m.slug}/`} class="material">
 						<span class="material__icon">
 							<Icon name={m.icon} size={28} />
@@ -25,12 +42,25 @@ import { materials } from '#/data/materials.ts'
 							<span class="material__audience">{m.audience}</span>
 							<span class="material__title">{m.title}</span>
 							<span class="material__text muted">{m.short}</span>
-							<span class="material__more">
-								Смотреть
+							<span class="btn btn--ghost material__btn">
+								Открыть памятку
 								<Icon name="arrow-out" class="material__arrow" size={18} />
 							</span>
 						</span>
 					</a>
+					<div class="preview" aria-hidden="true">
+						<div class="preview__card">
+							<span class="preview__audience">{m.audience}</span>
+							<span class="preview__title">{m.title}</span>
+							<span class="preview__block">{m.blocks[0].title}</span>
+							{previewItems(m.blocks[0]).map((item) => (
+								<span class="preview__item">
+									<span class="preview__label">{item.label}</span>
+									<span class="preview__text">{item.text}</span>
+								</span>
+							))}
+						</div>
+					</div>
 				</li>
 			))}
 		</ul>
@@ -99,13 +129,18 @@ import { materials } from '#/data/materials.ts'
 			font-size: 0.95rem;
 		}
 
-		&__more {
-			display: inline-flex;
-			gap: 6px;
-			align-items: center;
-			margin-top: 4px;
-			font-size: 0.9rem;
-			font-weight: 500;
+		/* Кнопка внутри ссылки-карточки: кликается вся карточка, кнопка показывает, что это переход. */
+		&__btn {
+			align-self: flex-start;
+			margin-top: 10px;
+			padding: 0.7em 1.4em;
+			font-size: 0.88rem;
+		}
+
+		&:hover &__btn,
+		&:focus-visible &__btn {
+			background: color-mix(in srgb, var(--fg) 12%, transparent);
+			box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 40%, transparent);
 		}
 
 		& :global(.material__arrow) {
@@ -116,6 +151,103 @@ import { materials } from '#/data/materials.ts'
 		&:hover :global(.material__arrow),
 		&:focus-visible :global(.material__arrow) {
 			transform: translate(3px, -3px);
+		}
+	}
+
+	/* Превью памятки на месте фото в колонке Story: проявляется, пока курсор над карточкой.
+	   Только на десктопе с мышью -- на телефоне колонки нет, а наведения не бывает. */
+	.preview {
+		display: none;
+
+		@media (--md) and (hover: hover) {
+			pointer-events: none;
+			position: fixed;
+			z-index: 4;
+			inset: 0 0 0 auto;
+			display: grid;
+			place-items: center;
+			width: 46vw;
+			padding: 96px clamp(40px, 6vw, 96px) 48px;
+			visibility: hidden;
+			opacity: 0;
+			transition:
+				opacity 0.5s var(--ease),
+				visibility 0s 0.5s;
+
+			@media (--reduced-motion) {
+				transition: none;
+			}
+		}
+
+		/* Подложка отдельным слоем: маска с широким переходом слева гасила бы и текст.
+		   Тон ночи с верха страницы, полупрозрачный -- фото колонки просвечивает. Не через
+		   data-stage: за ним следит скрипт стадий и перекрасил бы всю страницу. */
+		&::before {
+			@media (--md) and (hover: hover) {
+				content: '';
+				position: absolute;
+				z-index: -1;
+				inset: 0;
+				background: rgb(33 19 32 / 0.45);
+				mask-image: linear-gradient(to right, transparent 0%, #000 45%);
+			}
+		}
+
+		/* Появляется с задержкой, чтобы не мигать, когда курсор просто проходит через список.
+		   Гаснет сразу: задержка есть только у появления. */
+		.materials__item:hover > &,
+		.material:focus-visible + & {
+			visibility: visible;
+			opacity: 1;
+			transition:
+				opacity 0.5s var(--ease) 0.35s,
+				visibility 0s 0.35s;
+		}
+
+		&__card {
+			display: flex;
+			flex-direction: column;
+			gap: 14px;
+			max-width: 30rem;
+		}
+
+		&__audience {
+			font-size: 0.74rem;
+			font-weight: 500;
+			color: var(--accent);
+			text-transform: uppercase;
+			letter-spacing: 0.18em;
+		}
+
+		&__title {
+			font-family: var(--font-serif);
+			font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+			line-height: 1.15;
+		}
+
+		&__block {
+			margin-top: 18px;
+			padding-top: 18px;
+			border-top: 1px solid var(--line);
+			font-size: 0.82rem;
+			color: var(--muted);
+		}
+
+		&__item {
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+		}
+
+		&__label {
+			font-size: 0.82rem;
+			color: var(--accent);
+		}
+
+		&__text {
+			font-family: var(--font-serif);
+			font-size: 1.12rem;
+			line-height: 1.35;
 		}
 	}
 </style>
