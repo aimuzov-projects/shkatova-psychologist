@@ -1,6 +1,7 @@
 ---
 import Icon from './Icon.astro'
 import { contacts } from '../data/site'
+import { enabled as chatEnabled } from '../data/chat'
 
 const items = [
 	{ title: 'Telegram', icon: 'plane', ...contacts.telegram, external: true },
@@ -21,22 +22,24 @@ const items = [
 			знакомства.
 		</p>
 
-		<a href="/chat" class="ask reveal" data-delay="3">
-			<span class="ask__icon" aria-hidden="true">
-				<Icon name="chat" size={26} />
-			</span>
-			<span class="ask__text">
-				<span class="ask__title">Сложно сформулировать запрос?</span>
-				<span class="ask__lead">
-					Расскажите о себе моему ассистенту — в своём темпе, без звонков и неловкости. Он бережно расспросит, а я
-					прочитаю и сама напишу вам, уже понимая, что вас волнует.
+		{chatEnabled && (
+			<a href="/chat/" class="ask reveal" data-delay="3">
+				<span class="ask__icon" aria-hidden="true">
+					<Icon name="chat" size={26} />
 				</span>
-			</span>
-			<span class="btn ask__btn">
-				Рассказать о себе
-				<Icon name="arrow-out" size={18} />
-			</span>
-		</a>
+				<span class="ask__text">
+					<span class="ask__title">Сложно сформулировать запрос?</span>
+					<span class="ask__lead">
+						Расскажите о себе моему ассистенту — в своём темпе, без звонков и неловкости. Он бережно расспросит, а я
+						прочитаю и сама напишу вам, уже понимая, что вас волнует.
+					</span>
+				</span>
+				<span class="btn ask__btn">
+					Рассказать о себе
+					<Icon name="arrow-out" size={18} />
+				</span>
+			</a>
+		)}
 
 		<ul class="links soft-divide reveal" data-delay="3">
 			{items.map((i) => (
