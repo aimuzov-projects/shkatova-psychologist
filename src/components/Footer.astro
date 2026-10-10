@@ -2,7 +2,7 @@
 import { Picture } from 'astro:assets'
 
 import mountains from '#/assets/mountains.jpg'
-import { person } from '#/data/site.ts'
+import { contacts, person } from '#/data/site.ts'
 
 type Props = {
 	/** `data-stage` футера, по умолчанию `day`. Вне главной -- как у страницы, иначе фон перекрасится. */
@@ -33,6 +33,7 @@ const year = new Date().getFullYear()
 		<span>
 			© {year} {person.name}, {person.status}, ИНН {person.inn}
 		</span>
+		<span>{contacts.address}</span>
 		<span>Информация на сайте не является медицинской консультацией</span>
 	</div>
 </footer>

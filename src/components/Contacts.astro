@@ -6,9 +6,9 @@ import { encodePhone } from '#/lib/phone.ts'
 
 const items = [
 	{ title: 'Telegram', icon: 'plane', ...contacts.telegram, external: true },
-	{ title: 'WhatsApp', icon: 'chat', ...contacts.whatsapp, external: true, reveal: 'whatsapp' },
-	{ title: 'Телефон', icon: 'phone', ...contacts.phone, external: false, reveal: 'tel' },
 	{ title: 'ВКонтакте', icon: 'people', ...contacts.vk, external: true },
+	{ title: 'Телефон', icon: 'phone', ...contacts.phone, external: false, reveal: 'tel' },
+	{ title: 'WhatsApp', icon: 'chat', ...contacts.whatsapp, external: true, reveal: 'whatsapp' },
 ] as const
 ---
 
@@ -42,7 +42,7 @@ const items = [
 			</a>
 		)}
 
-		<ul class="links soft-divide reveal" data-delay="3">
+		<ul class="links reveal" data-delay="3">
 			{items.map((i) => {
 				// Номер в разметку не попадает: ссылку и подпись собирает phone-reveal.ts, а без скриптов пункта нет.
 				const secret = 'reveal' in i
@@ -70,7 +70,6 @@ const items = [
 				)
 			})}
 		</ul>
-		<p class="contacts__address muted">{contacts.address}</p>
 	</div>
 </section>
 
@@ -80,34 +79,50 @@ const items = [
 
 <style>
 	.links {
-		margin: 56px 0 0;
+		display: grid;
+		gap: 12px;
+		margin: 40px 0 0;
 		padding: 0;
 		list-style: none;
 
+		/* Два столбца: пункты идут сверху вниз, мессенджеры слева, номер справа. */
+		@media (--md) {
+			grid-template-rows: auto auto;
+			grid-auto-flow: column;
+			grid-auto-columns: 1fr;
+			gap: 16px;
+		}
+
+		/* Карточки как у входа в чат, только тише: без них контакты читались простым текстом. */
 		&__link {
 			display: grid;
 			grid-template-columns: 1fr auto;
 			gap: 6px 20px;
 			align-items: center;
-			margin-inline: -12px;
-			padding: 22px 12px;
-			border-radius: 12px;
+			height: 100%;
+			padding: 22px 24px;
+			border-radius: 20px;
 			text-decoration: none;
-			transition: background-color 0.4s var(--ease);
+			background: color-mix(in srgb, var(--fg) 7%, transparent);
+			box-shadow: inset 0 0 0 1px var(--line);
+			transition:
+				background-color 0.4s var(--ease),
+				transform 0.5s var(--ease);
 		}
 
 		&__link:hover,
 		&__link:focus-visible {
-			background: color-mix(in srgb, var(--accent) 10%, transparent);
+			transform: translateY(-2px);
+			background: color-mix(in srgb, var(--accent) 14%, transparent);
 		}
 
-		/* Стрелка выезжает слева и встаёт на место, подчёркивание растёт от левого края. */
+		/* Стрелка видна всегда, чтобы карточку узнавали как ссылку; на наведении встаёт на место. */
 		&__go {
-			transform: translate(-8px, 8px);
+			transform: translate(-4px, 4px);
 			grid-column: 2;
 			grid-row: 1 / span 2;
 			color: var(--accent);
-			opacity: 0;
+			opacity: 0.45;
 			transition:
 				opacity 0.4s var(--ease),
 				transform 0.5s var(--ease),
@@ -123,7 +138,7 @@ const items = [
 		&__value {
 			width: fit-content;
 			font-family: var(--font-serif);
-			font-size: clamp(1.4rem, 3.4vw, 2.2rem);
+			font-size: clamp(1.4rem, 3.4vw, 2rem);
 			line-height: 1.2;
 			/* Телефон рвётся на дефисах, а неразрывный пробел их не держит. */
 			white-space: nowrap;
@@ -260,10 +275,5 @@ const items = [
 	.contacts__inner {
 		position: relative;
 		z-index: 1;
-	}
-
-	.contacts__address {
-		margin-top: 24px;
-		font-size: 0.9rem;
 	}
 </style>
