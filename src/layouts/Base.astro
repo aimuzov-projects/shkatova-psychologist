@@ -10,6 +10,7 @@ import golosLat from '@fontsource/golos-text/files/golos-text-latin-400-normal.w
 import golosLat500 from '@fontsource/golos-text/files/golos-text-latin-500-normal.woff2?url'
 import golosLatExt from '@fontsource/golos-text/files/golos-text-latin-ext-400-normal.woff2?url'
 import '#/styles/global.css'
+import og from '#/assets/og.jpg'
 import { person } from '#/data/site.ts'
 
 // Шрифты свои и в preload, иначе текст рисуется запасным и прыгает.
@@ -34,9 +35,18 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		{/* Карточка ссылки в мессенджерах. og.jpg вырезан из hero.jpg в пропорции 1.91:1 лицом по центру:
+		    снимки вертикальные, а автоматическая обрезка ловила статуэтку вместо лица. */}
 		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content={person.name} />
+		<meta property="og:locale" content="ru_RU" />
+		<meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
+		<meta property="og:image" content={new URL(og.src, Astro.site)} />
+		<meta property="og:image:width" content={String(og.width)} />
+		<meta property="og:image:height" content={String(og.height)} />
+		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="theme-color" content="#211320" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		{preload.map((href) => (
