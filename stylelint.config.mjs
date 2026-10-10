@@ -26,7 +26,7 @@ const resolve = (rule) => {
 const bemClass = stylelint.createPlugin(ruleName, (on) => (root, result) => {
 	if (!on) return
 	root.walkRules((rule) => {
-		if (rule.parent?.type === 'atrule' && /keyframes$/.test(rule.parent.name)) return
+		if (rule.parent?.type === 'atrule' && rule.parent.name.endsWith('keyframes')) return
 		const seen = new Set()
 		for (const selector of resolve(rule))
 			for (const [, cls] of selector.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) {

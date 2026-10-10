@@ -10,7 +10,7 @@ export type MaterialBlock =
 	| { type: 'formula'; title: string; formula: string; examplesTitle: string; examples: string[] }
 	| { type: 'dont-do'; title: string; dontLabel: string; doLabel: string; items: { dont: string; do: string }[] }
 
-export interface Material {
+export type Material = {
 	slug: string
 	icon: IconName
 	audience: string

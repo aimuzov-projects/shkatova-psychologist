@@ -5,13 +5,13 @@ import type { ImageMetadata } from 'astro'
 // Фото справа от нескольких секций. Без trigger видно сразу, остальные включаются,
 // когда trigger выше линии at (до 1 -- доля экрана, больше -- пиксели от верха).
 // На телефоне колонка скрыта, но eager-фото всё равно качается: sizes 1px берёт самый лёгкий файл.
-interface Shot {
+type Shot = {
 	src: ImageMetadata
 	trigger?: string
 	at?: number
 }
 
-interface Props {
+type Props = {
 	shots: Shot[]
 	rows?: number
 	eager?: boolean
