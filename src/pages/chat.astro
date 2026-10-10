@@ -39,8 +39,17 @@ import { contacts, person } from '../data/site'
 					<li>
 						<Icon name="heart" size={20} />
 						<span>
-							Если вам сейчас очень плохо или есть мысли навредить себе, звоните <a href="tel:112">112</a> или на
-							бесплатный телефон доверия <a href="tel:88002000122">8-800-2000-122</a>.
+							Если вам сейчас очень плохо или есть мысли навредить себе, звоните{' '}
+							<a class="icon-link" href="tel:112">
+								<Icon name="phone" size={16} />
+								112
+							</a>{' '}
+							или на бесплатный телефон доверия{' '}
+							<a class="icon-link" href="tel:88002000122">
+								<Icon name="phone" size={16} />
+								8-800-2000-122
+							</a>
+							.
 						</span>
 					</li>
 				</ul>
@@ -48,8 +57,9 @@ import { contacts, person } from '../data/site'
 					<input type="checkbox" data-agree />
 					<span>
 						Даю согласие на обработку моих персональных данных, в том числе сведений о здоровье, на условиях{' '}
-						<a href="/privacy" target="_blank">
+						<a class="icon-link icon-link--after" href="/privacy" target="_blank">
 							политики конфиденциальности
+							<Icon name="arrow-out" size={16} />
 						</a>
 					</span>
 				</label>
@@ -67,12 +77,14 @@ import { contacts, person } from '../data/site'
 				<div class="dialog__finish" data-finish hidden>
 					<p data-finish-text></p>
 					<p class="muted" data-fallback hidden>
-						Не получилось передать разговор автоматически. Пожалуйста, напишите Татьяне напрямую:
-						<a href={contacts.telegram.href} target="_blank" rel="noopener noreferrer">
+						Не получилось передать разговор автоматически. Пожалуйста, напишите Татьяне напрямую:{' '}
+						<a class="icon-link" href={contacts.telegram.href} target="_blank" rel="noopener noreferrer">
+							<Icon name="plane" size={16} />
 							Telegram
 						</a>{' '}
-						или
-						<a href={contacts.whatsapp.href} target="_blank" rel="noopener noreferrer">
+						или{' '}
+						<a class="icon-link" href={contacts.whatsapp.href} target="_blank" rel="noopener noreferrer">
+							<Icon name="chat" size={16} />
 							WhatsApp
 						</a>
 						.
@@ -325,9 +337,24 @@ import { contacts, person } from '../data/site'
 		align-items: start;
 	}
 
-	.consent__notes :global(svg) {
+	.consent__notes > li > :global(svg) {
 		margin-top: 3px;
 		color: var(--accent);
+	}
+
+	/* Иконка у ссылки не отрывается от текста при переносе строки. */
+	.icon-link {
+		white-space: nowrap;
+	}
+
+	.icon-link :global(svg) {
+		display: inline-block;
+		vertical-align: -0.15em;
+		margin-inline-end: 0.25em;
+	}
+
+	.icon-link--after :global(svg) {
+		margin-inline: 0.25em 0;
 	}
 
 	.consent__check {
