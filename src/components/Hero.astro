@@ -19,25 +19,27 @@ import { person } from '../data/site'
 				sizes="(min-width: 900px) 1px, 100vw"
 				loading="eager"
 				fetchpriority="high"
+				class="hero__img"
 			/>
 		</div>
 	</div>
 
 	<div class="container story__text hero__inner">
 		<div class="hero__text">
-			<span class="eyebrow eyebrow--plain reveal is-in">{person.role} · Тольятти и онлайн</span>
-			<h1 class="reveal is-in" data-delay="1">
+			<span class="eyebrow eyebrow--plain reveal reveal--in">{person.role} · Тольятти и онлайн</span>
+			<h1 class="hero__title reveal reveal--in" data-delay="1">
 				Вам говорят
 				<br />
 				«радуйся»
 				<br />
-				<em>— а вам страшно</em>
+				<em class="hero__accent">— а вам страшно</em>
 			</h1>
-			<p class="lead reveal is-in" data-delay="2">
-				Работаю с тревогой в беременности, страхом родов, тяжёлыми первыми месяцами после — и с теми, кто потерял
-				беременность. Первые 20 минут бесплатно: расскажете, что происходит, и вместе поймём, нужна ли я вам.
+			<p class="lead reveal reveal--in" data-delay="2">
+				Работаю с тревогой в беременности, страхом родов, тяжёлыми первыми месяцами после — и с теми, кто
+				потерял беременность. Первые 20 минут бесплатно: расскажете, что происходит, и вместе поймём, нужна ли
+				я вам.
 			</p>
-			<div class="hero__actions reveal is-in" data-delay="3">
+			<div class="hero__actions reveal reveal--in" data-delay="3">
 				<a href="#contacts" class="btn btn--breath">
 					<Icon name="spark" size={18} />
 					Бесплатные 20 минут знакомства
@@ -65,47 +67,55 @@ import { person } from '../data/site'
 		align-items: end;
 		padding-block: 0 96px;
 		overflow: clip;
-	}
 
-	.hero__inner {
-		position: relative;
-		z-index: 2;
-	}
+		&__inner {
+			position: relative;
+			z-index: 2;
+		}
 
-	.hero__text {
-		max-width: 620px;
+		&__text {
+			max-width: 620px;
+		}
 	}
 
 	/* Строки склеены неразрывными пробелами: на телефоне шрифт идёт от ширины экрана. */
-	h1 {
-		font-size: clamp(1.7rem, 8.6vw, 4.4rem);
+	.hero {
+		&__title {
+			font-size: clamp(1.7rem, 8.6vw, 4.4rem);
+		}
 	}
 
 	/* На десктопе колонке текста достаётся чуть больше половины экрана: при 5vw строка
 	   "— а вам страшно" к 1440px становилась шире колонки и уходила под фото. */
 	@media (min-width: 900px) {
-		h1 {
-			font-size: clamp(2.2rem, 4.2vw, 4rem);
+		.hero {
+			&__title {
+				font-size: clamp(2.2rem, 4.2vw, 4rem);
+			}
 		}
 	}
 
-	h1 em {
-		font-style: normal;
-		color: var(--accent);
-		transition: color 1.4s var(--ease);
+	.hero {
+		&__accent {
+			font-style: normal;
+			color: var(--accent);
+			transition: color 1.4s var(--ease);
+		}
 	}
 
-	/* На телефоне кнопки друг под другом во всю ширину; от 360px текст в одну строку. */
-	.hero__actions {
-		display: grid;
-		gap: 10px;
-		margin-top: 32px;
-	}
+	.hero {
+		/* На телефоне кнопки друг под другом во всю ширину; от 360px текст в одну строку. */
+		&__actions {
+			display: grid;
+			gap: 10px;
+			margin-top: 32px;
+		}
 
-	.hero__actions .btn {
-		justify-content: center;
-		padding-inline: 1.2em;
-		text-align: center;
+		&__actions .btn {
+			justify-content: center;
+			padding-inline: 1.2em;
+			text-align: center;
+		}
 	}
 
 	@media (min-width: 360px) {
@@ -115,68 +125,74 @@ import { person } from '../data/site'
 	}
 
 	@media (min-width: 560px) {
-		.hero__actions {
-			display: flex;
-			flex-wrap: wrap;
-			gap: 12px;
-			margin-top: 36px;
+		.hero {
+			&__actions {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 12px;
+				margin-top: 36px;
+			}
+
+			&__actions .btn {
+				padding-inline: 1.9em;
+			}
+		}
+	}
+
+	.hero {
+		/* Фото уходит в ночь по левому краю и снизу, чтобы не спорить с текстом. */
+		&__photo {
+			position: relative;
+			z-index: 0;
+			height: min(54svh, 480px);
+			margin-bottom: -6svh;
+			overflow: hidden;
+			mask-image: linear-gradient(to top, transparent 0%, #000 45%);
+			-webkit-mask-image: linear-gradient(to top, transparent 0%, #000 45%);
 		}
 
-		.hero__actions .btn {
-			padding-inline: 1.9em;
+		&__photo::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			z-index: 1;
+			background: linear-gradient(to bottom, var(--bg) 0%, transparent 32%);
+			transition: background 1.4s var(--ease);
+		}
+
+		/* Первый экран при прокрутке только отстаёт и едет вниз, запас нужен сверху. Больше
+		   не даём, иначе обрезается голова, а щель в самом конце пути прячет градиент сверху. */
+		&__photo .px {
+			position: absolute;
+			inset: -18% 0 -6%;
+		}
+
+		& :global(.hero__img) {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: 50% 0%;
 		}
 	}
 
-	/* Фото уходит в ночь по левому краю и снизу, чтобы не спорить с текстом. */
-	.hero__photo {
-		position: relative;
-		z-index: 0;
-		height: min(54svh, 480px);
-		margin-bottom: -6svh;
-		overflow: hidden;
-		mask-image: linear-gradient(to top, transparent 0%, #000 45%);
-		-webkit-mask-image: linear-gradient(to top, transparent 0%, #000 45%);
-	}
+	.btn {
+		/* Кнопка светится и дышит: 4 секунды ярче, 4 секунды тише. Дышит слой с готовой
+		   тенью через opacity -- анимацию box-shadow браузер перерисовывал бы на каждом кадре. */
+		&--breath {
+			position: relative;
+			box-shadow: 0 0 14px 0 color-mix(in srgb, var(--accent) 35%, transparent);
+		}
 
-	.hero__photo::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		z-index: 1;
-		background: linear-gradient(to bottom, var(--bg) 0%, transparent 32%);
-		transition: background 1.4s var(--ease);
-	}
-
-	/* Первый экран при прокрутке только отстаёт и едет вниз, запас нужен сверху. Больше
-	   не даём, иначе обрезается голова, а щель в самом конце пути прячет градиент сверху. */
-	.hero__photo .px {
-		position: absolute;
-		inset: -18% 0 -6%;
-	}
-
-	.hero__photo img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: 50% 0%;
-	}
-
-	/* Кнопка светится и дышит: 4 секунды ярче, 4 секунды тише. Дышит слой с готовой
-	   тенью через opacity -- анимацию box-shadow браузер перерисовывал бы на каждом кадре. */
-	.btn--breath {
-		position: relative;
-		box-shadow: 0 0 14px 0 color-mix(in srgb, var(--accent) 35%, transparent);
-	}
-
-	.btn--breath::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: inherit;
-		box-shadow: 0 0 44px 10px color-mix(in srgb, var(--accent) 70%, transparent);
-		opacity: 0;
-		pointer-events: none;
-		animation: glow 8s ease-in-out infinite;
+		&--breath::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			border-radius: inherit;
+			box-shadow: 0 0 44px 10px color-mix(in srgb, var(--accent) 70%, transparent);
+			opacity: 0;
+			pointer-events: none;
+			animation: glow 8s ease-in-out infinite;
+		}
 	}
 
 	/* Мышка по центру низа экрана, прячется после первого скролла. */
@@ -199,7 +215,7 @@ import { person } from '../data/site'
 		}
 	}
 
-	:global(html.scrolled) .hero__hint {
+	:global(.page--scrolled) .hero__hint {
 		opacity: 0;
 		pointer-events: none;
 	}
@@ -210,16 +226,16 @@ import { person } from '../data/site'
 		height: 38px;
 		border: 1.5px solid currentColor;
 		border-radius: 12px;
-	}
 
-	.mouse__wheel {
-		display: block;
-		width: 3px;
-		height: 7px;
-		margin: 6px auto 0;
-		border-radius: 2px;
-		background: currentColor;
-		animation: wheel 2s ease-in-out infinite;
+		&__wheel {
+			display: block;
+			width: 3px;
+			height: 7px;
+			margin: 6px auto 0;
+			border-radius: 2px;
+			background: currentColor;
+			animation: wheel 2s ease-in-out infinite;
+		}
 	}
 
 	@keyframes wheel {
@@ -247,10 +263,10 @@ import { person } from '../data/site'
 		.hero {
 			align-items: center;
 			padding-block: 120px 96px;
-		}
 
-		.hero__photo {
-			display: none;
+			&__photo {
+				display: none;
+			}
 		}
 	}
 </style>

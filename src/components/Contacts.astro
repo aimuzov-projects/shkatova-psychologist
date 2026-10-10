@@ -30,8 +30,8 @@ const items = [
 				<span class="ask__text">
 					<span class="ask__title">Сложно сформулировать запрос?</span>
 					<span class="ask__lead">
-						Расскажите о себе моему ассистенту — в своём темпе, без звонков и неловкости. Он задаст пару вопросов,
-						а я прочитаю и сама напишу вам, уже понимая, что вас волнует.
+						Расскажите о себе моему ассистенту — в своём темпе, без звонков и неловкости. Он задаст пару
+						вопросов, а я прочитаю и сама напишу вам, уже понимая, что вас волнует.
 					</span>
 				</span>
 				<span class="btn ask__btn">
@@ -44,9 +44,13 @@ const items = [
 		<ul class="links soft-divide reveal" data-delay="3">
 			{items.map((i) => (
 				<li>
-					<a href={i.href} {...(i.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+					<a
+						href={i.href}
+						class="links__link"
+						{...(i.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+					>
 						<span class="links__title muted">
-							<Icon name={i.icon} size={22} />
+							<Icon name={i.icon} size={22} class="links__icon" />
 							{i.title}
 						</span>
 						<span class="links__value selectable">{i.label}</span>
@@ -66,78 +70,78 @@ const items = [
 		list-style: none;
 		margin: 56px 0 0;
 		padding: 0;
-	}
 
-	.links a {
-		display: grid;
-		grid-template-columns: 1fr auto;
-		align-items: center;
-		gap: 6px 20px;
-		padding: 22px 12px;
-		margin-inline: -12px;
-		border-radius: 12px;
-		text-decoration: none;
-		transition: background-color 0.4s var(--ease);
-	}
+		&__link {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			align-items: center;
+			gap: 6px 20px;
+			padding: 22px 12px;
+			margin-inline: -12px;
+			border-radius: 12px;
+			text-decoration: none;
+			transition: background-color 0.4s var(--ease);
+		}
 
-	.links a:hover,
-	.links a:focus-visible {
-		background: color-mix(in srgb, var(--accent) 10%, transparent);
-	}
+		&__link:hover,
+		&__link:focus-visible {
+			background: color-mix(in srgb, var(--accent) 10%, transparent);
+		}
 
-	/* Стрелка выезжает слева и встаёт на место, подчёркивание растёт от левого края. */
-	.links__go {
-		grid-column: 2;
-		grid-row: 1 / span 2;
-		color: var(--accent);
-		opacity: 0;
-		transform: translate(-8px, 8px);
-		transition:
-			opacity 0.4s var(--ease),
-			transform 0.5s var(--ease),
-			color 1.4s var(--ease);
-	}
+		/* Стрелка выезжает слева и встаёт на место, подчёркивание растёт от левого края. */
+		&__go {
+			grid-column: 2;
+			grid-row: 1 / span 2;
+			color: var(--accent);
+			opacity: 0;
+			transform: translate(-8px, 8px);
+			transition:
+				opacity 0.4s var(--ease),
+				transform 0.5s var(--ease),
+				color 1.4s var(--ease);
+		}
 
-	.links a:hover .links__go,
-	.links a:focus-visible .links__go {
-		opacity: 1;
-		transform: none;
-	}
+		&__link:hover .links__go,
+		&__link:focus-visible .links__go {
+			opacity: 1;
+			transform: none;
+		}
 
-	.links__value {
-		background: linear-gradient(currentColor, currentColor) no-repeat left bottom / 0 1px;
-		transition: background-size 0.5s var(--ease);
-	}
+		&__value {
+			background: linear-gradient(currentColor, currentColor) no-repeat left bottom / 0 1px;
+			transition: background-size 0.5s var(--ease);
+		}
 
-	.links a:hover .links__value,
-	.links a:focus-visible .links__value {
-		background-size: 100% 1px;
-	}
+		&__link:hover .links__value,
+		&__link:focus-visible .links__value {
+			background-size: 100% 1px;
+		}
 
-	.links__title :global(svg) {
-		transition: color 0.4s var(--ease);
-	}
+		& :global(.links__icon) {
+			transition: color 0.4s var(--ease);
+		}
 
-	.links a:hover .links__title :global(svg) {
-		color: var(--accent);
-	}
+		&__link:hover :global(.links__icon) {
+			color: var(--accent);
+		}
 
-	.links__title {
-		display: inline-flex;
-		align-items: center;
-		gap: 12px;
-		font-size: 0.78rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-	}
+		&__title {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			font-size: 0.78rem;
+			letter-spacing: 0.18em;
+			text-transform: uppercase;
+		}
 
-	.links__value {
-		width: fit-content;
-		font-family: var(--font-serif);
-		font-size: clamp(1.4rem, 3.4vw, 2.2rem);
-		line-height: 1.2;
-		/* Телефон рвётся на дефисах, а неразрывный пробел их не держит. */
-		white-space: nowrap;
+		&__value {
+			width: fit-content;
+			font-family: var(--font-serif);
+			font-size: clamp(1.4rem, 3.4vw, 2.2rem);
+			line-height: 1.2;
+			/* Телефон рвётся на дефисах, а неразрывный пробел их не держит. */
+			white-space: nowrap;
+		}
 	}
 
 	/* Вход в чат: карточка целиком кликабельна, кнопка дышит как главная в Hero. */
@@ -155,61 +159,61 @@ const items = [
 		transition:
 			background-color 0.5s var(--ease),
 			transform 0.5s var(--ease);
-	}
 
-	.ask:hover,
-	.ask:focus-visible {
-		background: color-mix(in srgb, var(--fg) 18%, transparent);
-		transform: translateY(-2px);
-	}
+		&:hover,
+		&:focus-visible {
+			background: color-mix(in srgb, var(--fg) 18%, transparent);
+			transform: translateY(-2px);
+		}
 
-	.ask__icon {
-		display: grid;
-		place-items: center;
-		width: 56px;
-		height: 56px;
-		border-radius: 50%;
-		background: color-mix(in srgb, var(--accent) 22%, transparent);
-		color: var(--accent);
-	}
+		&__icon {
+			display: grid;
+			place-items: center;
+			width: 56px;
+			height: 56px;
+			border-radius: 50%;
+			background: color-mix(in srgb, var(--accent) 22%, transparent);
+			color: var(--accent);
+		}
 
-	.ask__text {
-		display: grid;
-		gap: 6px;
-	}
+		&__text {
+			display: grid;
+			gap: 6px;
+		}
 
-	.ask__title {
-		font-family: var(--font-serif);
-		font-size: clamp(1.5rem, 3vw, 2rem);
-		line-height: 1.15;
-	}
+		&__title {
+			font-family: var(--font-serif);
+			font-size: clamp(1.5rem, 3vw, 2rem);
+			line-height: 1.15;
+		}
 
-	.ask__lead {
-		color: var(--muted);
-		max-width: 52ch;
-		transition: color 1.4s var(--ease);
-	}
+		&__lead {
+			color: var(--muted);
+			max-width: 52ch;
+			transition: color 1.4s var(--ease);
+		}
 
-	.ask__btn {
-		position: relative;
-		grid-column: 1 / -1;
-		justify-self: start;
-		box-shadow: 0 0 14px 0 color-mix(in srgb, var(--accent) 35%, transparent);
-	}
+		&__btn {
+			position: relative;
+			grid-column: 1 / -1;
+			justify-self: start;
+			box-shadow: 0 0 14px 0 color-mix(in srgb, var(--accent) 35%, transparent);
+		}
 
-	.ask__btn::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border-radius: inherit;
-		box-shadow: 0 0 44px 10px color-mix(in srgb, var(--accent) 70%, transparent);
-		opacity: 0;
-		pointer-events: none;
-		animation: ask-glow 8s ease-in-out infinite;
-	}
+		&__btn::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			border-radius: inherit;
+			box-shadow: 0 0 44px 10px color-mix(in srgb, var(--accent) 70%, transparent);
+			opacity: 0;
+			pointer-events: none;
+			animation: ask-glow 8s ease-in-out infinite;
+		}
 
-	.ask:hover .ask__btn {
-		background: var(--btn-hover);
+		&:hover .ask__btn {
+			background: var(--btn-hover);
+		}
 	}
 
 	@keyframes ask-glow {
@@ -222,11 +226,11 @@ const items = [
 		.ask {
 			grid-template-columns: 1fr;
 			padding: 24px;
-		}
 
-		.ask__btn {
-			justify-self: stretch;
-			justify-content: center;
+			&__btn {
+				justify-self: stretch;
+				justify-content: center;
+			}
 		}
 	}
 
@@ -235,10 +239,10 @@ const items = [
 			grid-template-columns: auto 1fr auto;
 			padding: 32px 36px;
 			gap: 28px;
-		}
 
-		.ask__btn {
-			grid-column: auto;
+			&__btn {
+				grid-column: auto;
+			}
 		}
 	}
 

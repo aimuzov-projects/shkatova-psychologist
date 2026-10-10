@@ -50,12 +50,20 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 <Base title={`${material.title} — ${person.name}`} description={material.description}>
 	<main class="deck">
 		<div class="deck__bg" aria-hidden="true">
-			<Picture src={sea} formats={['avif']} fallbackFormat="webp" alt="" widths={[480, 768]} sizes="100vw" />
+			<Picture
+				src={sea}
+				formats={['avif']}
+				fallbackFormat="webp"
+				alt=""
+				widths={[480, 768]}
+				sizes="100vw"
+				class="deck__bg-img"
+			/>
 			<div class="deck__veil"></div>
 		</div>
 
 		<div class="deck__progress" aria-hidden="true">
-			<span data-progress></span>
+			<span class="deck__progress-bar" data-progress></span>
 		</div>
 
 		<header class="deck__top container">
@@ -80,7 +88,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 						{slide.kind === 'cover' && (
 							<div class="cover">
 								<span class="eyebrow">{material.audience} · бесплатно</span>
-								<h1>{material.title}</h1>
+								<h1 class="cover__title">{material.title}</h1>
 								<p class="lead">{material.intro}</p>
 								<button type="button" class="btn" data-next>
 									Листать
@@ -95,7 +103,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 								{slide.block.type === 'phrases' && (
 									<ol class="phrases">
 										{slide.block.items.map((item) => (
-											<li>
+											<li class="phrases__item">
 												<span class="label">{item.label}</span>
 												<blockquote class="phrase">{quote(item.text)}</blockquote>
 											</li>
@@ -105,7 +113,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 								{slide.block.type === 'replies' && (
 									<ol class="replies soft-divide">
 										{slide.block.items.map((item) => (
-											<li>
+											<li class="replies__item">
 												<span class="muted">{item.label}</span>
 												<blockquote class="reply">{quote(item.text)}</blockquote>
 											</li>
@@ -122,9 +130,13 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 										<p class="label examples-title">{slide.block.examplesTitle}</p>
 										<ul class="examples">
 											{slide.block.examples.map((text) => (
-												<li>
+												<li class="examples__item">
 													{slots(quote(text)).map((p) =>
-														p.slot ? <mark class={`fill fill--${p.slot}`}>{p.text}</mark> : p.text,
+														p.slot ? (
+															<mark class={`fill fill--${p.slot}`}>{p.text}</mark>
+														) : (
+															p.text
+														),
 													)}
 												</li>
 											))}
@@ -146,14 +158,14 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 										<Icon name="cross" size={18} />
 										{slide.block.dontLabel}
 									</span>
-									<p>{slide.item.dont}</p>
+									<p class="pair__dont-text">{slide.item.dont}</p>
 								</div>
 								<div class="pair__do">
 									<span class="label">
 										<Icon name="check" size={18} />
 										{slide.block.doLabel}
 									</span>
-									<p>{slide.item.do}</p>
+									<p class="pair__do-text">{slide.item.do}</p>
 								</div>
 							</div>
 						)}
@@ -161,7 +173,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 						{slide.kind === 'outro' && (
 							<div class="outro">
 								{material.outro.map((text) => (
-									<p>{text}</p>
+									<p class="outro__text">{text}</p>
 								))}
 								<div class="outro__actions">
 									{chatEnabled && (
@@ -175,9 +187,9 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 										Контакты
 									</a>
 								</div>
-								<p class="outro__note muted">
-									Первая встреча — 20 минут онлайн, бесплатно. Напишите слово «Гармония», и мы подберём время.{' '}
-									<a href="/#about">Обо мне</a>
+								<p class="outro__text outro__note muted">
+									Первая встреча — 20 минут онлайн, бесплатно. Напишите слово «Гармония»,
+									и мы подберём время. <a href="/#about">Обо мне</a>
 								</p>
 							</div>
 						)}
@@ -211,7 +223,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	// Фон проявляется только после загрузки. Из кэша картинка бывает готова раньше скрипта.
 	const bg = document.querySelector<HTMLElement>('.deck__bg')!
 	const bgImg = bg.querySelector('img')!
-	const showBg = () => bg.classList.add('is-loaded')
+	const showBg = () => bg.classList.add('deck__bg--loaded')
 	if (bgImg.complete && bgImg.naturalWidth) showBg()
 	else bgImg.addEventListener('load', showBg, { once: true })
 
@@ -288,83 +300,83 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		display: grid;
 		grid-template-rows: auto minmax(0, 1fr) auto;
 		height: 100svh;
-	}
 
-	.deck__bg {
-		position: absolute;
-		inset: 0;
-		z-index: -1;
-		overflow: hidden;
-	}
+		&__bg {
+			position: absolute;
+			inset: 0;
+			z-index: -1;
+			overflow: hidden;
+		}
 
-	.deck__bg :global(img) {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		opacity: 0;
-		transition: opacity 1.4s var(--ease);
-	}
+		& :global(.deck__bg-img) {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			opacity: 0;
+			transition: opacity 1.4s var(--ease);
+		}
 
-	.deck__bg.is-loaded :global(img) {
-		opacity: 1;
-	}
+		&__bg--loaded :global(.deck__bg-img) {
+			opacity: 1;
+		}
 
-	.deck__veil {
-		position: absolute;
-		inset: 0;
-		background: var(--bg);
-		opacity: 0.78;
-		transition: background-color 1.4s var(--ease);
-	}
+		&__veil {
+			position: absolute;
+			inset: 0;
+			background: var(--bg);
+			opacity: 0.78;
+			transition: background-color 1.4s var(--ease);
+		}
 
-	.deck__top,
-	.deck__nav {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 16px;
-		padding-block: 16px;
-	}
+		&__top,
+		&__nav {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 16px;
+			padding-block: 16px;
+		}
 
-	.deck__back {
-		display: inline-flex;
-		align-items: center;
-		gap: 8px;
-		font-size: 0.9rem;
-		text-decoration: none;
-		opacity: 0.85;
-	}
+		&__back {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			font-size: 0.9rem;
+			text-decoration: none;
+			opacity: 0.85;
+		}
 
-	.deck__back:hover {
-		opacity: 1;
-	}
+		&__back:hover {
+			opacity: 1;
+		}
 
-	.deck__back :global(.deck__back-icon) {
-		transform: rotate(-90deg);
-		color: var(--accent);
-	}
+		&__back :global(.deck__back-icon) {
+			transform: rotate(-90deg);
+			color: var(--accent);
+		}
 
-	.deck__counter {
-		font-family: var(--font-serif);
-		font-variant-numeric: tabular-nums;
-		color: var(--muted);
-	}
+		&__counter {
+			font-family: var(--font-serif);
+			font-variant-numeric: tabular-nums;
+			color: var(--muted);
+		}
 
-	.deck__track {
-		display: flex;
-		overflow-x: auto;
-		overflow-y: hidden;
-		scroll-snap-type: x mandatory;
-		overscroll-behavior-x: contain;
-		scrollbar-width: none;
-	}
+		&__track {
+			display: flex;
+			overflow-x: auto;
+			overflow-y: hidden;
+			scroll-snap-type: x mandatory;
+			overscroll-behavior-x: contain;
+			scrollbar-width: none;
+		}
 
-	.deck__track::-webkit-scrollbar {
-		display: none;
-	}
+		&__track::-webkit-scrollbar {
+			display: none;
+		}
 
-	.deck__track:focus {
-		outline: none;
+		&__track:focus {
+			outline: none;
+		}
 	}
 
 	.slide {
@@ -374,13 +386,13 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		scroll-snap-align: start;
 		scroll-snap-stop: always;
 		scrollbar-width: thin;
-	}
 
-	/* Короткий слайд стоит по центру, длинный на маленьком экране прокручивается внутри. */
-	.slide__inner {
-		max-width: calc(820px + var(--gutter) * 2);
-		margin-block: auto;
-		padding-block: 24px;
+		/* Короткий слайд стоит по центру, длинный на маленьком экране прокручивается внутри. */
+		&__inner {
+			max-width: calc(820px + var(--gutter) * 2);
+			margin-block: auto;
+			padding-block: 24px;
+		}
 	}
 
 	.label {
@@ -407,18 +419,20 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	}
 
 	/* Обложка */
-	h1 {
+	.cover__title {
 		font-size: clamp(2rem, 5.2vw, 3.6rem);
 	}
 
-	.cover .btn {
-		border: 0;
-		font-family: inherit;
-		cursor: pointer;
-	}
+	.cover {
+		& .btn {
+			border: 0;
+			font-family: inherit;
+			cursor: pointer;
+		}
 
-	.cover .btn :global(.slide__arrow) {
-		transform: rotate(-90deg);
+		& .btn :global(.slide__arrow) {
+			transform: rotate(-90deg);
+		}
 	}
 
 	/* Фразы и ответы */
@@ -427,13 +441,13 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		margin-bottom: clamp(20px, 4svh, 40px);
 	}
 
-	.phrases li + li {
+	.phrases__item + .phrases__item {
 		margin-top: clamp(16px, 3.5svh, 32px);
 	}
 
 	.phrase,
 	.formula,
-	.pair__do p {
+	.pair__do-text {
 		font-family: var(--font-serif);
 		font-size: clamp(1.2rem, 2.6vw, 1.7rem);
 		line-height: 1.35;
@@ -445,7 +459,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		border-left: 1px solid var(--accent);
 	}
 
-	.replies li {
+	.replies__item {
 		padding-block: clamp(12px, 2.4svh, 22px);
 	}
 
@@ -486,7 +500,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		white-space: nowrap;
 	}
 
-	.examples li {
+	.examples__item {
 		line-height: 1.8;
 	}
 
@@ -504,209 +518,219 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		margin: 28px 0 12px;
 	}
 
-	.examples li {
-		font-size: 1.1rem;
-	}
+	.examples {
+		&__item {
+			font-size: 1.1rem;
+		}
 
-	.examples li + li {
-		margin-top: 12px;
+		&__item + &__item {
+			margin-top: 12px;
+		}
 	}
 
 	/* Ошибка и чем её заменить */
 	.pair {
 		display: grid;
 		gap: 20px;
-	}
 
-	.pair .eyebrow {
-		margin-bottom: 0;
-	}
+		& .eyebrow {
+			margin-bottom: 0;
+		}
 
-	.pair__num {
-		font-family: var(--font-serif);
-		font-size: clamp(3rem, 8vw, 5rem);
-		line-height: 1;
-		color: var(--accent);
-		transition: color 1.4s var(--ease);
-	}
+		&__num {
+			font-family: var(--font-serif);
+			font-size: clamp(3rem, 8vw, 5rem);
+			line-height: 1;
+			color: var(--accent);
+			transition: color 1.4s var(--ease);
+		}
 
-	.pair__num .muted {
-		font-size: 0.4em;
-	}
+		&__num .muted {
+			font-size: 0.4em;
+		}
 
-	/* Ошибка -- в красноватой плашке и зачёркнута, замена -- в плашке цвета акцента:
-	   с одного взгляда ясно, что говорить нельзя, а что можно. */
-	.pair__dont,
-	.pair__do {
-		display: grid;
-		gap: 8px;
-		padding: 16px 18px;
-		border-radius: 14px;
-		background: color-mix(in srgb, var(--tone) 14%, transparent);
-		box-shadow: inset 3px 0 0 var(--tone);
-	}
+		/* Ошибка -- в красноватой плашке и зачёркнута, замена -- в плашке цвета акцента:
+		   с одного взгляда ясно, что говорить нельзя, а что можно. */
+		&__dont,
+		&__do {
+			display: grid;
+			gap: 8px;
+			padding: 16px 18px;
+			border-radius: 14px;
+			background: color-mix(in srgb, var(--tone) 14%, transparent);
+			box-shadow: inset 3px 0 0 var(--tone);
+		}
 
-	/* Под ошибкой тёмно-красная подложка, а не светлая: на утренних слайдах светлая
-	   сливается с фоном. */
-	.pair__dont {
-		--tone: #ffa093;
-		background: color-mix(in srgb, #6e1a1f 32%, transparent);
-	}
+		/* Под ошибкой тёмно-красная подложка, а не светлая: на утренних слайдах светлая
+		   сливается с фоном. */
+		&__dont {
+			--tone: #ffa093;
+			background: color-mix(in srgb, #6e1a1f 32%, transparent);
+		}
 
-	.pair__do {
-		--tone: var(--accent);
-	}
+		&__do {
+			--tone: var(--accent);
+		}
 
-	.pair__dont p,
-	.pair__do p {
-		margin: 0;
-	}
+		&__dont-text,
+		&__do-text {
+			margin: 0;
+		}
 
-	.pair__dont .label {
-		color: var(--tone);
-	}
+		&__dont .label {
+			color: var(--tone);
+		}
 
-	.pair__dont p {
-		font-size: 1.1rem;
-		color: var(--muted);
-		text-decoration: line-through;
-		text-decoration-color: color-mix(in srgb, var(--tone) 35%, transparent);
-		text-decoration-thickness: 1.5px;
+		&__dont-text {
+			font-size: 1.1rem;
+			color: var(--muted);
+			text-decoration: line-through;
+			text-decoration-color: color-mix(in srgb, var(--tone) 35%, transparent);
+			text-decoration-thickness: 1.5px;
+		}
 	}
 
 	/* Финал */
-	.outro p:first-child {
-		font-family: var(--font-serif);
-		font-size: clamp(1.15rem, 2.6vw, 1.75rem);
-		line-height: 1.3;
-	}
+	.outro {
+		&__text:first-child {
+			font-family: var(--font-serif);
+			font-size: clamp(1.15rem, 2.6vw, 1.75rem);
+			line-height: 1.3;
+		}
 
-	.outro p {
-		font-size: 1.1rem;
-	}
+		&__text {
+			font-size: 1.1rem;
+		}
 
-	.outro__actions {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 10px;
-		margin-top: 20px;
-	}
+		&__actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin-top: 20px;
+		}
 
-	.outro__actions .btn {
-		padding: 0.85em 1.4em;
-	}
+		&__actions .btn {
+			padding: 0.85em 1.4em;
+		}
 
-	.outro__note {
-		margin-top: 24px;
-		font-size: 0.95rem !important;
+		&__note {
+			margin-top: 24px;
+			font-size: 0.95rem !important;
+		}
 	}
 
 	/* Навигация */
-	.deck__step {
-		display: grid;
-		place-items: center;
-		width: 48px;
-		height: 48px;
-		flex-shrink: 0;
-		border: 0;
-		border-radius: 50%;
-		background: var(--btn-bg);
-		color: var(--btn-fg);
-		cursor: pointer;
-		transition:
-			opacity 0.4s var(--ease),
-			transform 0.4s var(--ease);
-	}
+	.deck {
+		&__step {
+			display: grid;
+			place-items: center;
+			width: 48px;
+			height: 48px;
+			flex-shrink: 0;
+			border: 0;
+			border-radius: 50%;
+			background: var(--btn-bg);
+			color: var(--btn-fg);
+			cursor: pointer;
+			transition:
+				opacity 0.4s var(--ease),
+				transform 0.4s var(--ease);
+		}
 
-	.deck__step:hover:not(:disabled) {
-		transform: scale(1.06);
-	}
+		&__step:hover:not(:disabled) {
+			transform: scale(1.06);
+		}
 
-	.deck__step:disabled {
-		opacity: 0.25;
-		cursor: default;
-	}
+		&__step:disabled {
+			opacity: 0.25;
+			cursor: default;
+		}
 
-	.deck__step :global(.deck__step-prev) {
-		transform: rotate(90deg);
-	}
+		&__step :global(.deck__step-prev) {
+			transform: rotate(90deg);
+		}
 
-	.deck__step :global(.deck__step-next) {
-		transform: rotate(-90deg);
-	}
+		&__step :global(.deck__step-next) {
+			transform: rotate(-90deg);
+		}
 
-	/* Тонкая полоса во всю ширину по верхнему краю: сколько уже пролистано. */
-	.deck__progress {
-		position: absolute;
-		inset: 0 0 auto;
-		z-index: 1;
-		height: 3px;
-		background: var(--line);
-	}
+		/* Тонкая полоса во всю ширину по верхнему краю: сколько уже пролистано. */
+		&__progress {
+			position: absolute;
+			inset: 0 0 auto;
+			z-index: 1;
+			height: 3px;
+			background: var(--line);
+		}
 
-	.deck__progress span {
-		display: block;
-		height: 100%;
-		background: var(--accent);
-		transform: scaleX(0);
-		transform-origin: left;
-		transition: background-color 1.4s var(--ease);
+		&__progress-bar {
+			display: block;
+			height: 100%;
+			background: var(--accent);
+			transform: scaleX(0);
+			transform-origin: left;
+			transition: background-color 1.4s var(--ease);
+		}
 	}
 
 	/* Низкие телефоны вроде iPhone SE: поля и шрифты мельче, слайд влезает целиком. */
 	@media (max-height: 700px) {
-		.deck__top,
-		.deck__nav {
-			padding-block: 8px;
-		}
+		.deck {
+			&__top,
+			&__nav {
+				padding-block: 8px;
+			}
 
-		.deck__step {
-			width: 40px;
-			height: 40px;
+			&__step {
+				width: 40px;
+				height: 40px;
+			}
 		}
 
 		.slide__inner {
 			padding-block: 8px;
 		}
 
-		h1,
+		.cover__title,
 		.slide__title {
 			font-size: 1.7rem;
 		}
 
 		.lead,
-		.outro p,
-		.examples li {
+		.outro__text,
+		.examples__item {
 			font-size: 1rem;
 		}
 
 		.phrase,
 		.formula,
 		.reply,
-		.pair__do p {
+		.pair__do-text {
 			font-size: 1.08rem;
 		}
 
-		.outro p:first-child {
-			font-size: 1.05rem;
-			line-height: 1.28;
-		}
+		.outro {
+			&__text:first-child {
+				font-size: 1.05rem;
+				line-height: 1.28;
+			}
 
-		.outro p:not(:first-child) {
-			font-size: 0.92rem !important;
-			margin-bottom: 0.6em;
-		}
+			&__text:not(:first-child) {
+				font-size: 0.92rem !important;
+				margin-bottom: 0.6em;
+			}
 
-		.outro__actions {
-			margin-top: 12px;
-		}
+			&__actions {
+				margin-top: 12px;
+			}
 
-		.outro .btn {
-			padding: 0.75em 1.4em;
-		}
+			& .btn {
+				padding: 0.75em 1.4em;
+			}
 
-		.outro__note {
-			margin-top: 12px;
+			&__note {
+				margin-top: 12px;
+			}
 		}
 	}
 </style>

@@ -25,8 +25,8 @@ const base = home ? '' : '/'
 			<ul class="nav">
 				{nav.map((item) => (
 					<li>
-						<a href={base + item.href}>
-							<Icon name={item.icon} size={16} />
+						<a href={base + item.href} class="nav__link">
+							<Icon name={item.icon} size={16} class="nav__icon" />
 							{item.label}
 						</a>
 					</li>
@@ -67,7 +67,7 @@ const base = home ? '' : '/'
 	/* Телефон: за первым экраном шапка уезжает вместе со своей кнопкой,
 	   а запись живёт в круглой кнопке, которая выезжает справа в угол. */
 	@media (max-width: 999px) {
-		:global(html.past-hero) .header {
+		:global(.page--past-hero) .header {
 			transform: translateY(-100%);
 		}
 	}
@@ -88,41 +88,41 @@ const base = home ? '' : '/'
 		transition:
 			transform 0.6s var(--ease),
 			visibility 0s 0.6s;
-	}
 
-	.fab__bg {
-		position: absolute;
-		inset: 0;
-		border-radius: 999px;
-		background: var(--btn-bg);
-		box-shadow: 0 10px 30px -12px rgb(20 10 20 / 0.45);
-	}
+		&__bg {
+			position: absolute;
+			inset: 0;
+			border-radius: 999px;
+			background: var(--btn-bg);
+			box-shadow: 0 10px 30px -12px rgb(20 10 20 / 0.45);
+		}
 
-	.fab__icons {
-		position: relative;
-		display: grid;
-	}
+		&__icons {
+			position: relative;
+			display: grid;
+		}
 
-	/* У контактов записываться уже некуда: календарь уступает место стрелке наверх. */
-	.fab :global(.fab__icon) {
-		grid-area: 1 / 1;
-		transition:
-			opacity 0.3s var(--ease),
-			transform 0.45s var(--ease);
+		/* У контактов записываться уже некуда: календарь уступает место стрелке наверх. */
+		& :global(.fab__icon) {
+			grid-area: 1 / 1;
+			transition:
+				opacity 0.3s var(--ease),
+				transform 0.45s var(--ease);
+		}
 	}
 
 	.fab :global(.fab__icon--up),
-	:global(html.at-contacts) .fab :global(.fab__icon--book) {
+	:global(.page--at-contacts) .fab :global(.fab__icon--book) {
 		opacity: 0;
 		transform: rotate(-90deg) scale(0.6);
 	}
 
-	:global(html.at-contacts) .fab :global(.fab__icon--up) {
+	:global(.page--at-contacts) .fab :global(.fab__icon--up) {
 		opacity: 1;
 		transform: none;
 	}
 
-	:global(html.past-hero) .fab {
+	:global(.page--past-hero) .fab {
 		transform: none;
 		visibility: visible;
 		pointer-events: auto;
@@ -131,7 +131,7 @@ const base = home ? '' : '/'
 
 	@media (prefers-reduced-motion: reduce) {
 		.fab,
-		:global(html.past-hero) .fab {
+		:global(.page--past-hero) .fab {
 			transition: none;
 		}
 	}
@@ -142,21 +142,23 @@ const base = home ? '' : '/'
 		}
 	}
 
-	.header::after {
-		content: '';
-		position: absolute;
-		inset: auto 0 0;
-		height: 1px;
-		background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
-		opacity: 0.6;
-	}
+	.header {
+		&::after {
+			content: '';
+			position: absolute;
+			inset: auto 0 0;
+			height: 1px;
+			background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
+			opacity: 0.6;
+		}
 
-	.header__inner {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 24px;
-		min-height: 76px;
+		&__inner {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 24px;
+			min-height: 76px;
+		}
 	}
 
 	.logo {
@@ -165,37 +167,37 @@ const base = home ? '' : '/'
 		gap: 12px;
 		text-decoration: none;
 		line-height: 1.15;
-	}
 
-	.logo :global(.logo__mark) {
-		flex-shrink: 0;
-		color: var(--accent);
-		transition:
-			color 1.4s var(--ease),
-			transform 0.6s var(--ease);
-	}
+		& :global(.logo__mark) {
+			flex-shrink: 0;
+			color: var(--accent);
+			transition:
+				color 1.4s var(--ease),
+				transform 0.6s var(--ease);
+		}
 
-	.logo:hover :global(.logo__mark) {
-		transform: rotate(-8deg);
-	}
+		&:hover :global(.logo__mark) {
+			transform: rotate(-8deg);
+		}
 
-	.logo__text {
-		display: flex;
-		flex-direction: column;
-	}
+		&__text {
+			display: flex;
+			flex-direction: column;
+		}
 
-	.logo__name {
-		font-family: var(--font-serif);
-		font-size: 1.25rem;
-	}
+		&__name {
+			font-family: var(--font-serif);
+			font-size: 1.25rem;
+		}
 
-	.logo__role {
-		display: none;
-		font-size: 0.66rem;
-		letter-spacing: 0.18em;
-		text-transform: uppercase;
-		color: var(--muted);
-		transition: color 1.4s var(--ease);
+		&__role {
+			display: none;
+			font-size: 0.66rem;
+			letter-spacing: 0.18em;
+			text-transform: uppercase;
+			color: var(--muted);
+			transition: color 1.4s var(--ease);
+		}
 	}
 
 	.nav {
@@ -204,26 +206,26 @@ const base = home ? '' : '/'
 		margin: 0;
 		padding: 0;
 		gap: 24px;
-	}
 
-	.nav a {
-		display: inline-flex;
-		white-space: nowrap;
-		align-items: center;
-		gap: 7px;
-		text-decoration: none;
-		font-size: 0.9rem;
-		opacity: 0.8;
-		transition: opacity 0.3s;
-	}
+		&__link {
+			display: inline-flex;
+			white-space: nowrap;
+			align-items: center;
+			gap: 7px;
+			text-decoration: none;
+			font-size: 0.9rem;
+			opacity: 0.8;
+			transition: opacity 0.3s;
+		}
 
-	.nav a :global(svg) {
-		color: var(--accent);
-		transition: color 1.4s var(--ease);
-	}
+		& :global(.nav__icon) {
+			color: var(--accent);
+			transition: color 1.4s var(--ease);
+		}
 
-	.nav a:hover {
-		opacity: 1;
+		&__link:hover {
+			opacity: 1;
+		}
 	}
 
 	.header__cta {
@@ -246,7 +248,7 @@ const base = home ? '' : '/'
 	/* Шесть пунктов меню с иконками и подписью под именем влезают только от 1280px. */
 	@media (min-width: 1000px) and (max-width: 1279px) {
 		.logo__role,
-		.nav a :global(svg) {
+		.nav :global(.nav__icon) {
 			display: none;
 		}
 	}
