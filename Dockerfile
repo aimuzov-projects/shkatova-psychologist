@@ -6,7 +6,9 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund --loglevel=error
 COPY . .
-RUN npm run build
+# .env приходит секретом сборки: телефон нужен на этапе build,
+# но в слоях образа файла не остаётся.
+RUN --mount=type=secret,id=env,target=/app/.env npm run build
 
 FROM nginx:1.29-alpine
 COPY deploy/nginx.conf /etc/nginx/conf.d/default.conf

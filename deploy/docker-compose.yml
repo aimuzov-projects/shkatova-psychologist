@@ -13,6 +13,7 @@ services:
   site:
     build:
       context: ..
+      secrets: [env]
     image: shkatova-site
     container_name: shkatova-site
     restart: unless-stopped
@@ -38,6 +39,10 @@ services:
       - edge
       - vpn
     logging: *logging
+
+secrets:
+  env:
+    file: ../.env
 
 networks:
   edge:

@@ -153,8 +153,11 @@ export const faq: { icon: IconName; q: string; a: string }[] = [
 	},
 ]
 
-// В HTML номер выводится закодированным, см. #/lib/phone.ts. Здесь он открытым текстом для промпта ассистента.
-const phone = '79000000000'
+// Номер берём из окружения, чтобы его не было в открытом репозитории.
+// В HTML он выводится закодированным (см. #/lib/phone.ts),
+// а открытым текстом нужен только промпту ассистента.
+const phone = process.env.CONTACT_PHONE
+if (!phone) throw new Error('CONTACT_PHONE не задан: добавьте его в .env, образец в .env.example')
 
 export const contacts = {
 	telegram: { label: '@tatiana_shkatova', href: 'https://t.me/tatiana_shkatova' },
