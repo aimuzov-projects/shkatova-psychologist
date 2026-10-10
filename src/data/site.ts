@@ -1,4 +1,4 @@
-import type { IconName } from '#/components/Icon.astro'
+import type { IconName } from '#/lib/icons.ts'
 import { formatPhone, phoneHref } from '#/lib/phone.ts'
 
 export const person = {
