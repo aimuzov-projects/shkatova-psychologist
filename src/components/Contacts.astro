@@ -2,11 +2,12 @@
 import Icon from '#/components/Icon.astro'
 import { contacts } from '#/data/site.ts'
 import { enabled as chatEnabled } from '#/data/chat.ts'
+import { encodePhone } from '#/lib/phone.ts'
 
 const items = [
 	{ title: 'Telegram', icon: 'plane', ...contacts.telegram, external: true },
-	{ title: 'WhatsApp', icon: 'chat', ...contacts.whatsapp, external: true },
-	{ title: 'Телефон', icon: 'phone', ...contacts.phone, external: false },
+	{ title: 'WhatsApp', icon: 'chat', ...contacts.whatsapp, external: true, reveal: 'whatsapp' },
+	{ title: 'Телефон', icon: 'phone', ...contacts.phone, external: false, reveal: 'tel' },
 	{ title: 'ВКонтакте', icon: 'people', ...contacts.vk, external: true },
 ] as const
 ---
@@ -42,28 +43,40 @@ const items = [
 		)}
 
 		<ul class="links soft-divide reveal" data-delay="3">
-			{items.map((i) => (
-				<li>
-					<a
-						href={i.href}
-						class="links__link"
-						{...(i.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-					>
-						<span class="links__title muted">
-							<Icon name={i.icon} size={22} class="links__icon" />
-							{i.title}
-						</span>
-						<span class="links__value selectable">{i.label}</span>
-						<span class="links__go" aria-hidden="true">
-							<Icon name="arrow-out" size={22} />
-						</span>
-					</a>
-				</li>
-			))}
+			{items.map((i) => {
+				// Номер в разметку не попадает: ссылку и подпись собирает phone-reveal.ts, а без скриптов пункта нет.
+				const secret = 'reveal' in i
+				return (
+					<li {...(secret ? { 'data-phone-item': '', hidden: true } : {})}>
+						<a
+							class="links__link"
+							{...(secret
+								? { 'data-phone': encodePhone(i.phone), 'data-phone-href': i.reveal }
+								: { href: i.href })}
+							{...(i.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+						>
+							<span class="links__title muted">
+								<Icon name={i.icon} size={22} class="links__icon" />
+								{i.title}
+							</span>
+							<span class="links__value selectable" {...(secret ? { 'data-phone-label': '' } : {})}>
+								{secret ? '' : i.label}
+							</span>
+							<span class="links__go" aria-hidden="true">
+								<Icon name="arrow-out" size={22} />
+							</span>
+						</a>
+					</li>
+				)
+			})}
 		</ul>
 		<p class="contacts__address muted">{contacts.address}</p>
 	</div>
 </section>
+
+<script>
+	import '#/lib/phone-reveal.ts'
+</script>
 
 <style>
 	.links {
