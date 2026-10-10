@@ -1,4 +1,4 @@
-import type { IconName } from '../components/Icon.astro'
+import type { IconName } from '@/components/Icon.astro'
 
 // Бесплатные материалы: у каждого своя страница-презентация /materials/<slug>/
 // и карточка на главной. Блок -- слайд, а ошибки из dont-do идут по одной на слайд.

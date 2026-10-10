@@ -1,9 +1,9 @@
 ---
-import Base from '../layouts/Base.astro'
-import Header from '../components/Header.astro'
-import Icon from '../components/Icon.astro'
-import { greeting, limits } from '../data/chat'
-import { contacts, person } from '../data/site'
+import Base from '@/layouts/Base.astro'
+import Header from '@/components/Header.astro'
+import Icon from '@/components/Icon.astro'
+import { greeting, limits } from '@/data/chat'
+import { contacts, person } from '@/data/site'
 ---
 
 <Base
@@ -116,8 +116,8 @@ import { contacts, person } from '../data/site'
 </Base>
 
 <script>
-	import { greeting, limits } from '../data/chat'
-	import { typograph } from '../lib/typograph'
+	import { greeting, limits } from '@/data/chat'
+	import { typograph } from '@/lib/typograph'
 
 	type Message = { role: 'user' | 'assistant'; content: string }
 	type State = { consent: boolean; messages: Message[]; done: boolean; delivered: boolean }

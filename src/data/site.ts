@@ -1,4 +1,4 @@
-import type { IconName } from '../components/Icon.astro'
+import type { IconName } from '@/components/Icon.astro'
 
 export const person = {
 	name: 'Татьяна Шкатова',
