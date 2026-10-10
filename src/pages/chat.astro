@@ -1,4 +1,7 @@
 ---
+import { Picture } from 'astro:assets'
+
+import night from '#/assets/night.jpg'
 import Base from '#/layouts/Base.astro'
 import Chat from '#/components/Chat.svelte'
 import Header from '#/components/Header.astro'
@@ -13,6 +16,17 @@ import { encodePhone } from '#/lib/phone.ts'
 >
 	<Header home={false} />
 	<main class="chat" data-stage="night">
+		<div class="chat__bg" aria-hidden="true">
+			<Picture
+				class="chat__bg-img"
+				src={night}
+				formats={['avif']}
+				fallbackFormat="webp"
+				alt=""
+				widths={[480, 768, 1200]}
+				sizes="100vw"
+			/>
+		</div>
 		<div class="container chat__inner">
 			<span class="eyebrow">Подготовка к встрече</span>
 			<h1 class="chat__title">Расскажите о себе</h1>
@@ -42,7 +56,29 @@ import { encodePhone } from '#/lib/phone.ts'
 		min-height: 100dvh;
 		padding-block: calc(var(--section-y) + 64px) 32px;
 
+		/* Ночное небо стоит на месте, переписка едет поверх. Под вуалью оно еле проступает. */
+		&__bg {
+			position: fixed;
+			inset: 0;
+			overflow: hidden;
+		}
+
+		&__bg::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			opacity: 0.92;
+			background: var(--bg);
+		}
+
+		& :global(.chat__bg-img) {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
 		&__inner {
+			position: relative;
 			max-width: calc(760px + var(--gutter) * 2);
 		}
 
