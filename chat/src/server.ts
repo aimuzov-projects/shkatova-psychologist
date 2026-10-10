@@ -120,7 +120,7 @@ async function chat(req: IncomingMessage, res: ServerResponse) {
 		if (!abort.signal.aborted) {
 			status = 'error'
 			console.error('completion failed:', (error as Error).message)
-			send('error', { error: 'Не получилось ответить, попробуйте отправить сообщение ещё раз' })
+			send('error', { error: 'Не получилось ответить, попробуйте отправить сообщение ещё раз' })
 		} else status = 'aborted'
 	}
 	res.end()

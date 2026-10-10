@@ -47,7 +47,7 @@ const slots = (text: string) =>
 const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».` : `«${text}»`)
 ---
 
-<Base title={`${material.title} — ${person.name}`} description={material.description}>
+<Base title={`${material.title} — ${person.name}`} description={material.description}>
 	<main class="deck">
 		<div class="deck__bg" aria-hidden="true">
 			<Picture src={sea} formats={['avif']} fallbackFormat="webp" alt="" widths={[480, 768]} sizes="100vw" />
@@ -167,7 +167,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 									{chatEnabled && (
 										<a href="/chat/" class="btn">
 											<Icon name="chat" size={18} />
-											Рассказать о себе ассистенту
+											Рассказать о себе ассистенту
 										</a>
 									)}
 									<a href="/#contacts" class={chatEnabled ? 'btn btn--ghost' : 'btn'}>
@@ -176,8 +176,8 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 									</a>
 								</div>
 								<p class="outro__note muted">
-									Первая встреча — 20 минут онлайн, бесплатно. Напишите слово «Гармония», и мы подберём время.{' '}
-									<a href="/#about">Обо мне</a>
+									Первая встреча — 20 минут онлайн, бесплатно. Напишите слово «Гармония», и мы подберём время.{' '}
+									<a href="/#about">Обо мне</a>
 								</p>
 							</div>
 						)}
