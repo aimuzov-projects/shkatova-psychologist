@@ -13,7 +13,7 @@ const items = [
 ---
 
 <section class="section contacts" id="contacts" data-stage="day">
-	<div class="container">
+	<div class="container contacts__inner">
 		<span class="eyebrow reveal">Контакты</span>
 		<h2 class="reveal" data-delay="1">
 			Напишите, как получится
@@ -254,6 +254,12 @@ const items = [
 		50% {
 			opacity: 1;
 		}
+	}
+
+	/* Над горами из футера, которые поднимаются под контакты. */
+	.contacts__inner {
+		position: relative;
+		z-index: 1;
 	}
 
 	.contacts__address {
