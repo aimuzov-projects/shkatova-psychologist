@@ -41,7 +41,10 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 			<link rel="preload" as="font" type="font/woff2" href={href} crossorigin />
 		))}
 
-		<!-- Yandex.Metrika counter -->
+		{/* Яндекс.Метрика. Скрипт счётчика (~85 КБ) на мобильном отнимал канал у шрифтов
+		    и первого фото, поэтому грузим его по первому действию или через 4 с после load,
+		    вызовы ym до того ждут в очереди. Вебвизор выключен: на мобильном он поднимал LCP
+		    с ~2.1 до ~3 с. Комментарии здесь, а не в скрипте: is:inline уходит в HTML как есть. */}
 		<script is:inline>
 			;(function (m, e, t, r, i, k, a) {
 				m[i] =
@@ -55,8 +58,6 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 						return
 					}
 				}
-				// Скрипт счётчика (~85 КБ) на мобильном отнимал канал у шрифтов и первого фото.
-				// Грузим по первому действию или через 4 с после load, вызовы ym до того ждут в очереди.
 				var events = ['scroll', 'pointerdown', 'keydown', 'touchstart']
 				var load = function () {
 					if (k) return
@@ -81,7 +82,6 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 
 			ym(113579697, 'init', {
 				ssr: true,
-				// Вебвизор выключен: на мобильном он поднимал LCP с ~2.1 до ~3 с.
 				webvisor: false,
 				clickmap: true,
 				ecommerce: 'dataLayer',
@@ -91,7 +91,6 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 				trackLinks: true,
 			})
 		</script>
-		<!-- /Yandex.Metrika counter -->
 	</head>
 	<body>
 		<noscript>
