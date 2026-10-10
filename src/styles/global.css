@@ -27,7 +27,7 @@
 
 	--container: 1180px;
 	--gutter: 20px;
-	--section-y: clamp(56px, 7vw, 104px);
+	--section-y: clamp(32px, 3.5vw, 52px);
 	--ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
