@@ -8,7 +8,7 @@ A static site built with [Astro](https://astro.build). The only interactive part
 
 ## Getting started
 
-Requires Node 24.
+Requires Node 26.11.1, the same version is pinned in `package.json` and the Dockerfiles.
 
 ```sh
 cp .env.example .env   # fill in: the phone is required, the keys are only needed by the chat
