@@ -4,8 +4,9 @@ import type { ImageMetadata } from 'astro'
 
 // Фото над текстом секции на телефоне: уходит в фон снизу, сверху тонет в шапке.
 // На десктопе прячется, там фото показывает колонка Story.
-interface Props {
+type Props = {
 	src: ImageMetadata
+	/** Значение `object-position` для кадра, по умолчанию `50% 0%`. */
 	position?: string
 }
 
@@ -13,7 +14,7 @@ const { src, position = '50% 0%' } = Astro.props
 ---
 
 <div class="section-photo" aria-hidden="true">
-	<div class="veil" data-veil></div>
+	<div class="veil" data-veil />
 	<div class="px" data-parallax="-0.2">
 		<Picture
 			class="section-photo__img"

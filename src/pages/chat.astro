@@ -1,9 +1,9 @@
 ---
-import Base from '../layouts/Base.astro'
-import Header from '../components/Header.astro'
-import Icon from '../components/Icon.astro'
-import { greeting, limits } from '../data/chat'
-import { contacts, person } from '../data/site'
+import Base from '#/layouts/Base.astro'
+import Header from '#/components/Header.astro'
+import Icon from '#/components/Icon.astro'
+import { greeting, limits } from '#/data/chat.ts'
+import { contacts, person } from '#/data/site.ts'
 ---
 
 <Base
@@ -76,7 +76,7 @@ import { contacts, person } from '../data/site'
 				</ol>
 
 				<div class="dialog__finish" data-finish hidden>
-					<p data-finish-text></p>
+					<p data-finish-text />
 					<p class="muted" data-fallback hidden>
 						Не получилось передать разговор автоматически. Пожалуйста, напишите Татьяне напрямую:{' '}
 						<a class="icon-link" href={contacts.telegram.href} target="_blank" rel="noopener noreferrer">
@@ -92,7 +92,7 @@ import { contacts, person } from '../data/site'
 					</p>
 				</div>
 
-				<p class="dialog__error" data-error role="alert" hidden></p>
+				<p class="dialog__error" data-error role="alert" hidden />
 
 				<form class="composer" data-form>
 					<textarea
@@ -116,8 +116,8 @@ import { contacts, person } from '../data/site'
 </Base>
 
 <script>
-	import { greeting, limits } from '../data/chat'
-	import { typograph } from '../lib/typograph'
+	import { greeting, limits } from '#/data/chat.ts'
+	import { typograph } from '#/lib/typograph.ts'
 
 	type Message = { role: 'user' | 'assistant'; content: string }
 	type State = { consent: boolean; messages: Message[]; done: boolean; delivered: boolean }

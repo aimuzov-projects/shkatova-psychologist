@@ -1,8 +1,10 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
-import { limits } from '../../src/data/chat.ts'
+
+import { limits } from '#/data/chat.ts'
+
 import { complete, type Message } from './openrouter.ts'
-import { formatSummary, sendSummary } from './telegram.ts'
 import type { Summary } from './prompt.ts'
+import { formatSummary, sendSummary } from './telegram.ts'
 
 const port = Number(process.env.PORT || 8787)
 const production = process.env.NODE_ENV === 'production'

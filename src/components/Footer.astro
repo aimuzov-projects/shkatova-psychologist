@@ -1,8 +1,8 @@
 ---
-import { person } from '../data/site'
+import { person } from '#/data/site.ts'
 
-interface Props {
-	// Стадия страницы: на внутренних страницах футер не должен перекрашивать фон.
+type Props = {
+	/** `data-stage` футера, по умолчанию `day`. Вне главной -- как у страницы, иначе фон перекрасится. */
 	stage?: string
 }
 

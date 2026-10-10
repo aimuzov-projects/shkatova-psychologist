@@ -1,8 +1,8 @@
 ---
-import Icon from './Icon.astro'
-import SectionPhoto from './SectionPhoto.astro'
-import { services } from '../data/site'
-import photo from '../assets/services.jpg'
+import Icon from '#/components/Icon.astro'
+import SectionPhoto from '#/components/SectionPhoto.astro'
+import { services } from '#/data/site.ts'
+import photo from '#/assets/services.jpg'
 
 const offer = services.find((s) => s.popular)
 const rest = services.filter((s) => !s.popular)

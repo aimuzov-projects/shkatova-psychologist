@@ -5,15 +5,20 @@ import type { ImageMetadata } from 'astro'
 // Фото справа от нескольких секций. Без trigger видно сразу, остальные включаются,
 // когда trigger выше линии at (до 1 -- доля экрана, больше -- пиксели от верха).
 // На телефоне колонка скрыта, но eager-фото всё равно качается: sizes 1px берёт самый лёгкий файл.
-interface Shot {
+type Shot = {
 	src: ImageMetadata
+	/** Селектор элемента, который включает кадр. Без него кадр виден сразу. */
 	trigger?: string
+	/** Линия для `trigger`: до 1 -- доля экрана, больше -- пиксели от верха. По умолчанию 0. */
 	at?: number
 }
 
-interface Props {
+type Props = {
+	/** Кадры по порядку прокрутки: активен последний, чей `trigger` уже прошёл свою линию. */
 	shots: Shot[]
+	/** Сколько строк сетки (секций из slot) занимает колонка с фото, по умолчанию 2. */
 	rows?: number
+	/** Грузить первый кадр сразу и с высоким приоритетом, для фото на первом экране. */
 	eager?: boolean
 }
 
@@ -38,7 +43,7 @@ const { shots, rows = 2, eager = false } = Astro.props
 					fetchpriority={eager && i === 0 ? 'high' : 'auto'}
 				/>
 			))}
-			<div class="veil" data-veil="story"></div>
+			<div class="veil" data-veil="story" />
 		</div>
 	</div>
 	<slot />

@@ -1,12 +1,12 @@
 ---
 import type { GetStaticPaths } from 'astro'
 import { Picture } from 'astro:assets'
-import Base from '../../layouts/Base.astro'
-import Icon from '../../components/Icon.astro'
-import { materials, type Material, type MaterialBlock } from '../../data/materials'
-import { person } from '../../data/site'
-import { enabled as chatEnabled } from '../../data/chat'
-import sea from '../../assets/materials/sea.png'
+import Base from '#/layouts/Base.astro'
+import Icon from '#/components/Icon.astro'
+import { materials, type Material, type MaterialBlock } from '#/data/materials.ts'
+import { person } from '#/data/site.ts'
+import { enabled as chatEnabled } from '#/data/chat.ts'
+import sea from '#/assets/materials/sea.png'
 
 export const getStaticPaths = (() =>
 	materials.map((material) => ({ params: { slug: material.slug }, props: { material } }))) satisfies GetStaticPaths
@@ -59,11 +59,11 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 				sizes="100vw"
 				class="deck__bg-img"
 			/>
-			<div class="deck__veil"></div>
+			<div class="deck__veil" />
 		</div>
 
 		<div class="deck__progress" aria-hidden="true">
-			<span class="deck__progress-bar" data-progress></span>
+			<span class="deck__progress-bar" data-progress />
 		</div>
 
 		<header class="deck__top container">

@@ -1,4 +1,4 @@
-import type { IconName } from '../components/Icon.astro'
+import type { IconName } from '#/components/Icon.astro'
 
 // Бесплатные материалы: у каждого своя страница-презентация /materials/<slug>/
 // и карточка на главной. Блок -- слайд, а ошибки из dont-do идут по одной на слайд.
@@ -10,7 +10,7 @@ export type MaterialBlock =
 	| { type: 'formula'; title: string; formula: string; examplesTitle: string; examples: string[] }
 	| { type: 'dont-do'; title: string; dontLabel: string; doLabel: string; items: { dont: string; do: string }[] }
 
-export interface Material {
+export type Material = {
 	slug: string
 	icon: IconName
 	audience: string

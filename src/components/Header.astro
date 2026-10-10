@@ -1,10 +1,10 @@
 ---
-import Icon from './Icon.astro'
-import Logo from './Logo.astro'
-import { nav, person } from '../data/site'
+import Icon from '#/components/Icon.astro'
+import Logo from '#/components/Logo.astro'
+import { nav, person } from '#/data/site.ts'
 
-// Вне главной якоря секций ведут на главную.
-interface Props {
+type Props = {
+	/** `false` вне главной: якоря шапки ведут на `/#...`. */
 	home?: boolean
 }
 
@@ -41,7 +41,7 @@ const base = home ? '' : '/'
 </header>
 
 <a href="#contacts" class="fab" aria-label="Записаться">
-	<span class="fab__bg"></span>
+	<span class="fab__bg" />
 	<span class="fab__icons">
 		<Icon name="calendar" size={24} class="fab__icon fab__icon--book" />
 		<Icon name="arrow-up" size={24} class="fab__icon fab__icon--up" />
