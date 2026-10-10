@@ -35,12 +35,16 @@ const stages = ['night', 'dusk', 'dawn', 'rose', 'morning', 'day']
 const stageOf = (i: number) => stages[Math.round((i / (slides.length - 1)) * (stages.length - 1))]
 const pad = (n: number) => String(n).padStart(2, '0')
 
-// "Мне нужна {1:просьба}" -> куски текста, у выделенных номер места формулы.
+// "Пожалуйста, {1:просьба}" -> куски текста, у выделенных номер места формулы.
 const slots = (text: string) =>
 	text.split(/(\{\d+:[^}]+\})/).map((part) => {
 		const m = part.match(/^\{(\d+):(.+)\}$/)
 		return m ? { text: m[2], slot: m[1] } : { text: part }
 	})
+
+// Реплика в кавычках: точка по правилам набора встаёт после закрывающей кавычки,
+// вопрос и восклицание остаются внутри.
+const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».` : `«${text}»`)
 ---
 
 <Base title={`${material.title} — ${person.name}`} description={material.description}>
@@ -93,7 +97,7 @@ const slots = (text: string) =>
 										{slide.block.items.map((item) => (
 											<li>
 												<span class="label">{item.label}</span>
-												<blockquote class="phrase">«{item.text}»</blockquote>
+												<blockquote class="phrase">{quote(item.text)}</blockquote>
 											</li>
 										))}
 									</ol>
@@ -103,7 +107,7 @@ const slots = (text: string) =>
 										{slide.block.items.map((item) => (
 											<li>
 												<span class="muted">{item.label}</span>
-												<blockquote class="reply">«{item.text}»</blockquote>
+												<blockquote class="reply">{quote(item.text)}</blockquote>
 											</li>
 										))}
 									</ol>
@@ -119,7 +123,7 @@ const slots = (text: string) =>
 										<ul class="examples">
 											{slide.block.examples.map((text) => (
 												<li>
-													{slots(`«${text}»`).map((p) =>
+													{slots(quote(text)).map((p) =>
 														p.slot ? <mark class={`fill fill--${p.slot}`}>{p.text}</mark> : p.text,
 													)}
 												</li>

@@ -193,6 +193,8 @@ h3 {
 	line-height: 1.08;
 	margin: 0 0 0.5em;
 	letter-spacing: -0.01em;
+	/* Не оставлять одно слово на последней строке заголовка. */
+	text-wrap: balance;
 }
 
 h2 {
@@ -205,6 +207,7 @@ h3 {
 
 p {
 	margin: 0 0 1em;
+	text-wrap: pretty;
 }
 
 a {

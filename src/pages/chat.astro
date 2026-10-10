@@ -115,6 +115,7 @@ import { contacts, person } from '../data/site'
 
 <script>
 	import { greeting, limits } from '../data/chat'
+	import { typographText as typo } from '../lib/typograph'
 
 	type Message = { role: 'user' | 'assistant'; content: string }
 	type State = { consent: boolean; messages: Message[]; done: boolean; delivered: boolean }
@@ -152,7 +153,8 @@ import { contacts, person } from '../data/site'
 	const bubble = (role: Message['role'], text: string) => {
 		const li = document.createElement('li')
 		li.className = `msg msg--${role}`
-		li.textContent = text
+		// Типограф на сборке сюда не дотягивается. Текст клиентки остаётся как написан.
+		li.textContent = role === 'assistant' ? typo(text) : text
 		log.append(li)
 		return li
 	}
@@ -168,7 +170,7 @@ import { contacts, person } from '../data/site'
 		form.hidden = true
 		finish.hidden = false
 		$('[data-finish-text]').textContent = state.delivered
-			? 'Разговор передан Татьяне. Если захотите что-то добавить, можно написать ей напрямую.'
+			? typo('Разговор передан Татьяне. Если захотите что-то добавить, можно написать ей напрямую.')
 			: ''
 		$<HTMLElement>('[data-fallback]').hidden = state.delivered
 	}
@@ -224,7 +226,7 @@ import { contacts, person } from '../data/site'
 					if (event === 'delta') {
 						reply += data.text
 						typing.classList.remove('msg--typing')
-						typing.textContent = reply.trimStart()
+						typing.textContent = typo(reply.trimStart())
 						scrollDown()
 					} else if (event === 'done') done = data
 					else if (event === 'error') throw new Error(data.error)
@@ -237,7 +239,7 @@ import { contacts, person } from '../data/site'
 			typing.remove()
 			log.lastElementChild?.remove()
 			input.value = text
-			error.textContent = (e as Error).message
+			error.textContent = typo((e as Error).message)
 			error.hidden = false
 			setBusy(false)
 			resize()
@@ -246,7 +248,7 @@ import { contacts, person } from '../data/site'
 
 		reply = reply.trim() || farewell
 		typing.classList.remove('msg--typing')
-		typing.textContent = reply
+		typing.textContent = typo(reply)
 		state.messages.push({ role: 'assistant', content: reply })
 		if (done) {
 			state.done = true
@@ -272,8 +274,9 @@ import { contacts, person } from '../data/site'
 		const text = input.value.trim()
 		if (!text || input.disabled) return
 		if (state.messages.length + 2 > limits.messages) {
-			error.textContent =
-				'Разговор получился длинным. Напишите, пожалуйста, Татьяне напрямую — она обязательно ответит.'
+			error.textContent = typo(
+				'Разговор получился длинным. Напишите, пожалуйста, Татьяне напрямую — она обязательно ответит.',
+			)
 			error.hidden = false
 			return
 		}
@@ -294,7 +297,7 @@ import { contacts, person } from '../data/site'
 	input.addEventListener('input', resize)
 
 	$('[data-restart]').addEventListener('click', () => {
-		if (state.messages.length && !state.done && !confirm('Начать разговор заново? Написанное сотрётся.')) return
+		if (state.messages.length && !state.done && !confirm(typo('Начать разговор заново? Написанное сотрётся.'))) return
 		Object.assign(state, { messages: [], done: false, delivered: false })
 		save()
 		form.hidden = false
