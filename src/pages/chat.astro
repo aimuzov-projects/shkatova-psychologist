@@ -15,6 +15,22 @@ import { contacts, person } from '#/data/site.ts'
 		<div class="container chat__inner">
 			<span class="eyebrow">Подготовка к встрече</span>
 			<h1 class="chat__title">Расскажите о себе</h1>
+			<noscript>
+				<p class="lead">
+					Чат работает только с включённым JavaScript, а в вашем браузере он выключен. Напишите Татьяне
+					напрямую в{' '}
+					<a class="icon-link" href={contacts.telegram.href} target="_blank" rel="noopener noreferrer">
+						<Icon name="plane" size={16} class="icon-link__icon" />
+						Telegram
+					</a>{' '}
+					или{' '}
+					<a class="icon-link" href={contacts.whatsapp.href} target="_blank" rel="noopener noreferrer">
+						<Icon name="chat" size={16} class="icon-link__icon" />
+						WhatsApp
+					</a>
+					, она ответит в течение дня.
+				</p>
+			</noscript>
 
 			<section class="consent" data-consent hidden>
 				<p class="lead">
