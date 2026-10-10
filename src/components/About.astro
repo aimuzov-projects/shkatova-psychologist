@@ -47,6 +47,10 @@ import { about } from '../data/site'
 			position: relative;
 			z-index: 2;
 		}
+
+		@media (--md) {
+			padding-top: var(--section-y);
+		}
 	}
 
 	.education {
@@ -86,12 +90,6 @@ import { about } from '../data/site'
 
 		&__link:hover {
 			color: var(--fg);
-		}
-	}
-
-	@media (--md) {
-		.about {
-			padding-top: var(--section-y);
 		}
 	}
 </style>

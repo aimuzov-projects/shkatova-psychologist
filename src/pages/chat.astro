@@ -319,10 +319,10 @@ import { contacts, person } from '../data/site'
 		&__inner {
 			max-width: calc(760px + var(--gutter) * 2);
 		}
-	}
 
-	.chat__title {
-		font-size: clamp(2.4rem, 6vw, 3.6rem);
+		&__title {
+			font-size: clamp(2.4rem, 6vw, 3.6rem);
+		}
 	}
 
 	.consent {
@@ -346,24 +346,7 @@ import { contacts, person } from '../data/site'
 			margin-top: 3px;
 			color: var(--accent);
 		}
-	}
 
-	/* Иконка у ссылки не отрывается от текста при переносе строки. */
-	.icon-link {
-		white-space: nowrap;
-
-		& :global(.icon-link__icon) {
-			display: inline-block;
-			vertical-align: -0.15em;
-			margin-inline-end: 0.25em;
-		}
-
-		&--after :global(.icon-link__icon) {
-			margin-inline: 0.25em 0;
-		}
-	}
-
-	.consent {
 		&__check {
 			display: grid;
 			grid-template-columns: 20px 1fr;
@@ -381,16 +364,31 @@ import { contacts, person } from '../data/site'
 		}
 	}
 
-	.btn:disabled {
-		opacity: 0.45;
-		cursor: not-allowed;
-		transform: none;
+	/* Иконка у ссылки не отрывается от текста при переносе строки. */
+	.icon-link {
+		white-space: nowrap;
+
+		& :global(.icon-link__icon) {
+			display: inline-block;
+			vertical-align: -0.15em;
+			margin-inline-end: 0.25em;
+		}
+
+		&--after :global(.icon-link__icon) {
+			margin-inline: 0.25em 0;
+		}
 	}
 
 	.btn {
 		border: 0;
 		font-family: inherit;
 		cursor: pointer;
+
+		&:disabled {
+			opacity: 0.45;
+			cursor: not-allowed;
+			transform: none;
+		}
 	}
 
 	.dialog {
@@ -430,11 +428,29 @@ import { contacts, person } from '../data/site'
 			color: var(--muted);
 			animation: typing 1.4s ease-in-out infinite;
 		}
-	}
 
-	@keyframes typing {
-		50% {
-			opacity: 0.3;
+		&__error {
+			margin: 20px 0 0;
+			color: var(--accent);
+		}
+
+		&__finish {
+			margin-top: 28px;
+			padding-top: 20px;
+			border-top: 1px solid var(--line);
+		}
+
+		&__restart {
+			display: block;
+			margin: 16px auto 0;
+			padding: 6px 10px;
+			border: 0;
+			background: none;
+			font: inherit;
+			font-size: 0.85rem;
+			text-decoration: underline;
+			text-underline-offset: 3px;
+			cursor: pointer;
 		}
 	}
 
@@ -494,29 +510,9 @@ import { contacts, person } from '../data/site'
 		}
 	}
 
-	.dialog {
-		&__error {
-			margin: 20px 0 0;
-			color: var(--accent);
-		}
-
-		&__finish {
-			margin-top: 28px;
-			padding-top: 20px;
-			border-top: 1px solid var(--line);
-		}
-
-		&__restart {
-			display: block;
-			margin: 16px auto 0;
-			padding: 6px 10px;
-			border: 0;
-			background: none;
-			font: inherit;
-			font-size: 0.85rem;
-			text-decoration: underline;
-			text-underline-offset: 3px;
-			cursor: pointer;
+	@keyframes typing {
+		50% {
+			opacity: 0.3;
 		}
 	}
 </style>

@@ -335,6 +335,12 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 			justify-content: space-between;
 			gap: 16px;
 			padding-block: 16px;
+
+			/* Низкие телефоны вроде iPhone SE: поля и шрифты мельче, слайд влезает целиком.
+			   Тот же запрос ниже повторяется у слайда, заголовков, текстов и кнопок. */
+			@media (max-height: 700px) {
+				padding-block: 8px;
+			}
 		}
 
 		&__back {
@@ -377,6 +383,63 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		&__track:focus {
 			outline: none;
 		}
+
+		/* Навигация */
+		&__step {
+			display: grid;
+			place-items: center;
+			width: 48px;
+			height: 48px;
+			flex-shrink: 0;
+			border: 0;
+			border-radius: 50%;
+			background: var(--btn-bg);
+			color: var(--btn-fg);
+			cursor: pointer;
+			transition:
+				opacity 0.4s var(--ease),
+				transform 0.4s var(--ease);
+
+			@media (max-height: 700px) {
+				width: 40px;
+				height: 40px;
+			}
+		}
+
+		&__step:hover:not(:disabled) {
+			transform: scale(1.06);
+		}
+
+		&__step:disabled {
+			opacity: 0.25;
+			cursor: default;
+		}
+
+		&__step :global(.deck__step-prev) {
+			transform: rotate(90deg);
+		}
+
+		&__step :global(.deck__step-next) {
+			transform: rotate(-90deg);
+		}
+
+		/* Тонкая полоса во всю ширину по верхнему краю: сколько уже пролистано. */
+		&__progress {
+			position: absolute;
+			inset: 0 0 auto;
+			z-index: 1;
+			height: 3px;
+			background: var(--line);
+		}
+
+		&__progress-bar {
+			display: block;
+			height: 100%;
+			background: var(--accent);
+			transform: scaleX(0);
+			transform-origin: left;
+			transition: background-color 1.4s var(--ease);
+		}
 	}
 
 	.slide {
@@ -392,6 +455,19 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 			max-width: calc(820px + var(--gutter) * 2);
 			margin-block: auto;
 			padding-block: 24px;
+
+			@media (max-height: 700px) {
+				padding-block: 8px;
+			}
+		}
+
+		&__title {
+			font-size: clamp(1.9rem, 4.4vw, 3rem);
+			margin-bottom: clamp(20px, 4svh, 40px);
+
+			@media (max-height: 700px) {
+				font-size: 1.7rem;
+			}
 		}
 	}
 
@@ -421,11 +497,15 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	/* stylelint-enable selector-max-type */
 
 	/* Обложка */
-	.cover__title {
-		font-size: clamp(2rem, 5.2vw, 3.6rem);
-	}
-
 	.cover {
+		&__title {
+			font-size: clamp(2rem, 5.2vw, 3.6rem);
+
+			@media (max-height: 700px) {
+				font-size: 1.7rem;
+			}
+		}
+
 		& .btn {
 			border: 0;
 			font-family: inherit;
@@ -437,16 +517,21 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		}
 	}
 
+	.lead {
+		@media (max-height: 700px) {
+			font-size: 1rem;
+		}
+	}
+
 	/* Фразы и ответы */
-	.slide__title {
-		font-size: clamp(1.9rem, 4.4vw, 3rem);
-		margin-bottom: clamp(20px, 4svh, 40px);
+	.phrases {
+		&__item + &__item {
+			margin-top: clamp(16px, 3.5svh, 32px);
+		}
 	}
 
-	.phrases__item + .phrases__item {
-		margin-top: clamp(16px, 3.5svh, 32px);
-	}
-
+	/* Общий набор крупных реплик. Стоит раньше .phrase, .formula и .pair, чтобы их
+	   собственные line-height и мелкий шрифт низких экранов перекрывали этот. */
 	.phrase,
 	.formula,
 	.pair__do-text {
@@ -459,10 +544,16 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		margin-top: 8px;
 		padding-left: 20px;
 		border-left: 1px solid var(--accent);
+
+		@media (max-height: 700px) {
+			font-size: 1.08rem;
+		}
 	}
 
-	.replies__item {
-		padding-block: clamp(12px, 2.4svh, 22px);
+	.replies {
+		&__item {
+			padding-block: clamp(12px, 2.4svh, 22px);
+		}
 	}
 
 	.reply {
@@ -470,6 +561,10 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		font-family: var(--font-serif);
 		font-size: clamp(1.1rem, 2.2vw, 1.4rem);
 		line-height: 1.4;
+
+		@media (max-height: 700px) {
+			font-size: 1.08rem;
+		}
 	}
 
 	.formula {
@@ -478,21 +573,15 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		background: color-mix(in srgb, var(--accent) 14%, transparent);
 		/* Строки с плашками разведены, иначе плашки соседних строк налезают друг на друга. */
 		line-height: 1.9;
+
+		@media (max-height: 700px) {
+			font-size: 1.08rem;
+		}
 	}
 
 	/* Места формулы -- плашки своего цвета, а в примерах тем же цветом подчёркнуто
 	   то, что их заполняет. Цвета светлые, поэтому только рамка и лёгкая заливка:
 	   сплошной фон съел бы белый текст. */
-	.slot--1,
-	.fill--1 {
-		--slot: #ffd3a1;
-	}
-
-	.slot--2,
-	.fill--2 {
-		--slot: #c4d8ff;
-	}
-
 	.slot {
 		padding: 0.02em 0.4em 0.08em;
 		border-radius: 0.35em;
@@ -500,10 +589,14 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		box-shadow: inset 0 0 0 1.5px var(--slot);
 		color: #fff;
 		white-space: nowrap;
-	}
 
-	.examples__item {
-		line-height: 1.8;
+		&--1 {
+			--slot: #ffd3a1;
+		}
+
+		&--2 {
+			--slot: #c4d8ff;
+		}
 	}
 
 	.fill {
@@ -514,6 +607,14 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 		color: #fff;
 		-webkit-box-decoration-break: clone;
 		box-decoration-break: clone;
+
+		&--1 {
+			--slot: #ffd3a1;
+		}
+
+		&--2 {
+			--slot: #c4d8ff;
+		}
 	}
 
 	.examples-title {
@@ -522,7 +623,12 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 
 	.examples {
 		&__item {
+			line-height: 1.8;
 			font-size: 1.1rem;
+
+			@media (max-height: 700px) {
+				font-size: 1rem;
+			}
 		}
 
 		&__item + &__item {
@@ -579,6 +685,12 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 			margin: 0;
 		}
 
+		&__do-text {
+			@media (max-height: 700px) {
+				font-size: 1.08rem;
+			}
+		}
+
 		&__dont .label {
 			color: var(--tone);
 		}
@@ -598,10 +710,26 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 			font-family: var(--font-serif);
 			font-size: clamp(1.15rem, 2.6vw, 1.75rem);
 			line-height: 1.3;
+
+			@media (max-height: 700px) {
+				font-size: 1.05rem;
+				line-height: 1.28;
+			}
 		}
 
 		&__text {
 			font-size: 1.1rem;
+
+			@media (max-height: 700px) {
+				font-size: 1rem;
+			}
+		}
+
+		&__text:not(:first-child) {
+			@media (max-height: 700px) {
+				font-size: 0.92rem !important;
+				margin-bottom: 0.6em;
+			}
 		}
 
 		&__actions {
@@ -609,128 +737,28 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 			flex-wrap: wrap;
 			gap: 10px;
 			margin-top: 20px;
+
+			@media (max-height: 700px) {
+				margin-top: 12px;
+			}
 		}
 
 		&__actions .btn {
 			padding: 0.85em 1.4em;
 		}
 
+		/* Та же специфичность, что у &__actions .btn: должно идти после него. */
+		& .btn {
+			@media (max-height: 700px) {
+				padding: 0.75em 1.4em;
+			}
+		}
+
 		&__note {
 			margin-top: 24px;
 			font-size: 0.95rem !important;
-		}
-	}
 
-	/* Навигация */
-	.deck {
-		&__step {
-			display: grid;
-			place-items: center;
-			width: 48px;
-			height: 48px;
-			flex-shrink: 0;
-			border: 0;
-			border-radius: 50%;
-			background: var(--btn-bg);
-			color: var(--btn-fg);
-			cursor: pointer;
-			transition:
-				opacity 0.4s var(--ease),
-				transform 0.4s var(--ease);
-		}
-
-		&__step:hover:not(:disabled) {
-			transform: scale(1.06);
-		}
-
-		&__step:disabled {
-			opacity: 0.25;
-			cursor: default;
-		}
-
-		&__step :global(.deck__step-prev) {
-			transform: rotate(90deg);
-		}
-
-		&__step :global(.deck__step-next) {
-			transform: rotate(-90deg);
-		}
-
-		/* Тонкая полоса во всю ширину по верхнему краю: сколько уже пролистано. */
-		&__progress {
-			position: absolute;
-			inset: 0 0 auto;
-			z-index: 1;
-			height: 3px;
-			background: var(--line);
-		}
-
-		&__progress-bar {
-			display: block;
-			height: 100%;
-			background: var(--accent);
-			transform: scaleX(0);
-			transform-origin: left;
-			transition: background-color 1.4s var(--ease);
-		}
-	}
-
-	/* Низкие телефоны вроде iPhone SE: поля и шрифты мельче, слайд влезает целиком. */
-	@media (max-height: 700px) {
-		.deck {
-			&__top,
-			&__nav {
-				padding-block: 8px;
-			}
-
-			&__step {
-				width: 40px;
-				height: 40px;
-			}
-		}
-
-		.slide__inner {
-			padding-block: 8px;
-		}
-
-		.cover__title,
-		.slide__title {
-			font-size: 1.7rem;
-		}
-
-		.lead,
-		.outro__text,
-		.examples__item {
-			font-size: 1rem;
-		}
-
-		.phrase,
-		.formula,
-		.reply,
-		.pair__do-text {
-			font-size: 1.08rem;
-		}
-
-		.outro {
-			&__text:first-child {
-				font-size: 1.05rem;
-				line-height: 1.28;
-			}
-
-			&__text:not(:first-child) {
-				font-size: 0.92rem !important;
-				margin-bottom: 0.6em;
-			}
-
-			&__actions {
-				margin-top: 12px;
-			}
-
-			& .btn {
-				padding: 0.75em 1.4em;
-			}
-
-			&__note {
+			@media (max-height: 700px) {
 				margin-top: 12px;
 			}
 		}

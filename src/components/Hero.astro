@@ -76,70 +76,52 @@ import { person } from '../data/site'
 		&__text {
 			max-width: 620px;
 		}
-	}
 
-	/* Строки склеены неразрывными пробелами: на телефоне шрифт идёт от ширины экрана. */
-	.hero {
+		/* Строки склеены неразрывными пробелами: на телефоне шрифт идёт от ширины экрана. */
 		&__title {
 			font-size: clamp(1.7rem, 8.6vw, 4.4rem);
-		}
-	}
 
-	/* На десктопе колонке текста достаётся чуть больше половины экрана: при 5vw строка
-	   "— а вам страшно" к 1440px становилась шире колонки и уходила под фото. */
-	@media (--md) {
-		.hero {
-			&__title {
+			/* На десктопе колонке текста достаётся чуть больше половины экрана: при 5vw строка
+			   "— а вам страшно" к 1440px становилась шире колонки и уходила под фото. */
+			@media (--md) {
 				font-size: clamp(2.2rem, 4.2vw, 4rem);
 			}
 		}
-	}
 
-	.hero {
 		&__accent {
 			font-style: normal;
 			color: var(--accent);
 			transition: color 1.4s var(--ease);
 		}
-	}
 
-	.hero {
 		/* На телефоне кнопки друг под другом во всю ширину; от 360px текст в одну строку. */
 		&__actions {
 			display: grid;
 			gap: 10px;
 			margin-top: 32px;
+
+			@media (min-width: 560px) {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 12px;
+				margin-top: 36px;
+			}
 		}
 
 		&__actions .btn {
 			justify-content: center;
 			padding-inline: 1.2em;
 			text-align: center;
-		}
-	}
 
-	@media (min-width: 360px) {
-		.hero__actions .btn {
-			white-space: nowrap;
-		}
-	}
-
-	@media (min-width: 560px) {
-		.hero {
-			&__actions {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 12px;
-				margin-top: 36px;
+			@media (min-width: 360px) {
+				white-space: nowrap;
 			}
 
-			&__actions .btn {
+			@media (min-width: 560px) {
 				padding-inline: 1.9em;
 			}
 		}
-	}
 
-	.hero {
 		/* Фото уходит в ночь по левому краю и снизу, чтобы не спорить с текстом. */
 		&__photo {
 			position: relative;
@@ -149,6 +131,10 @@ import { person } from '../data/site'
 			overflow: hidden;
 			mask-image: linear-gradient(to top, transparent 0%, #000 45%);
 			-webkit-mask-image: linear-gradient(to top, transparent 0%, #000 45%);
+
+			@media (--md) {
+				display: none;
+			}
 		}
 
 		&__photo::before {
@@ -173,6 +159,34 @@ import { person } from '../data/site'
 			object-fit: cover;
 			object-position: 50% 0%;
 		}
+
+		/* Мышка по центру низа экрана, прячется после первого скролла. */
+		&__hint {
+			position: fixed;
+			z-index: 15;
+			left: 50%;
+			bottom: 28px;
+			transform: translateX(-50%);
+			color: var(--muted);
+			transition:
+				opacity 0.6s var(--ease),
+				color 1.4s var(--ease);
+
+			/* На сенсорных экранах мышки нет, а подсказка налезает на кнопку. */
+			@media (pointer: coarse), (--below-md) {
+				display: none;
+			}
+
+			:global(.page--scrolled) & {
+				opacity: 0;
+				pointer-events: none;
+			}
+		}
+
+		@media (--md) {
+			align-items: center;
+			padding-block: 120px 96px;
+		}
 	}
 
 	.btn {
@@ -193,31 +207,6 @@ import { person } from '../data/site'
 			pointer-events: none;
 			animation: glow 8s ease-in-out infinite;
 		}
-	}
-
-	/* Мышка по центру низа экрана, прячется после первого скролла. */
-	.hero__hint {
-		position: fixed;
-		z-index: 15;
-		left: 50%;
-		bottom: 28px;
-		transform: translateX(-50%);
-		color: var(--muted);
-		transition:
-			opacity 0.6s var(--ease),
-			color 1.4s var(--ease);
-	}
-
-	/* На сенсорных экранах мышки нет, а подсказка налезает на кнопку. */
-	@media (pointer: coarse), (--below-md) {
-		.hero__hint {
-			display: none;
-		}
-	}
-
-	:global(.page--scrolled) .hero__hint {
-		opacity: 0;
-		pointer-events: none;
 	}
 
 	.mouse {
@@ -256,17 +245,6 @@ import { person } from '../data/site'
 	@keyframes glow {
 		50% {
 			opacity: 1;
-		}
-	}
-
-	@media (--md) {
-		.hero {
-			align-items: center;
-			padding-block: 120px 96px;
-
-			&__photo {
-				display: none;
-			}
 		}
 	}
 </style>

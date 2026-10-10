@@ -49,25 +49,22 @@ const { shots, rows = 2, eager = false } = Astro.props
 		/* На телефоне колонки нет: секции показывают свои фото сами. */
 		&__photos {
 			display: none;
-		}
-	}
 
-	@media (--md) {
-		.story {
-			display: grid;
-			grid-template-columns: minmax(0, 1fr) 46vw;
-
-			/* stylelint-disable-next-line selector-max-type -- секции приходят через slot, общего класса у них нет */
-			& > :global(section) {
-				grid-column: 1;
-			}
-
-			&__photos {
+			@media (--md) {
 				display: block;
 				grid-column: 2;
 			}
+		}
 
-			&__sticky {
+		/* stylelint-disable-next-line selector-max-type -- секции приходят через slot, общего класса у них нет */
+		& > :global(section) {
+			@media (--md) {
+				grid-column: 1;
+			}
+		}
+
+		&__sticky {
+			@media (--md) {
 				position: sticky;
 				top: 0;
 				height: 100svh;
@@ -81,8 +78,10 @@ const { shots, rows = 2, eager = false } = Astro.props
 				mask-composite: intersect;
 				-webkit-mask-composite: source-in;
 			}
+		}
 
-			&__sticky :global(.story__shot) {
+		&__sticky :global(.story__shot) {
+			@media (--md) {
 				position: absolute;
 				inset: 0;
 				width: 100%;
@@ -92,10 +91,17 @@ const { shots, rows = 2, eager = false } = Astro.props
 				opacity: 0;
 				transition: opacity 1.4s var(--ease);
 			}
+		}
 
-			&__sticky :global(.story__shot--active) {
+		&__sticky :global(.story__shot--active) {
+			@media (--md) {
 				opacity: 1;
 			}
+		}
+
+		@media (--md) {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) 46vw;
 		}
 	}
 </style>

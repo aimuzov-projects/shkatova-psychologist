@@ -41,10 +41,21 @@ import { faq } from '../data/site'
 			align-items: start;
 			gap: 8px 12px;
 			padding-block: 22px;
+
+			@media (--md) {
+				grid-template-columns: 64px 1fr;
+				align-items: start;
+				gap: 20px;
+				padding-block: 26px;
+			}
 		}
 
 		&__body {
 			display: contents;
+
+			@media (--md) {
+				display: block;
+			}
 		}
 
 		&__badge {
@@ -55,11 +66,23 @@ import { faq } from '../data/site'
 				color 1.4s var(--ease),
 				background-color 1.4s var(--ease),
 				transform 0.6s var(--ease);
+
+			@media (--md) {
+				width: 64px;
+				height: 64px;
+				border-radius: 50%;
+				background: color-mix(in srgb, var(--accent) 10%, transparent);
+			}
 		}
 
 		& :global(.faq__icon) {
 			width: 1.6rem;
 			height: 1.6rem;
+
+			@media (--md) {
+				width: 30px;
+				height: 30px;
+			}
 		}
 
 		&__item:hover .faq__badge {
@@ -71,6 +94,10 @@ import { faq } from '../data/site'
 			font-size: 1.3rem;
 			line-height: 1.25;
 			letter-spacing: normal;
+
+			@media (--md) {
+				margin: 6px 0 8px;
+			}
 		}
 
 		&__a {
@@ -78,39 +105,8 @@ import { faq } from '../data/site'
 			margin: 0;
 			font-size: 0.97rem;
 			max-width: 52ch;
-		}
-	}
 
-	@media (--md) {
-		.faq {
-			&__item {
-				grid-template-columns: 64px 1fr;
-				align-items: start;
-				gap: 20px;
-				padding-block: 26px;
-			}
-
-			&__body {
-				display: block;
-			}
-
-			&__badge {
-				width: 64px;
-				height: 64px;
-				border-radius: 50%;
-				background: color-mix(in srgb, var(--accent) 10%, transparent);
-			}
-
-			& :global(.faq__icon) {
-				width: 30px;
-				height: 30px;
-			}
-
-			&__q {
-				margin: 6px 0 8px;
-			}
-
-			&__a {
+			@media (--md) {
 				grid-column: auto;
 			}
 		}

@@ -108,7 +108,13 @@ const items = [
 		}
 
 		&__value {
+			width: fit-content;
+			font-family: var(--font-serif);
+			font-size: clamp(1.4rem, 3.4vw, 2.2rem);
+			line-height: 1.2;
 			background: linear-gradient(currentColor, currentColor) no-repeat left bottom / 0 1px;
+			/* Телефон рвётся на дефисах, а неразрывный пробел их не держит. */
+			white-space: nowrap;
 			transition: background-size 0.5s var(--ease);
 		}
 
@@ -132,15 +138,6 @@ const items = [
 			font-size: 0.78rem;
 			letter-spacing: 0.18em;
 			text-transform: uppercase;
-		}
-
-		&__value {
-			width: fit-content;
-			font-family: var(--font-serif);
-			font-size: clamp(1.4rem, 3.4vw, 2.2rem);
-			line-height: 1.2;
-			/* Телефон рвётся на дефисах, а неразрывный пробел их не держит. */
-			white-space: nowrap;
 		}
 	}
 
@@ -198,6 +195,15 @@ const items = [
 			grid-column: 1 / -1;
 			justify-self: start;
 			box-shadow: 0 0 14px 0 color-mix(in srgb, var(--accent) 35%, transparent);
+
+			@media (--below-sm) {
+				justify-self: stretch;
+				justify-content: center;
+			}
+
+			@media (--md) {
+				grid-column: auto;
+			}
 		}
 
 		&__btn::after {
@@ -209,46 +215,31 @@ const items = [
 			opacity: 0;
 			pointer-events: none;
 			animation: ask-glow 8s ease-in-out infinite;
+
+			@media (--reduced-motion) {
+				animation: none;
+			}
 		}
 
 		&:hover .ask__btn {
 			background: var(--btn-hover);
+		}
+
+		@media (--below-sm) {
+			grid-template-columns: 1fr;
+			padding: 24px;
+		}
+
+		@media (--md) {
+			grid-template-columns: auto 1fr auto;
+			padding: 32px 36px;
+			gap: 28px;
 		}
 	}
 
 	@keyframes ask-glow {
 		50% {
 			opacity: 1;
-		}
-	}
-
-	@media (--below-sm) {
-		.ask {
-			grid-template-columns: 1fr;
-			padding: 24px;
-
-			&__btn {
-				justify-self: stretch;
-				justify-content: center;
-			}
-		}
-	}
-
-	@media (--md) {
-		.ask {
-			grid-template-columns: auto 1fr auto;
-			padding: 32px 36px;
-			gap: 28px;
-
-			&__btn {
-				grid-column: auto;
-			}
-		}
-	}
-
-	@media (--reduced-motion) {
-		.ask__btn::after {
-			animation: none;
 		}
 	}
 

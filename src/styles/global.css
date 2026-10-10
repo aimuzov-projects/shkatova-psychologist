@@ -116,17 +116,10 @@
 	box-sizing: border-box;
 }
 
-/* Якоря не прячут заголовок под шапкой. На телефоне шапки за первым экраном нет:
-   у секций без фото рубрика встаёт в 24px от верха, без пустой полосы. */
+/* Якоря не прячут заголовок под шапкой. */
 @media (--lg) {
 	html {
 		scroll-padding-top: 76px;
-	}
-}
-
-@media (--below-lg) {
-	.section:not(:has(.section-photo)) {
-		scroll-margin-top: calc(24px - var(--section-y));
 	}
 }
 
@@ -235,6 +228,14 @@ svg {
 .section {
 	padding-block: var(--section-y);
 	position: relative;
+
+	/* На телефоне шапки за первым экраном нет: у секций без фото рубрика встаёт
+	   в 24px от верха, без пустой полосы. */
+	&:not(:has(.section-photo)) {
+		@media (--below-lg) {
+			scroll-margin-top: calc(24px - var(--section-y));
+		}
+	}
 }
 
 /* Текст в левой колонке Story равняется по общей сетке контейнера. */
@@ -246,19 +247,6 @@ svg {
 		padding-left: 0;
 		padding-right: 48px;
 	}
-}
-
-.eyebrow {
-	display: inline-flex;
-	align-items: center;
-	gap: 14px;
-	font-size: 0.86rem;
-	font-weight: 500;
-	letter-spacing: 0.22em;
-	text-transform: uppercase;
-	color: var(--accent);
-	margin-bottom: 1.4rem;
-	transition: color 1.4s var(--ease);
 }
 
 /* Мягкий разделитель как в "С чем работаю": только между пунктами, тает к краям. */
@@ -279,6 +267,17 @@ svg {
 }
 
 .eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 14px;
+	font-size: 0.86rem;
+	font-weight: 500;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: var(--accent);
+	margin-bottom: 1.4rem;
+	transition: color 1.4s var(--ease);
+
 	&::before {
 		content: '';
 		width: 28px;
@@ -360,6 +359,12 @@ svg {
 	&[data-delay='3'] {
 		transition-delay: 0.36s;
 	}
+
+	@media (--reduced-motion) {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
 }
 
 /* Параллакс двигает вложенный элемент, обёртка стоит на месте:
@@ -389,19 +394,13 @@ svg {
 	mix-blend-mode: screen;
 	background: radial-gradient(500px circle at var(--x, 50%) var(--y, 30%), var(--glow), transparent);
 	transition: background 1.4s var(--ease);
+
+	@media (--reduced-motion) {
+		display: none;
+	}
 }
 
 @media (--reduced-motion) {
-	.reveal {
-		opacity: 1;
-		transform: none;
-		transition: none;
-	}
-
-	.glow {
-		display: none;
-	}
-
 	*,
 	*::before,
 	*::after {

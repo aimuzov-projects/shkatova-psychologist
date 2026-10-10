@@ -38,6 +38,16 @@ const { src, position = '50% 0%' } = Astro.props
 		overflow: hidden;
 		mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 55%, transparent 100%);
 		-webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 28%, #000 55%, transparent 100%);
+
+		& :global(.section-photo__img) {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		@media (--md) {
+			display: none;
+		}
 	}
 
 	/* Запас под сдвиг параллакса только снизу: лица на фото у верхнего края, запас сверху
@@ -45,17 +55,5 @@ const { src, position = '50% 0%' } = Astro.props
 	.px {
 		position: absolute;
 		inset: 0 0 -30%;
-	}
-
-	.section-photo :global(.section-photo__img) {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	@media (--md) {
-		.section-photo {
-			display: none;
-		}
 	}
 </style>

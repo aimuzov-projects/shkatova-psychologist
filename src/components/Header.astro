@@ -62,13 +62,35 @@ const base = home ? '' : '/'
 			color 1.4s var(--ease),
 			background-color 1.4s var(--ease),
 			transform 1s cubic-bezier(0.65, 0, 0.35, 1);
-	}
 
-	/* Телефон: за первым экраном шапка уезжает вместе со своей кнопкой,
-	   а запись живёт в круглой кнопке, которая выезжает справа в угол. */
-	@media (--below-lg) {
-		:global(.page--past-hero) .header {
-			transform: translateY(-100%);
+		/* Телефон: за первым экраном шапка уезжает вместе со своей кнопкой,
+		   а запись живёт в круглой кнопке, которая выезжает справа в угол. */
+		:global(.page--past-hero) & {
+			@media (--below-lg) {
+				transform: translateY(-100%);
+			}
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: auto 0 0;
+			height: 1px;
+			background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
+			opacity: 0.6;
+		}
+
+		&__inner {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 24px;
+			min-height: 76px;
+		}
+
+		&__cta {
+			padding: 0.7em 1.4em;
+			font-size: 0.85rem;
 		}
 	}
 
@@ -109,55 +131,35 @@ const base = home ? '' : '/'
 				opacity 0.3s var(--ease),
 				transform 0.45s var(--ease);
 		}
-	}
 
-	.fab :global(.fab__icon--up),
-	:global(.page--at-contacts) .fab :global(.fab__icon--book) {
-		opacity: 0;
-		transform: rotate(-90deg) scale(0.6);
-	}
+		& :global(.fab__icon--up),
+		:global(.page--at-contacts) & :global(.fab__icon--book) {
+			opacity: 0;
+			transform: rotate(-90deg) scale(0.6);
+		}
 
-	:global(.page--at-contacts) .fab :global(.fab__icon--up) {
-		opacity: 1;
-		transform: none;
-	}
+		:global(.page--at-contacts) & :global(.fab__icon--up) {
+			opacity: 1;
+			transform: none;
+		}
 
-	:global(.page--past-hero) .fab {
-		transform: none;
-		visibility: visible;
-		pointer-events: auto;
-		transition: transform 0.6s var(--ease);
-	}
+		:global(.page--past-hero) & {
+			transform: none;
+			visibility: visible;
+			pointer-events: auto;
+			transition: transform 0.6s var(--ease);
 
-	@media (--reduced-motion) {
-		.fab,
-		:global(.page--past-hero) .fab {
+			@media (--reduced-motion) {
+				transition: none;
+			}
+		}
+
+		@media (--reduced-motion) {
 			transition: none;
 		}
-	}
 
-	@media (--lg) {
-		.fab {
+		@media (--lg) {
 			display: none;
-		}
-	}
-
-	.header {
-		&::after {
-			content: '';
-			position: absolute;
-			inset: auto 0 0;
-			height: 1px;
-			background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
-			opacity: 0.6;
-		}
-
-		&__inner {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: 24px;
-			min-height: 76px;
 		}
 	}
 
@@ -197,6 +199,15 @@ const base = home ? '' : '/'
 			text-transform: uppercase;
 			color: var(--muted);
 			transition: color 1.4s var(--ease);
+
+			@media (--sm) {
+				display: block;
+			}
+
+			/* Шесть пунктов меню с иконками и подписью под именем влезают только от 1280px. */
+			@media (--lg) and (--below-xl) {
+				display: none;
+			}
 		}
 	}
 
@@ -221,35 +232,19 @@ const base = home ? '' : '/'
 		& :global(.nav__icon) {
 			color: var(--accent);
 			transition: color 1.4s var(--ease);
+
+			/* Шесть пунктов меню с иконками и подписью под именем влезают только от 1280px. */
+			@media (--lg) and (--below-xl) {
+				display: none;
+			}
 		}
 
 		&__link:hover {
 			opacity: 1;
 		}
-	}
 
-	.header__cta {
-		padding: 0.7em 1.4em;
-		font-size: 0.85rem;
-	}
-
-	@media (--sm) {
-		.logo__role {
-			display: block;
-		}
-	}
-
-	@media (--lg) {
-		.nav {
+		@media (--lg) {
 			display: flex;
-		}
-	}
-
-	/* Шесть пунктов меню с иконками и подписью под именем влезают только от 1280px. */
-	@media (--lg) and (--below-xl) {
-		.logo__role,
-		.nav :global(.nav__icon) {
-			display: none;
 		}
 	}
 </style>
