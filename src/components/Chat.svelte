@@ -132,7 +132,8 @@
 		e.preventDefault()
 		const message = text.trim()
 		if (!message || busy) return
-		if (chat.messages.length + 2 > limits.messages) {
+		const chars = chat.messages.reduce((sum, m) => sum + m.content.length, message.length)
+		if (chat.messages.length + 2 > limits.messages || chars + limits.assistantChars > limits.historyChars) {
 			error = 'Разговор получился длинным. Напишите, пожалуйста, Татьяне напрямую — она обязательно ответит.'
 			return
 		}

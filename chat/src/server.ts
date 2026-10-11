@@ -1,10 +1,9 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 
-import { limits } from '#/data/chat.ts'
-
 import { complete, type Message } from './openrouter.ts'
 import type { Summary } from './prompt.ts'
 import { formatSummary, sendSummary } from './telegram.ts'
+import { normalizeSummary, parseMessages } from './validate.ts'
 
 const port = Number(process.env.PORT || 8787)
 const production = process.env.NODE_ENV === 'production'
@@ -15,7 +14,7 @@ if (!process.env.OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY не з
 // в каждом запросе. В лог пишутся только статус, длина диалога и время.
 
 const hour = 60 * 60 * 1000
-const rates = { requests: 60, summaries: 3 }
+const rates = { requests: 60, summaries: 10 }
 const hits = new Map<string, { requests: number[]; summaries: number[] }>()
 
 // Счётчики в памяти и обнуляются при перезапуске: для защиты ключа хватает.
@@ -26,6 +25,16 @@ function allow(ip: string, kind: keyof typeof rates) {
 	hits.set(ip, entry)
 	if (entry[kind].length >= rates[kind]) return false
 	entry[kind].push(now)
+	return true
+}
+
+// Общий потолок запросов к модели за сутки: от смены IP лимиты выше не спасают.
+const daily = { limit: Number(process.env.CHAT_DAILY_LIMIT || 1000), day: '', count: 0 }
+function allowToday() {
+	const day = new Date().toISOString().slice(0, 10)
+	if (daily.day !== day) Object.assign(daily, { day, count: 0 })
+	if (daily.count >= daily.limit) return false
+	daily.count++
 	return true
 }
 
@@ -43,27 +52,12 @@ const clientIp = (req: IncomingMessage) =>
 		.trim() ||
 	(req.socket.remoteAddress ?? '')
 
-function parseMessages(body: unknown): Message[] | null {
-	const messages = (body as { messages?: unknown })?.messages
-	if (!Array.isArray(messages) || !messages.length || messages.length > limits.messages) return null
-	const valid = messages.every(
-		(m, i) =>
-			// Роли строго чередуются, первой и последней пишет клиентка.
-			m?.role === (i % 2 ? 'assistant' : 'user') &&
-			typeof m.content === 'string' &&
-			m.content.trim() &&
-			m.content.length <= (m.role === 'user' ? limits.userChars : 4 * limits.userChars),
-	)
-	if (!valid || messages.length % 2 === 0) return null
-	return messages.map((m) => ({ role: m.role, content: m.content }))
-}
-
 async function readBody(req: IncomingMessage) {
 	let size = 0
 	const chunks: Buffer[] = []
 	for await (const chunk of req) {
 		size += chunk.length
-		if (size > 512 * 1024) throw new Error('too large')
+		if (size > 256 * 1024) throw new Error('too large')
 		chunks.push(chunk)
 	}
 	return JSON.parse(Buffer.concat(chunks).toString('utf8'))
@@ -90,6 +84,10 @@ async function chat(req: IncomingMessage, res: ServerResponse) {
 		messages = parseMessages(await readBody(req))
 	} catch {}
 	if (!messages) return json(res, 400, { error: 'Некорректный запрос' })
+	if (!allowToday()) {
+		console.error(`daily limit of ${daily.limit} requests reached`)
+		return json(res, 503, { error: 'Ассистент сейчас недоступен. Напишите, пожалуйста, Татьяне напрямую' })
+	}
 
 	res.writeHead(200, {
 		'Content-Type': 'text/event-stream; charset=utf-8',
@@ -104,7 +102,7 @@ async function chat(req: IncomingMessage, res: ServerResponse) {
 
 	let status = 'ok'
 	try {
-		const summary: Summary | null = await complete(messages, (text) => send('delta', { text }), abort.signal)
+		const summary = normalizeSummary(await complete(messages, (text) => send('delta', { text }), abort.signal))
 		if (summary) {
 			let delivered = false
 			if (allow(ip, 'summaries')) {
