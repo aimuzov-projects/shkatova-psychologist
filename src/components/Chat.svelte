@@ -202,7 +202,7 @@
 			<input type="checkbox" class="consent__checkbox" bind:checked={agreed} />
 			<span>
 				Даю согласие на обработку моих персональных данных, в том числе сведений о здоровье, на условиях
-				<a class="icon-link icon-link--after" href="/privacy" target="_blank">
+				<a class="icon-link icon-link--after" href="/privacy/" target="_blank">
 					политики конфиденциальности
 					<Icon name="arrow-out" size={16} class="icon-link__icon" />
 				</a>
@@ -215,7 +215,8 @@
 	</section>
 {:else}
 	<section class="dialog">
-		<ol class="dialog__log" aria-live="polite">
+		<!-- Пока ответ приходит по кусочкам, скринридер ждёт и читает его целиком. -->
+		<ol class="dialog__log" aria-live="polite" aria-busy={busy}>
 			{#each log as message}
 				<!-- Текст клиентки остаётся как написан. -->
 				<li class="msg msg--{message.role}">
