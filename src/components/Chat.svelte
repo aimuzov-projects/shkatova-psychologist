@@ -275,7 +275,8 @@
 				</button>
 			</form>
 		{/if}
-		<button class="dialog__restart muted" type="button" onclick={restart}>
+		<!-- Пока приходит ответ, сброс недоступен: ответ дописался бы в пустую переписку. -->
+		<button class="dialog__restart muted" type="button" disabled={busy} onclick={restart}>
 			<Icon name="restart" size={14} />
 			Начать заново
 		</button>
@@ -384,6 +385,11 @@
 			text-decoration: underline;
 			text-underline-offset: 3px;
 			background: none;
+		}
+
+		&__restart:disabled {
+			cursor: default;
+			opacity: 0.45;
 		}
 	}
 
