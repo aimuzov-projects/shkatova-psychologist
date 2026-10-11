@@ -26,3 +26,7 @@ jobs:
       - run: npm run lint:css
       - run: npm run check
       - run: npm test
+      # Сайт собирается на сервере, но упасть сборке лучше здесь. Номер подставной.
+      - run: npm run build
+        env:
+          CONTACT_PHONE: '79000000000'
