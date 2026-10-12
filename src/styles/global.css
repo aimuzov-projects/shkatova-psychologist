@@ -129,6 +129,8 @@ html {
 	/* Цвет выделения берётся из стадии на <html>, а не из секции: он следует за фоном
 	   под экраном, как в материалах. */
 	--selection: color-mix(in srgb, var(--accent) 35%, transparent);
+	/* Двойной тап больше не приближает страницу, щипок по-прежнему работает. */
+	touch-action: manipulation;
 	background: var(--bg);
 }
 
