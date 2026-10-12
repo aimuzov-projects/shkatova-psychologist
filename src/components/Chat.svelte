@@ -132,7 +132,8 @@
 		e.preventDefault()
 		const message = text.trim()
 		if (!message || busy) return
-		if (chat.messages.length + 2 > limits.messages) {
+		const chars = chat.messages.reduce((sum, m) => sum + m.content.length, message.length)
+		if (chat.messages.length + 2 > limits.messages || chars + limits.assistantChars > limits.historyChars) {
 			error = 'Разговор получился длинным. Напишите, пожалуйста, Татьяне напрямую — она обязательно ответит.'
 			return
 		}
@@ -201,7 +202,7 @@
 			<input type="checkbox" class="consent__checkbox" bind:checked={agreed} />
 			<span>
 				Даю согласие на обработку моих персональных данных, в том числе сведений о здоровье, на условиях
-				<a class="icon-link icon-link--after" href="/privacy" target="_blank">
+				<a class="icon-link icon-link--after" href="/privacy/" target="_blank">
 					политики конфиденциальности
 					<Icon name="arrow-out" size={16} class="icon-link__icon" />
 				</a>
@@ -214,7 +215,8 @@
 	</section>
 {:else}
 	<section class="dialog">
-		<ol class="dialog__log" aria-live="polite">
+		<!-- Пока ответ приходит по кусочкам, скринридер ждёт и читает его целиком. -->
+		<ol class="dialog__log" aria-live="polite" aria-busy={busy}>
 			{#each log as message}
 				<!-- Текст клиентки остаётся как написан. -->
 				<li class="msg msg--{message.role}">
@@ -275,7 +277,8 @@
 				</button>
 			</form>
 		{/if}
-		<button class="dialog__restart muted" type="button" onclick={restart}>
+		<!-- Пока приходит ответ, сброс недоступен: ответ дописался бы в пустую переписку. -->
+		<button class="dialog__restart muted" type="button" disabled={busy} onclick={restart}>
 			<Icon name="restart" size={14} />
 			Начать заново
 		</button>
@@ -384,6 +387,11 @@
 			text-decoration: underline;
 			text-underline-offset: 3px;
 			background: none;
+		}
+
+		&__restart:disabled {
+			cursor: default;
+			opacity: 0.45;
 		}
 	}
 

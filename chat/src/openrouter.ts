@@ -11,7 +11,8 @@ const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-sonnet-5.5'
 export async function complete(messages: Message[], onText: (chunk: string) => void, signal: AbortSignal) {
 	const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
 		method: 'POST',
-		signal,
+		// Таймаут на весь поток: иначе повисший VPN-выход держал бы соединение.
+		signal: AbortSignal.any([signal, AbortSignal.timeout(90_000)]),
 		headers: {
 			Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
 			'Content-Type': 'application/json',
