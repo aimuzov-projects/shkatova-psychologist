@@ -1,5 +1,5 @@
 // Тонкие линейные иконки в одном стиле: внутренности SVG 24×24, рисуются currentColor.
-// Общие для Icon.astro и Icon.svelte.
+// Общие для icon.astro и icon.svelte.
 export const icons = {
 	belly: '<circle cx="12" cy="13" r="8"/><circle cx="12" cy="13" r="2.5"/><path d="M12 3v2"/>',
 	sunrise: '<path d="M3 18h18"/><path d="M6 18a6 6 0 0 1 12 0"/><path d="M12 4v3M5.5 7.5l2 2M18.5 7.5l-2 2"/>',

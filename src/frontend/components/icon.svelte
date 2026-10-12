@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { icons, type IconName } from '#shared/icons.ts'
 
-	// Двойник Icon.astro для Svelte-компонентов, с той же разметкой.
+	// Двойник icon.astro для Svelte-компонентов, с той же разметкой.
 	type Props = {
 		name: IconName
 		/** Сторона в пикселях, по умолчанию 28. Больше 64 -- линия тоньше. */
