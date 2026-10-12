@@ -31,8 +31,16 @@ npm run chat           # сервис ассистента
 Перед коммитом:
 
 ```sh
-npm run format:check && npm run lint:js && npm run lint:css && npm run check
+npm run format:check && npm run lint:js && npm run lint:css && npm run check && npm test
 ```
+
+## Content Security Policy
+
+Сборка кладёт в каждую страницу CSP с хешами скриптов и стилей Astro (настройка `security.csp` в `astro.config.mjs`). В `npm run dev` политики нет, поэтому нарушения видны только после `npm run build && npm run preview` и на проде.
+
+- Никаких атрибутов `style=""` и обработчиков вроде `onclick`: стили задаются классами и правилами в `<style>`, обработчики живут в `<script>`.
+- Внешний скрипт, картинку или запрос (виджет, карту, шрифт с CDN) сначала нужно разрешить в `security.csp`. Сейчас там только Яндекс Метрика.
+- После таких правок стоит открыть консоль браузера в `npm run preview`: всё заблокированное браузер пишет туда.
 
 ## Выкладка
 

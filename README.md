@@ -31,8 +31,16 @@ npm run chat           # the assistant service
 Before committing:
 
 ```sh
-npm run format:check && npm run lint:js && npm run lint:css && npm run check
+npm run format:check && npm run lint:js && npm run lint:css && npm run check && npm test
 ```
+
+## Content Security Policy
+
+The build puts a CSP with hashes of Astro's scripts and styles into every page (the `security.csp` option in `astro.config.mjs`). `npm run dev` has no policy, so violations only show up after `npm run build && npm run preview` and in production.
+
+- No `style=""` attributes or handlers like `onclick`: styles go through classes and rules in `<style>`, handlers live in `<script>`.
+- An external script, image or request (a widget, a map, a font from a CDN) has to be allowed in `security.csp` first. Right now only Yandex Metrica is there.
+- After such changes, check the browser console in `npm run preview`: the browser reports everything it blocks there.
 
 ## Deployment
 
