@@ -13,6 +13,7 @@ services:
   site:
     build:
       context: ..
+      dockerfile: deploy/frontend.Dockerfile
       secrets: [env]
     image: shkatova-psychologist
     container_name: shkatova-psychologist
@@ -27,7 +28,7 @@ services:
   chat:
     build:
       context: ..
-      dockerfile: chat/Dockerfile
+      dockerfile: deploy/backend.Dockerfile
     image: shkatova-chat
     container_name: shkatova-chat
     restart: unless-stopped

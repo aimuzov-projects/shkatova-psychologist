@@ -12,11 +12,11 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"check": "astro check && svelte-check",
-		"test": "node --test 'src/**/*.test.ts' 'chat/**/*.test.ts'",
+		"test": "node --test 'src/**/*.test.ts'",
 		"astro": "astro",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
-		"chat": "node --watch --env-file-if-exists=.env chat/src/server.ts",
+		"chat": "node --watch --env-file-if-exists=.env src/backend/server.ts",
 		"lint:css": "stylelint \"src/**/*.{css,astro,svelte}\"",
 		"lint:js": "oxlint --deny-warnings"
 	},
@@ -47,6 +47,8 @@
 		"typescript": "6.0.3"
 	},
 	"imports": {
-		"#/*": "./src/*"
+		"#frontend/*": "./src/frontend/*",
+		"#backend/*": "./src/backend/*",
+		"#shared/*": "./src/shared/*"
 	}
 }
