@@ -1,7 +1,7 @@
 # Сайт на сервере projects. Порты 80/443 держит общий Caddy из aimuzov-projects/infra-server,
 # он проксирует домен сюда по сети edge, а /api/* -- сервису чата.
 
-name: shkatova-site
+name: shkatova-psychologist
 
 x-logging: &logging
   driver: json-file
@@ -14,14 +14,14 @@ services:
     build:
       context: ..
       secrets: [env]
-    image: shkatova-site
-    container_name: shkatova-site
+    image: shkatova-psychologist
+    container_name: shkatova-psychologist
     restart: unless-stopped
     networks:
       - edge
     logging: *logging
 
-  # Секреты лежат в /srv/shkatova-site/.env, образец в .env.example.
+  # Секреты лежат в /srv/shkatova-psychologist/.env, образец в .env.example.
   # Из РФ OpenRouter и Telegram не отвечают, поэтому чат ходит наружу через общий
   # VPN-выход из infra-server.
   chat:

@@ -6,10 +6,10 @@ set -euo pipefail
 
 # Тело в блоке: bash дочитает его целиком до того, как git pull подменит этот файл.
 {
-	cd /srv/shkatova-site
+	cd /srv/shkatova-psychologist
 
 	# Два пуша подряд не должны собирать compose одновременно: второй ждёт первого.
-	exec 9>/tmp/shkatova-deploy.lock
+	exec 9>/tmp/shkatova-psychologist-deploy.lock
 	flock 9
 
 	git pull --ff-only --quiet
