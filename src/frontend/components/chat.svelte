@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { tick } from 'svelte'
 
-	import Icon from '#frontend/components/Icon.svelte'
+	import Icon from '#frontend/components/icon.svelte'
 	import { greeting, limits } from '#shared/chat.ts'
 	import { decodePhone, phoneHref } from '#shared/phone.ts'
 	import { typograph } from '#frontend/lib/typograph.ts'
