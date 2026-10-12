@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://tatiana-shkatova.ru/sitemap-index.xml

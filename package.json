@@ -21,6 +21,7 @@
 		"lint:js": "oxlint --deny-warnings"
 	},
 	"dependencies": {
+		"@astrojs/sitemap": "3.7.4",
 		"@astrojs/svelte": "9.0.1",
 		"@fontsource/golos-text": "5.3.0",
 		"@fontsource/prata": "5.3.0",

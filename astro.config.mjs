@@ -1,3 +1,4 @@
+import sitemap from '@astrojs/sitemap'
 import svelte from '@astrojs/svelte'
 import { defineConfig } from 'astro/config'
 
@@ -17,6 +18,6 @@ export default defineConfig({
 	// CSS всего несколько КБ: внутри HTML он не блокирует первую отрисовку отдельным запросом.
 	build: { inlineStylesheets: 'always' },
 	// Svelte только у чата: остальной сайт -- статичный HTML с ванильными скриптами.
-	integrations: [svelte()],
+	integrations: [svelte(), sitemap()],
 	vite: { server: { proxy }, preview: { proxy } },
 })

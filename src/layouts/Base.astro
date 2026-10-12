@@ -23,9 +23,16 @@ type Props = {
 	title?: string
 	/** `meta description` и `og:description`, по умолчанию `person.intro`. */
 	description?: string
+	/** `false` у служебных страниц вроде 404: без canonical и с запретом индексации. */
+	index?: boolean
 }
 
-const { title = `${person.name} — ${person.role.toLowerCase()}`, description = person.intro } = Astro.props
+const {
+	title = `${person.name} — ${person.role.toLowerCase()}`,
+	description = person.intro,
+	index = true,
+} = Astro.props
+const canonical = new URL(Astro.url.pathname, Astro.site)
 ---
 
 <!doctype html>
@@ -35,12 +42,13 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		{index ? <link rel="canonical" href={canonical} /> : <meta name="robots" content="noindex" />}
 		{/* Карточка ссылки в мессенджерах. og.jpg вырезан из hero.jpg в пропорции 1.91:1 лицом по центру:
 		    снимки вертикальные, а автоматическая обрезка ловила статуэтку вместо лица. */}
 		<meta property="og:type" content="website" />
 		<meta property="og:site_name" content={person.name} />
 		<meta property="og:locale" content="ru_RU" />
-		<meta property="og:url" content={new URL(Astro.url.pathname, Astro.site)} />
+		<meta property="og:url" content={canonical} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:image" content={new URL(og.src, Astro.site)} />
@@ -49,6 +57,7 @@ const { title = `${person.name} — ${person.role.toLowerCase()}`, description 
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="theme-color" content="#211320" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<slot name="head" />
 		{preload.map((href) => (
 			<link rel="preload" as="font" type="font/woff2" href={href} crossorigin />
 		))}
