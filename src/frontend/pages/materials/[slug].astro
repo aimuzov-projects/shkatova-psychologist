@@ -1,0 +1,770 @@
+---
+import type { GetStaticPaths } from 'astro'
+import { Picture } from 'astro:assets'
+import Base from '#frontend/layouts/Base.astro'
+import Icon from '#frontend/components/Icon.astro'
+import { materials, type Material, type MaterialBlock } from '#frontend/data/materials.ts'
+import { person } from '#shared/site.ts'
+import { enabled as chatEnabled } from '#shared/chat.ts'
+import sea from '#frontend/assets/materials/sea.png'
+
+export const getStaticPaths = (() =>
+	materials.map((material) => ({ params: { slug: material.slug }, props: { material } }))) satisfies GetStaticPaths
+
+const { material } = Astro.props as { material: Material }
+
+type DontDo = Extract<MaterialBlock, { type: 'dont-do' }>
+type Slide =
+	| { kind: 'cover' }
+	| { kind: 'block'; block: Exclude<MaterialBlock, DontDo> }
+	| { kind: 'pair'; block: DontDo; item: DontDo['items'][number]; n: number }
+	| { kind: 'outro' }
+
+const slides: Slide[] = [
+	{ kind: 'cover' },
+	...material.blocks.flatMap((block): Slide[] =>
+		block.type === 'dont-do'
+			? block.items.map((item, i) => ({ kind: 'pair', block, item, n: i + 1 }))
+			: [{ kind: 'block', block }],
+	),
+	{ kind: 'outro' },
+]
+
+// Как и главная, презентация идёт от ночи к утру: у каждого слайда своя стадия.
+const stages = ['night', 'dusk', 'dawn', 'rose', 'morning', 'day']
+const stageOf = (i: number) => stages[Math.round((i / (slides.length - 1)) * (stages.length - 1))]
+const pad = (n: number) => String(n).padStart(2, '0')
+
+// "Пожалуйста, {1:просьба}" -> куски текста, у выделенных номер места формулы.
+const slots = (text: string) =>
+	text.split(/(\{\d+:[^}]+\})/).map((part) => {
+		const m = part.match(/^\{(\d+):(.+)\}$/)
+		return m ? { text: m[2], slot: m[1] } : { text: part }
+	})
+
+// Реплика в кавычках: точка по правилам набора встаёт после закрывающей кавычки,
+// вопрос и восклицание остаются внутри.
+const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».` : `«${text}»`)
+---
+
+<Base title={`${material.title} — ${person.name}`} description={material.description}>
+	<main class="deck">
+		<div class="deck__bg" aria-hidden="true">
+			<Picture
+				src={sea}
+				formats={['avif']}
+				fallbackFormat="webp"
+				alt=""
+				widths={[480, 768]}
+				sizes="100vw"
+				class="deck__bg-img"
+			/>
+			<div class="deck__veil" />
+		</div>
+
+		<div class="deck__progress" aria-hidden="true">
+			<span class="deck__progress-bar" data-progress />
+		</div>
+
+		<header class="deck__top container">
+			<a href="/#materials" class="deck__back">
+				<Icon name="arrow-up" size={16} class="deck__back-icon" />
+				<span>Все материалы</span>
+			</a>
+			<span class="deck__counter">
+				<span data-current>1</span> / {slides.length}
+			</span>
+		</header>
+
+		<div class="deck__track" data-track tabindex="-1" aria-roledescription="карусель" aria-label={material.title}>
+			{slides.map((slide, i) => (
+				<section
+					class:list={['slide', `slide--${slide.kind}`]}
+					data-stage-name={stageOf(i)}
+					aria-roledescription="слайд"
+					aria-label={`${i + 1} из ${slides.length}`}
+				>
+					<div class="slide__inner container">
+						{slide.kind === 'cover' && (
+							<div class="cover">
+								<span class="eyebrow">{material.audience} · бесплатно</span>
+								<h1 class="cover__title">{material.title}</h1>
+								<p class="lead">{material.intro}</p>
+								<button type="button" class="btn" data-next>
+									Листать
+									<Icon name="arrow" size={18} class="slide__arrow" />
+								</button>
+							</div>
+						)}
+
+						{slide.kind === 'block' && (
+							<>
+								<h2 class="slide__title">{slide.block.title}</h2>
+								{slide.block.type === 'phrases' && (
+									<ol class="phrases">
+										{slide.block.items.map((item) => (
+											<li class="phrases__item">
+												<span class="label">{item.label}</span>
+												<blockquote class="phrase">{quote(item.text)}</blockquote>
+											</li>
+										))}
+									</ol>
+								)}
+								{slide.block.type === 'replies' && (
+									<ol class="replies soft-divide">
+										{slide.block.items.map((item) => (
+											<li class="replies__item">
+												<span class="muted">{item.label}</span>
+												<blockquote class="reply">{quote(item.text)}</blockquote>
+											</li>
+										))}
+									</ol>
+								)}
+								{slide.block.type === 'formula' && (
+									<>
+										<p class="formula">
+											{slots(slide.block.formula).map((p) =>
+												p.slot ? <span class={`slot slot--${p.slot}`}>{p.text}</span> : p.text,
+											)}
+										</p>
+										<p class="label examples-title">{slide.block.examplesTitle}</p>
+										<ul class="examples">
+											{slide.block.examples.map((text) => (
+												<li class="examples__item">
+													{slots(quote(text)).map((p) =>
+														p.slot ? (
+															<mark class={`fill fill--${p.slot}`}>{p.text}</mark>
+														) : (
+															p.text
+														),
+													)}
+												</li>
+											))}
+										</ul>
+									</>
+								)}
+							</>
+						)}
+
+						{slide.kind === 'pair' && (
+							<div class="pair">
+								<span class="eyebrow">{slide.block.title}</span>
+								<span class="pair__num">
+									{pad(slide.n)}
+									<span class="muted"> / {pad(slide.block.items.length)}</span>
+								</span>
+								<div class="pair__dont">
+									<span class="label">
+										<Icon name="cross" size={18} />
+										{slide.block.dontLabel}
+									</span>
+									<p class="pair__dont-text">{slide.item.dont}</p>
+								</div>
+								<div class="pair__do">
+									<span class="label">
+										<Icon name="check" size={18} />
+										{slide.block.doLabel}
+									</span>
+									<p class="pair__do-text">{slide.item.do}</p>
+								</div>
+							</div>
+						)}
+
+						{slide.kind === 'outro' && (
+							<div class="outro">
+								{material.outro.map((text) => (
+									<p class="outro__text">{text}</p>
+								))}
+								<div class="outro__actions">
+									{chatEnabled && (
+										<a href="/chat/" class="btn">
+											<Icon name="chat" size={18} />
+											Рассказать о себе ассистенту
+										</a>
+									)}
+									<a href="/#contacts" class={chatEnabled ? 'btn btn--ghost' : 'btn'}>
+										<Icon name="phone" size={18} />
+										Контакты
+									</a>
+								</div>
+								<p class="outro__text outro__note muted">
+									Первая встреча — 20 минут онлайн, бесплатно. Напишите, и мы подберём время.{' '}
+									<a href="/#about">Обо мне</a>
+								</p>
+							</div>
+						)}
+					</div>
+				</section>
+			))}
+		</div>
+
+		<nav class="deck__nav container" aria-label="Слайды">
+			<button type="button" class="deck__step" data-prev aria-label="Предыдущий слайд">
+				<Icon name="arrow" size={20} class="deck__step-prev" />
+			</button>
+			<button type="button" class="deck__step" data-next aria-label="Следующий слайд">
+				<Icon name="arrow" size={20} class="deck__step-next" />
+			</button>
+		</nav>
+	</main>
+</Base>
+
+<script>
+	const root = document.documentElement
+	const track = document.querySelector<HTMLElement>('[data-track]')!
+	const slides = [...track.querySelectorAll<HTMLElement>('.slide')]
+	const progress = document.querySelector<HTMLElement>('[data-progress]')!
+	const current = document.querySelector<HTMLElement>('[data-current]')!
+	const prev = document.querySelector<HTMLButtonElement>('[data-prev]')!
+	const nexts = [...document.querySelectorAll<HTMLButtonElement>('[data-next]')]
+	const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+	let index = -1
+
+	// Фон проявляется только после загрузки. Из кэша картинка бывает готова раньше скрипта.
+	const bg = document.querySelector<HTMLElement>('.deck__bg')!
+	const bgImg = bg.querySelector('img')!
+	const showBg = () => bg.classList.add('deck__bg--loaded')
+	if (bgImg.complete && bgImg.naturalWidth) showBg()
+	else bgImg.addEventListener('load', showBg, { once: true })
+
+	const go = (i: number) => {
+		const to = Math.max(0, Math.min(slides.length - 1, i))
+		track.scrollTo({ left: to * track.clientWidth, behavior: reduce ? 'auto' : 'smooth' })
+	}
+
+	// Полоса прогресса идёт за пальцем плавно, а текущим слайд становится, когда занял
+	// больше половины ширины: от него стадия, счётчик и стрелки.
+	const update = () => {
+		const position = track.scrollLeft / track.clientWidth
+		progress.style.transform = `scaleX(${(position + 1) / slides.length})`
+		const i = Math.round(position)
+		if (i === index) return
+		index = i
+		root.dataset.stage = slides[i].dataset.stageName
+		current.textContent = String(i + 1)
+		prev.disabled = i === 0
+		nexts.forEach((b) => (b.disabled = i === slides.length - 1))
+		// Соседние слайды вне экрана: Tab не должен уводить фокус за край.
+		slides.forEach((slide, j) => (slide.inert = j !== i))
+	}
+
+	let ticking = false
+	track.addEventListener(
+		'scroll',
+		() => {
+			if (ticking) return
+			ticking = true
+			requestAnimationFrame(() => {
+				update()
+				ticking = false
+			})
+		},
+		{ passive: true },
+	)
+
+	prev.addEventListener('click', () => go(index - 1))
+	nexts.forEach((b) => b.addEventListener('click', () => go(index + 1)))
+
+	document.addEventListener('keydown', (e) => {
+		if (e.metaKey || e.ctrlKey || e.altKey) return
+		const step = { ArrowRight: 1, PageDown: 1, ArrowLeft: -1, PageUp: -1 }[e.key]
+		if (step) go(index + step)
+		else if (e.key === 'Home') go(0)
+		else if (e.key === 'End') go(slides.length - 1)
+		else return
+		e.preventDefault()
+	})
+
+	// При повороте телефона ширина слайда меняется: остаёмся на том же слайде.
+	new ResizeObserver(() => {
+		if (index >= 0) track.scrollTo({ left: index * track.clientWidth })
+	}).observe(track)
+
+	update()
+</script>
+
+<style>
+	:global(html),
+	:global(body) {
+		overflow: hidden;
+		height: 100%;
+	}
+
+	:global(body) {
+		transition: background-color 1.4s var(--ease);
+	}
+
+	.deck {
+		isolation: isolate;
+		position: relative;
+		display: grid;
+		grid-template-rows: auto minmax(0, 1fr) auto;
+		height: 100svh;
+
+		&__bg {
+			position: absolute;
+			z-index: -1;
+			inset: 0;
+			overflow: hidden;
+		}
+
+		& :global(.deck__bg-img) {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: opacity 1.4s var(--ease);
+
+			/* Проявляется, когда скрипт дождётся загрузки; без скриптов виден сразу. */
+			@media (--scripting) {
+				opacity: 0;
+			}
+		}
+
+		&__bg--loaded :global(.deck__bg-img) {
+			opacity: 1;
+		}
+
+		&__veil {
+			position: absolute;
+			inset: 0;
+			opacity: 0.78;
+			background: var(--bg);
+			transition: background-color 1.4s var(--ease);
+		}
+
+		&__top,
+		&__nav {
+			display: flex;
+			gap: 16px;
+			align-items: center;
+			justify-content: space-between;
+			padding-block: 16px;
+
+			/* Низкие телефоны вроде iPhone SE: поля и шрифты мельче, слайд влезает целиком.
+			   Тот же запрос ниже повторяется у слайда, заголовков, текстов и кнопок. */
+			@media (max-height: 700px) {
+				padding-block: 8px;
+			}
+		}
+
+		&__back {
+			display: inline-flex;
+			gap: 8px;
+			align-items: center;
+			font-size: 0.9rem;
+			text-decoration: none;
+			opacity: 0.85;
+		}
+
+		&__back:hover {
+			opacity: 1;
+		}
+
+		&__back :global(.deck__back-icon) {
+			transform: rotate(-90deg);
+			color: var(--accent);
+		}
+
+		&__counter {
+			font-family: var(--font-serif);
+			font-variant-numeric: tabular-nums;
+			color: var(--muted);
+		}
+
+		&__track {
+			scrollbar-width: none;
+			scroll-snap-type: x mandatory;
+			overflow-x: auto;
+			overflow-y: hidden;
+			overscroll-behavior-x: contain;
+			display: flex;
+		}
+
+		&__track::-webkit-scrollbar {
+			display: none;
+		}
+
+		&__track:focus {
+			outline: none;
+		}
+
+		/* Навигация */
+		&__step {
+			cursor: pointer;
+			display: grid;
+			flex-shrink: 0;
+			place-items: center;
+			width: 48px;
+			height: 48px;
+			border: 0;
+			border-radius: 50%;
+			color: var(--btn-fg);
+			background: var(--btn-bg);
+			transition:
+				opacity 0.4s var(--ease),
+				transform 0.4s var(--ease);
+
+			@media (max-height: 700px) {
+				width: 40px;
+				height: 40px;
+			}
+		}
+
+		&__step:hover:not(:disabled) {
+			transform: scale(1.06);
+		}
+
+		&__step:disabled {
+			cursor: default;
+			opacity: 0.25;
+		}
+
+		&__step :global(.deck__step-prev) {
+			transform: rotate(90deg);
+		}
+
+		&__step :global(.deck__step-next) {
+			transform: rotate(-90deg);
+		}
+
+		/* Тонкая полоса во всю ширину по верхнему краю: сколько уже пролистано. */
+		&__progress {
+			position: absolute;
+			z-index: 1;
+			inset: 0 0 auto;
+			height: 3px;
+			background: var(--line);
+		}
+
+		&__progress-bar {
+			transform-origin: left;
+			transform: scaleX(0);
+			display: block;
+			height: 100%;
+			background: var(--accent);
+			transition: background-color 1.4s var(--ease);
+		}
+	}
+
+	.slide {
+		scrollbar-width: thin;
+		scroll-snap-align: start;
+		scroll-snap-stop: always;
+		overflow-y: auto;
+		display: flex;
+		flex: 0 0 100%;
+
+		/* Короткий слайд стоит по центру, длинный на маленьком экране прокручивается внутри. */
+		&__inner {
+			max-width: calc(820px + var(--gutter) * 2);
+			margin-block: auto;
+			padding-block: 24px;
+
+			@media (max-height: 700px) {
+				padding-block: 8px;
+			}
+		}
+
+		&__title {
+			margin-bottom: clamp(20px, 4svh, 40px);
+			font-size: clamp(1.9rem, 4.4vw, 3rem);
+
+			@media (max-height: 700px) {
+				font-size: 1.7rem;
+			}
+		}
+	}
+
+	.label {
+		display: inline-flex;
+		gap: 8px;
+		align-items: center;
+		font-size: 0.78rem;
+		font-weight: 500;
+		color: var(--accent);
+		text-transform: uppercase;
+		letter-spacing: 0.18em;
+		transition: color 1.4s var(--ease);
+	}
+
+	/* stylelint-disable selector-max-type -- сброс тегов на странице слайдов */
+	blockquote {
+		margin: 0;
+	}
+
+	ol,
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	/* stylelint-enable selector-max-type */
+
+	/* Обложка */
+	.cover {
+		&__title {
+			font-size: clamp(2rem, 5.2vw, 3.6rem);
+
+			@media (max-height: 700px) {
+				font-size: 1.7rem;
+			}
+		}
+
+		& .btn {
+			cursor: pointer;
+			border: 0;
+			font-family: inherit;
+		}
+
+		& .btn :global(.slide__arrow) {
+			transform: rotate(-90deg);
+		}
+	}
+
+	.lead {
+		@media (max-height: 700px) {
+			font-size: 1rem;
+		}
+	}
+
+	/* Фразы и ответы */
+	.phrases {
+		&__item + &__item {
+			margin-top: clamp(16px, 3.5svh, 32px);
+		}
+	}
+
+	/* Общий набор крупных реплик. Стоит раньше .phrase, .formula и .pair, чтобы их
+	   собственные line-height и мелкий шрифт низких экранов перекрывали этот. */
+	.phrase,
+	.formula,
+	.pair__do-text {
+		font-family: var(--font-serif);
+		font-size: clamp(1.2rem, 2.6vw, 1.7rem);
+		line-height: 1.35;
+	}
+
+	.phrase {
+		margin-top: 8px;
+		padding-left: 20px;
+		border-left: 1px solid var(--accent);
+
+		@media (max-height: 700px) {
+			font-size: 1.08rem;
+		}
+	}
+
+	.replies {
+		&__item {
+			padding-block: clamp(12px, 2.4svh, 22px);
+		}
+	}
+
+	.reply {
+		margin-top: 4px;
+		font-family: var(--font-serif);
+		font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+		line-height: 1.4;
+
+		@media (max-height: 700px) {
+			font-size: 1.08rem;
+		}
+	}
+
+	.formula {
+		padding: 20px 24px;
+		border-radius: 16px;
+		/* Строки с плашками разведены, иначе плашки соседних строк налезают друг на друга. */
+		line-height: 1.9;
+		background: color-mix(in srgb, var(--accent) 14%, transparent);
+
+		@media (max-height: 700px) {
+			font-size: 1.08rem;
+		}
+	}
+
+	/* Места формулы -- плашки своего цвета, а в примерах тем же цветом подчёркнуто
+	   то, что их заполняет. Цвета светлые, поэтому только рамка и лёгкая заливка:
+	   сплошной фон съел бы белый текст. */
+	.slot {
+		padding: 0.02em 0.4em 0.08em;
+		border-radius: 0.35em;
+		color: #fff;
+		white-space: nowrap;
+		background: color-mix(in srgb, var(--slot) 28%, transparent);
+		box-shadow: inset 0 0 0 1.5px var(--slot);
+
+		&--1 {
+			--slot: #ffd3a1;
+		}
+
+		&--2 {
+			--slot: #c4d8ff;
+		}
+	}
+
+	.fill {
+		padding: 0.05em 0.2em;
+		border-radius: 0.25em;
+		color: #fff;
+		background: color-mix(in srgb, var(--slot) 28%, transparent);
+		-webkit-box-decoration-break: clone;
+		box-decoration-break: clone;
+		box-shadow: inset 0 -2px 0 var(--slot);
+
+		&--1 {
+			--slot: #ffd3a1;
+		}
+
+		&--2 {
+			--slot: #c4d8ff;
+		}
+	}
+
+	.examples-title {
+		margin: 28px 0 12px;
+	}
+
+	.examples {
+		&__item {
+			font-size: 1.1rem;
+			line-height: 1.8;
+
+			@media (max-height: 700px) {
+				font-size: 1rem;
+			}
+		}
+
+		&__item + &__item {
+			margin-top: 12px;
+		}
+	}
+
+	/* Ошибка и чем её заменить */
+	.pair {
+		display: grid;
+		gap: 20px;
+
+		& .eyebrow {
+			margin-bottom: 0;
+		}
+
+		&__num {
+			font-family: var(--font-serif);
+			font-size: clamp(3rem, 8vw, 5rem);
+			line-height: 1;
+			color: var(--accent);
+			transition: color 1.4s var(--ease);
+		}
+
+		&__num .muted {
+			font-size: 0.4em;
+		}
+
+		/* Ошибка -- в красноватой плашке и зачёркнута, замена -- в плашке цвета акцента:
+		   с одного взгляда ясно, что говорить нельзя, а что можно. */
+		&__dont,
+		&__do {
+			display: grid;
+			gap: 8px;
+			padding: 16px 18px;
+			border-radius: 14px;
+			background: color-mix(in srgb, var(--tone) 14%, transparent);
+			box-shadow: inset 3px 0 0 var(--tone);
+		}
+
+		/* Под ошибкой тёмно-красная подложка, а не светлая: на утренних слайдах светлая
+		   сливается с фоном. */
+		&__dont {
+			--tone: #ffa093;
+			background: color-mix(in srgb, #6e1a1f 32%, transparent);
+		}
+
+		&__do {
+			--tone: var(--accent);
+		}
+
+		&__dont-text,
+		&__do-text {
+			margin: 0;
+		}
+
+		&__do-text {
+			@media (max-height: 700px) {
+				font-size: 1.08rem;
+			}
+		}
+
+		&__dont .label {
+			color: var(--tone);
+		}
+
+		&__dont-text {
+			font-size: 1.1rem;
+			color: var(--muted);
+			text-decoration: line-through;
+			text-decoration-color: color-mix(in srgb, var(--tone) 35%, transparent);
+			text-decoration-thickness: 1.5px;
+		}
+	}
+
+	/* Финал */
+	.outro {
+		&__text:first-child {
+			font-family: var(--font-serif);
+			font-size: clamp(1.15rem, 2.6vw, 1.75rem);
+			line-height: 1.3;
+
+			@media (max-height: 700px) {
+				font-size: 1.05rem;
+				line-height: 1.28;
+			}
+		}
+
+		&__text {
+			font-size: 1.1rem;
+
+			@media (max-height: 700px) {
+				font-size: 1rem;
+			}
+		}
+
+		&__text:not(:first-child) {
+			@media (max-height: 700px) {
+				margin-bottom: 0.6em;
+				font-size: 0.92rem !important;
+			}
+		}
+
+		&__actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin-top: 20px;
+
+			@media (max-height: 700px) {
+				margin-top: 12px;
+			}
+		}
+
+		&__actions .btn {
+			padding: 0.85em 1.4em;
+		}
+
+		/* Та же специфичность, что у &__actions .btn: должно идти после него. */
+		& .btn {
+			@media (max-height: 700px) {
+				padding: 0.75em 1.4em;
+			}
+		}
+
+		&__note {
+			margin-top: 24px;
+			font-size: 0.95rem !important;
+
+			@media (max-height: 700px) {
+				margin-top: 12px;
+			}
+		}
+	}
+</style>

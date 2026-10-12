@@ -54,6 +54,6 @@ export default {
 	overrides: [
 		{ files: ['**/*.css'], customSyntax: null },
 		// Базовые стили тегов живут здесь, это не элементы блоков.
-		{ files: ['src/styles/global.css'], rules: { 'selector-max-type': null } },
+		{ files: ['src/frontend/styles/global.css'], rules: { 'selector-max-type': null } },
 	],
 }

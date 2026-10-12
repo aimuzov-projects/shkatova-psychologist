@@ -1,0 +1,56 @@
+---
+import Base from '#frontend/layouts/Base.astro'
+import Footer from '#frontend/components/Footer.astro'
+import Header from '#frontend/components/Header.astro'
+import Icon from '#frontend/components/Icon.astro'
+import { person } from '#shared/site.ts'
+---
+
+<Base title={`Страница не найдена — ${person.name}`} description="Такой страницы на сайте нет." index={false}>
+	<Header home={false} />
+	<main class="missing" data-stage="night">
+		<div class="container missing__inner">
+			<span class="eyebrow">Ошибка 404</span>
+			<h1 class="missing__title">Такой страницы нет</h1>
+			<p class="lead">
+				Возможно, ссылка устарела или в ней опечатка. Загляните на главную или напишите мне — отвечу в течение
+				дня.
+			</p>
+			<div class="missing__actions">
+				<a href="/" class="btn">
+					<Icon name="heart" size={18} />
+					На главную
+				</a>
+				<a href="/#contacts" class="btn btn--ghost">
+					<Icon name="plane" size={18} />
+					Контакты
+				</a>
+			</div>
+		</div>
+	</main>
+	<Footer stage="night" />
+</Base>
+
+<style>
+	.missing {
+		display: grid;
+		align-items: center;
+		min-height: calc(100svh - 120px);
+		padding-block: calc(var(--section-y) + 64px) var(--section-y);
+
+		&__inner {
+			max-width: calc(760px + var(--gutter) * 2);
+		}
+
+		&__title {
+			font-size: clamp(2.4rem, 6vw, 3.6rem);
+		}
+
+		&__actions {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 12px;
+			margin-top: 32px;
+		}
+	}
+</style>

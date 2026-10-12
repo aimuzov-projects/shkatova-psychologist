@@ -1,0 +1,181 @@
+---
+import Icon from '#frontend/components/Icon.astro'
+import SectionPhoto from '#frontend/components/SectionPhoto.astro'
+import reading from '#frontend/assets/topics.jpg'
+import { topics } from '#shared/site.ts'
+---
+
+<section class="section topics-section" id="topics" data-stage="dawn">
+	<SectionPhoto src={reading} />
+
+	<div class="container story__text">
+		<span class="eyebrow reveal">С чем работаю</span>
+		<h2 class="reveal" data-delay="1">
+			С чем ко мне приходят
+		</h2>
+		<p class="lead reveal" data-delay="2">
+			Не обязательно ждать, пока станет совсем плохо. Достаточно того, что вам тяжело и не с кем об этом
+			поговорить.
+		</p>
+
+		<ol class="topics">
+			{topics.map((t, i) => (
+				<li class="topic reveal" data-delay={String(i % 2)}>
+					<span class="topic__badge">
+						<Icon name={t.icon} class="topic__icon" size={104} />
+					</span>
+					<div class="topic__body">
+						<h3 class="topic__title">{t.title}</h3>
+						<p class="topic__text muted">{t.text}</p>
+					</div>
+				</li>
+			))}
+		</ol>
+	</div>
+</section>
+
+<style>
+	.topics-section {
+		--photo-position: 60% 40%;
+		overflow: clip;
+		padding-top: 0;
+
+		@media (--md) {
+			overflow: visible;
+			padding-top: var(--section-y);
+			padding-bottom: calc(var(--section-y) + 72px);
+		}
+	}
+
+	.story {
+		&__text {
+			position: relative;
+			z-index: 2;
+
+			/* Две колонки тем шире левой половины: блок заходит на фото до края сетки. */
+			@media (--md) {
+				margin-right: calc(-46vw + max(var(--gutter), (100vw - var(--container)) / 2));
+				padding-right: 0;
+			}
+		}
+	}
+
+	.topics {
+		display: grid;
+		gap: 0 64px;
+		margin: 48px 0 0;
+		padding: 0;
+		list-style: none;
+
+		@media (--md) {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	/* На телефоне иконка в строку с заголовком и ростом с него, описание под ними. */
+	.topic {
+		position: relative;
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 10px 14px;
+		align-items: start;
+		padding-block: 24px;
+
+		@media (min-width: 700px) {
+			grid-template-columns: 136px 1fr;
+			gap: 12px 8px;
+			align-items: start;
+			margin-left: -16px;
+			padding-block: 32px;
+		}
+
+		&__body {
+			display: contents;
+
+			@media (min-width: 700px) {
+				display: block;
+			}
+		}
+
+		&__title {
+			margin: 0;
+
+			@media (min-width: 700px) {
+				margin: 0 0 0.5em;
+			}
+		}
+
+		/* Разделитель тает к краям, чтобы не резать сетку по линейке. */
+		&::after {
+			content: '';
+			position: absolute;
+			inset: auto 0 0;
+			height: 1px;
+			opacity: 0.6;
+			background: linear-gradient(to right, transparent, var(--line) 25%, var(--line) 75%, transparent);
+			transition: background 1.4s var(--ease);
+		}
+
+		&:last-child::after {
+			display: none;
+		}
+
+		&:nth-last-child(2)::after {
+			@media (--md) {
+				display: none;
+			}
+		}
+
+		&:nth-child(2n) {
+			@media (--md) {
+				transform: translateY(72px);
+			}
+		}
+
+		&:nth-child(2n):not(.reveal--in) {
+			@media (--md) {
+				transform: translateY(100px);
+			}
+		}
+
+		&__text {
+			grid-column: 1 / -1;
+			margin: 0;
+			font-size: 0.97rem;
+
+			@media (min-width: 700px) {
+				grid-column: auto;
+			}
+		}
+
+		&__badge {
+			display: grid;
+			place-items: center;
+
+			@media (min-width: 700px) {
+				width: 136px;
+				height: 136px;
+				margin-top: -28px;
+				border-radius: 50%;
+				background: radial-gradient(
+					circle,
+					color-mix(in srgb, var(--accent) 16%, transparent) 0%,
+					transparent 72%
+				);
+				transition: background 1.4s var(--ease);
+			}
+		}
+
+		& :global(.topic__icon) {
+			width: 1.6rem;
+			height: 1.6rem;
+			color: var(--accent);
+			transition: color 1.4s var(--ease);
+
+			@media (min-width: 700px) {
+				width: 104px;
+				height: 104px;
+			}
+		}
+	}
+</style>

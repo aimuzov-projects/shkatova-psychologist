@@ -1,0 +1,96 @@
+---
+import SectionPhoto from '#frontend/components/SectionPhoto.astro'
+import standing from '#frontend/assets/about.jpg'
+import { about } from '#shared/site.ts'
+---
+
+<section class="section about" id="about" data-stage="dusk">
+	<SectionPhoto src={standing} />
+
+	<div class="container story__text about__inner">
+		<div class="about__text">
+			<span class="eyebrow reveal">Обо мне</span>
+			<h2 class="reveal" data-delay="1">
+				Здесь не нужно «держаться»
+			</h2>
+			{about.paragraphs.map((p, i) => (
+				<p class={i === 0 ? 'lead reveal' : 'reveal'} data-delay="2">
+					{p}
+				</p>
+			))}
+
+			<ol class="education soft-divide reveal" data-delay="3">
+				{about.education.map((item) => (
+					<li class="education__item">
+						<span class="education__year">{item.year}</span>
+						<span>{item.title}</span>
+					</li>
+				))}
+			</ol>
+			<p class="profiles reveal" data-delay="3">
+				{about.profiles.map((p) => (
+					<a class="profiles__link" href={p.href} target="_blank" rel="noopener noreferrer">
+						{p.label}
+					</a>
+				))}
+			</p>
+		</div>
+	</div>
+</section>
+
+<style>
+	.about {
+		--photo-position: 30% 0%;
+		overflow: clip;
+		padding-top: 0;
+
+		@media (--md) {
+			padding-top: var(--section-y);
+		}
+
+		&__inner {
+			position: relative;
+			z-index: 2;
+		}
+	}
+
+	.education {
+		margin: 40px 0 24px;
+		padding: 0;
+		list-style: none;
+
+		&__item {
+			display: grid;
+			grid-template-columns: 64px 1fr;
+			gap: 16px;
+			padding-block: 18px;
+			font-size: 0.93rem;
+			color: var(--muted);
+			transition: color 1.4s var(--ease);
+		}
+
+		&__year {
+			font-family: var(--font-serif);
+			font-size: 1.3rem;
+			color: var(--accent);
+			transition: color 1.4s var(--ease);
+		}
+	}
+
+	.profiles {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 24px;
+		font-size: 0.88rem;
+
+		&__link {
+			color: var(--muted);
+			text-underline-offset: 4px;
+			transition: color 0.3s;
+		}
+
+		&__link:hover {
+			color: var(--fg);
+		}
+	}
+</style>

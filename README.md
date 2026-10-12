@@ -15,7 +15,7 @@
 
 Website of Tatiana Shkatova, a perinatal psychologist: [tatiana-shkatova.ru](https://tatiana-shkatova.ru). The site itself is in Russian.
 
-A static site built with [Astro](https://astro.build). The only interactive part is an AI assistant in Svelte: it helps visitors prepare for the first session and sends Tatiana a summary of the conversation. The assistant service (`chat/`) is plain Node with no dependencies: it talks to the model through OpenRouter and delivers summaries via Telegram.
+A static site built with [Astro](https://astro.build). The only interactive part is an AI assistant in Svelte: it helps visitors prepare for the first session and sends Tatiana a summary of the conversation. The assistant service (`src/backend/`) is plain Node with no dependencies: it talks to the model through OpenRouter and delivers summaries via Telegram.
 
 ## Getting started
 

@@ -1,0 +1,100 @@
+---
+import { Picture } from 'astro:assets'
+
+import night from '#frontend/assets/night.jpg'
+import Base from '#frontend/layouts/Base.astro'
+import Chat from '#frontend/components/Chat.svelte'
+import Header from '#frontend/components/Header.astro'
+import Icon from '#frontend/components/Icon.astro'
+import { contacts, person } from '#shared/site.ts'
+import { encodePhone } from '#shared/phone.ts'
+---
+
+<Base
+	title={`Расскажите о себе — ${person.name}`}
+	description="Не знаете, с чего начать? Расскажите о себе ассистенту, и Татьяна придёт на первую встречу, уже понимая ваш запрос."
+>
+	<Header home={false} />
+	<main class="chat" data-stage="night">
+		<div class="chat__bg" aria-hidden="true">
+			<Picture
+				class="chat__bg-img"
+				src={night}
+				formats={['avif']}
+				fallbackFormat="webp"
+				alt=""
+				widths={[480, 768, 1200]}
+				sizes="100vw"
+			/>
+		</div>
+		<div class="container chat__inner">
+			<span class="eyebrow">Подготовка к встрече</span>
+			<h1 class="chat__title">Расскажите о себе</h1>
+			<noscript>
+				<p class="lead">
+					Чат работает только с включённым JavaScript, а в вашем браузере он выключен. Напишите Татьяне
+					напрямую в{' '}
+					<a class="icon-link" href={contacts.telegram.href} target="_blank" rel="noopener noreferrer">
+						<Icon name="plane" size={16} class="icon-link__icon" />
+						Telegram
+					</a>
+					, она ответит в течение дня.
+				</p>
+			</noscript>
+
+			<Chat
+				client:only="svelte"
+				telegram={contacts.telegram.href}
+				whatsapp={encodePhone(contacts.whatsapp.phone)}
+			/>
+		</div>
+	</main>
+</Base>
+
+<style>
+	.chat {
+		min-height: 100dvh;
+		padding-block: calc(var(--section-y) + 64px) 32px;
+
+		/* Ночное небо стоит на месте, переписка едет поверх. Под вуалью оно еле проступает. */
+		&__bg {
+			position: fixed;
+			inset: 0;
+			overflow: hidden;
+		}
+
+		&__bg::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			opacity: 0.92;
+			background: var(--bg);
+		}
+
+		& :global(.chat__bg-img) {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		&__inner {
+			position: relative;
+			max-width: calc(760px + var(--gutter) * 2);
+		}
+
+		&__title {
+			font-size: clamp(2.4rem, 6vw, 3.6rem);
+		}
+	}
+
+	/* Иконка у ссылки не отрывается от текста при переносе строки. */
+	.icon-link {
+		white-space: nowrap;
+
+		& :global(.icon-link__icon) {
+			display: inline-block;
+			margin-inline-end: 0.25em;
+			vertical-align: -0.15em;
+		}
+	}
+</style>

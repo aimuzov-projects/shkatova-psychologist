@@ -1,0 +1,26 @@
+---
+import og from '#frontend/assets/og.jpg'
+import { about, contacts, person, services } from '#shared/site.ts'
+
+// Разметка schema.org для поисковиков: кто, где и почём. Телефона здесь нет
+// намеренно: в HTML он не попадает открытым (см. #/lib/phone.ts).
+const plain = (text: string) => text.replaceAll(' ', ' ')
+const price = (text: string) => (text === 'Бесплатно' ? '0' : text.replace(/\D/g, ''))
+
+const data = {
+	'@context': 'https://schema.org',
+	'@type': 'ProfessionalService',
+	name: person.name,
+	description: plain(person.intro),
+	url: Astro.site,
+	image: new URL(og.src, Astro.site),
+	address: { '@type': 'PostalAddress', addressLocality: 'Тольятти', addressCountry: 'RU' },
+	founder: { '@type': 'Person', name: person.name, jobTitle: person.role },
+	sameAs: [...about.profiles.map((p) => p.href), contacts.telegram.href, contacts.vk.href],
+	makesOffer: services
+		.filter((s) => price(s.price))
+		.map((s) => ({ '@type': 'Offer', name: plain(s.title), price: price(s.price), priceCurrency: 'RUB' })),
+}
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(data)} />
