@@ -1,6 +1,6 @@
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
 
-import { complete, type Message } from './openrouter.ts'
+import { complete, type Message, type Usage } from './openrouter.ts'
 import type { Summary } from './prompt.ts'
 import { formatSummary, sendSummary } from './telegram.ts'
 import { normalizeSummary, parseMessages } from './validate.ts'
@@ -101,8 +101,11 @@ async function chat(req: IncomingMessage, res: ServerResponse) {
 	res.on('close', () => abort.abort())
 
 	let status = 'ok'
+	let usage: Usage | null = null
 	try {
-		const summary = normalizeSummary(await complete(messages, (text) => send('delta', { text }), abort.signal))
+		const reply = await complete(messages, (text) => send('delta', { text }), abort.signal)
+		usage = reply.usage
+		const summary = normalizeSummary(reply.summary)
 		if (summary) {
 			let delivered = false
 			if (allow(ip, 'summaries')) {
@@ -124,7 +127,11 @@ async function chat(req: IncomingMessage, res: ServerResponse) {
 		} else status = 'aborted'
 	}
 	res.end()
-	console.log(`chat ${status} messages=${messages.length} ${Date.now() - started}ms`)
+	// Расход в логе: по нему видно, во что обходится чат, без захода в кабинет OpenRouter.
+	const spent = usage
+		? ` tokens=${usage.prompt}/${usage.cached}/${usage.completion} cost=$${usage.cost.toFixed(4)}`
+		: ''
+	console.log(`chat ${status} messages=${messages.length}${spent} ${Date.now() - started}ms`)
 }
 
 createServer((req, res) => {
