@@ -1,4 +1,4 @@
-# Сайт на сервере projects. Порты 80/443 держит общий Caddy из aimuzov-projects/server-infra,
+# Сайт на сервере projects. Порты 80/443 держит общий Caddy из aimuzov-projects/infra-server,
 # он проксирует домен сюда по сети edge, а /api/* -- сервису чата.
 
 name: shkatova-site
@@ -23,7 +23,7 @@ services:
 
   # Секреты лежат в /srv/shkatova-site/.env, образец в .env.example.
   # Из РФ OpenRouter и Telegram не отвечают, поэтому чат ходит наружу через общий
-  # VPN-выход из server-infra.
+  # VPN-выход из infra-server.
   chat:
     build:
       context: ..
