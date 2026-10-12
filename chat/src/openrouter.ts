@@ -4,7 +4,10 @@ export type Message = { role: 'user' | 'assistant'; content: string }
 
 type ToolCall = { name: string; arguments: string }
 
-const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-sonnet-5.5'
+/** Расход на ответ: токены промпта, из них из кеша, токены ответа и цена в долларах. */
+export type Usage = { prompt: number; cached: number; completion: number; cost: number }
+
+const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-haiku-5.5'
 
 // Ответ модели по кусочкам: текст отдаётся сразу через onText, вызов инструмента
 // приходит частями и склеивается к концу потока.
@@ -23,13 +26,22 @@ export async function complete(messages: Message[], onText: (chunk: string) => v
 			model,
 			stream: true,
 			max_tokens: 1000,
-			messages: [{ role: 'system', content: systemPrompt }, ...messages],
+			messages: [
+				// Системный промпт одинаков для всех разговоров: из кеша он в десять раз дешевле.
+				{
+					role: 'system',
+					content: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+				},
+				...messages,
+			],
 			tools: [summaryTool],
+			usage: { include: true },
 		}),
 	})
 	if (!res.ok || !res.body) throw new Error(`OpenRouter ${res.status}: ${(await res.text()).slice(0, 300)}`)
 
 	const calls: ToolCall[] = []
+	let usage: Usage | null = null
 	let buffer = ''
 	const decoder = new TextDecoder()
 	for await (const bytes of res.body) {
@@ -43,6 +55,13 @@ export async function complete(messages: Message[], onText: (chunk: string) => v
 			if (data === '[DONE]') continue
 			const chunk = JSON.parse(data)
 			if (chunk.error) throw new Error(`OpenRouter: ${chunk.error.message ?? JSON.stringify(chunk.error)}`)
+			if (chunk.usage)
+				usage = {
+					prompt: chunk.usage.prompt_tokens ?? 0,
+					cached: chunk.usage.prompt_tokens_details?.cached_tokens ?? 0,
+					completion: chunk.usage.completion_tokens ?? 0,
+					cost: chunk.usage.cost ?? 0,
+				}
 			const delta = chunk.choices?.[0]?.delta
 			if (delta?.content) onText(delta.content)
 			for (const call of delta?.tool_calls ?? []) {
@@ -54,5 +73,5 @@ export async function complete(messages: Message[], onText: (chunk: string) => v
 	}
 
 	const summary = calls.find((call) => call.name === summaryTool.function.name)
-	return summary ? JSON.parse(summary.arguments || '{}') : null
+	return { summary: summary ? JSON.parse(summary.arguments || '{}') : null, usage }
 }
