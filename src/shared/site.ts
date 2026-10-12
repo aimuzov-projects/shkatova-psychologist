@@ -1,4 +1,4 @@
-import type { IconName } from '#frontend/lib/icons.ts'
+import type { IconName } from '#shared/icons.ts'
 import { formatPhone, phoneHref } from '#shared/phone.ts'
 
 export const person = {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { icons, type IconName } from '#frontend/lib/icons.ts'
+	import { icons, type IconName } from '#shared/icons.ts'
 
 	// Двойник Icon.astro для Svelte-компонентов, с той же разметкой.
 	type Props = {
