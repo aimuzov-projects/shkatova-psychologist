@@ -59,7 +59,7 @@ const items = [
 								<Icon name={i.icon} size={22} class="links__icon" />
 								{i.title}
 							</span>
-							<span class="links__value selectable" {...(secret ? { 'data-phone-label': '' } : {})}>
+							<span class="links__value" {...(secret ? { 'data-phone-label': '' } : {})}>
 								{secret ? '' : i.label}
 							</span>
 							<span class="links__go" aria-hidden="true">

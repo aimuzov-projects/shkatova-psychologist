@@ -396,8 +396,6 @@
 	}
 
 	.msg {
-		-webkit-user-select: text;
-		user-select: text;
 		max-width: 88%;
 		overflow-wrap: anywhere;
 		white-space: pre-wrap;

@@ -84,7 +84,7 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 					aria-roledescription="слайд"
 					aria-label={`${i + 1} из ${slides.length}`}
 				>
-					<div class="slide__inner container selectable">
+					<div class="slide__inner container">
 						{slide.kind === 'cover' && (
 							<div class="cover">
 								<span class="eyebrow">{material.audience} · бесплатно</span>

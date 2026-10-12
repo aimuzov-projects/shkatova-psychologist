@@ -126,6 +126,9 @@
 /* Без scroll-behavior: smooth: с ним браузер плавно едет к якорю из адреса при каждом
    открытии страницы. Плавность нужна только по клику, её даёт скрипт в Base.astro. */
 html {
+	/* Цвет выделения берётся из стадии на <html>, а не из секции: он следует за фоном
+	   под экраном, как в материалах. */
+	--selection: color-mix(in srgb, var(--accent) 35%, transparent);
 	background: var(--bg);
 }
 
@@ -152,14 +155,10 @@ body::after {
 	mix-blend-mode: soft-light;
 }
 
-/* Выделение выключено: случайные клики подсвечивали фото голубым.
-   Контакты оставлены выделяемыми, их копируют. */
-body {
-	-webkit-user-select: none;
+/* Фото и иконки не выделяются: случайные клики подсвечивали их голубым. */
+img,
+svg {
 	user-select: none;
-}
-
-img {
 	-webkit-user-drag: none;
 }
 
@@ -168,14 +167,9 @@ picture {
 	display: contents;
 }
 
-.selectable {
-	-webkit-user-select: text;
-	user-select: text;
-}
-
 ::selection {
 	color: inherit;
-	background: color-mix(in srgb, var(--accent) 35%, transparent);
+	background: var(--selection);
 }
 
 h1,
