@@ -1,4 +1,4 @@
-import type { IconName } from '#frontend/lib/icons.ts'
+import type { IconName } from '#shared/icons.ts'
 
 // Бесплатные материалы: у каждого своя страница-презентация /materials/<slug>/
 // и карточка на главной. Блок -- слайд, а ошибки из dont-do идут по одной на слайд.
