@@ -10,6 +10,7 @@ import Materials from '#/components/Materials.astro'
 import Faq from '#/components/Faq.astro'
 import Contacts from '#/components/Contacts.astro'
 import Footer from '#/components/Footer.astro'
+import StructuredData from '#/components/StructuredData.astro'
 import hero from '#/assets/hero.jpg'
 import about from '#/assets/about.jpg'
 import services from '#/assets/services.jpg'
@@ -17,11 +18,11 @@ import reading from '#/assets/topics.jpg'
 ---
 
 <Base>
+	<StructuredData slot="head" />
 	<Header />
 	<main>
 		<Story
 			eager
-			rows={6}
 			shots={[
 				{ src: hero },
 				{ src: about, trigger: '#about .eyebrow', at: 260 },
