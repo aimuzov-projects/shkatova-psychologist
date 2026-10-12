@@ -6,7 +6,7 @@ import { topics } from '#/data/site.ts'
 ---
 
 <section class="section topics-section" id="topics" data-stage="dawn">
-	<SectionPhoto src={reading} position="60% 40%" />
+	<SectionPhoto src={reading} />
 
 	<div class="container story__text">
 		<span class="eyebrow reveal">С чем работаю</span>
@@ -36,6 +36,7 @@ import { topics } from '#/data/site.ts'
 
 <style>
 	.topics-section {
+		--photo-position: 60% 40%;
 		overflow: clip;
 		padding-top: 0;
 

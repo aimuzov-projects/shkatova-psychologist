@@ -16,17 +16,15 @@ type Shot = {
 type Props = {
 	/** Кадры по порядку прокрутки: активен последний, чей `trigger` уже прошёл свою линию. */
 	shots: Shot[]
-	/** Сколько строк сетки (секций из slot) занимает колонка с фото, по умолчанию 2. */
-	rows?: number
 	/** Грузить первый кадр сразу и с высоким приоритетом, для фото на первом экране. */
 	eager?: boolean
 }
 
-const { shots, rows = 2, eager = false } = Astro.props
+const { shots, eager = false } = Astro.props
 ---
 
 <div class="story">
-	<div class="story__photos" style={`grid-row: 1 / span ${rows}`} aria-hidden="true">
+	<div class="story__photos" aria-hidden="true">
 		<div class="story__sticky">
 			{shots.map((shot, i) => (
 				<Picture
@@ -46,7 +44,9 @@ const { shots, rows = 2, eager = false } = Astro.props
 			<div class="veil" data-veil="story" />
 		</div>
 	</div>
-	<slot />
+	<div class="story__sections">
+		<slot />
+	</div>
 </div>
 
 <script>
@@ -100,14 +100,14 @@ const { shots, rows = 2, eager = false } = Astro.props
 
 			@media (--md) {
 				display: block;
-				grid-column: 2;
+				grid-area: 1 / 2;
 			}
 		}
 
-		/* stylelint-disable-next-line selector-max-type -- секции приходят через slot, общего класса у них нет */
-		& > :global(section) {
+		/* Секции слева, колонка с фото справа во всю их высоту. */
+		&__sections {
 			@media (--md) {
-				grid-column: 1;
+				grid-area: 1 / 1;
 			}
 		}
 

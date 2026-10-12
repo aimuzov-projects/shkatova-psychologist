@@ -5,7 +5,7 @@ import { about } from '#/data/site.ts'
 ---
 
 <section class="section about" id="about" data-stage="dusk">
-	<SectionPhoto src={standing} position="30% 0%" />
+	<SectionPhoto src={standing} />
 
 	<div class="container story__text about__inner">
 		<div class="about__text">
@@ -40,6 +40,7 @@ import { about } from '#/data/site.ts'
 
 <style>
 	.about {
+		--photo-position: 30% 0%;
 		overflow: clip;
 		padding-top: 0;
 
