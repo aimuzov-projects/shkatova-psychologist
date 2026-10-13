@@ -1,4 +1,9 @@
 <p align="center">
+	<a href="README.md"><img src="https://img.shields.io/badge/English-555?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MCAzMCI+PGNsaXBQYXRoIGlkPSJ0Ij48cGF0aCBkPSJNMzAsMTVoMzB2MTV6djE1aC0zMHpoLTMwdi0xNXp2LTE1aDMweiIvPjwvY2xpcFBhdGg+PHBhdGggZD0iTTAsMHYzMGg2MHYtMzB6IiBmaWxsPSIjMDEyMTY5Ii8+PHBhdGggZD0iTTAsMCA2MCwzME02MCwwIDAsMzAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI2Ii8+PHBhdGggZD0iTTAsMCA2MCwzME02MCwwIDAsMzAiIGNsaXAtcGF0aD0idXJsKCN0KSIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjQiLz48cGF0aCBkPSJNMzAsMHYzME0wLDE1aDYwIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMTAiLz48cGF0aCBkPSJNMzAsMHYzME0wLDE1aDYwIiBzdHJva2U9IiNDODEwMkUiIHN0cm9rZS13aWR0aD0iNiIvPjwvc3ZnPg==" alt="English"></a>
+	<img src="https://img.shields.io/badge/%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-e3b48b?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5IDYiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0wIDBoOXYzSDB6Ii8+PHBhdGggZmlsbD0iIzAwMzlhNiIgZD0iTTAgMmg5djJIMHoiLz48cGF0aCBmaWxsPSIjZDUyYjFlIiBkPSJNMCA0aDl2MkgweiIvPjwvc3ZnPg==" alt="Русский">
+</p>
+
+<p align="center">
 	<a href="https://tatiana-shkatova.ru"><img src=".github/assets/banner.jpg" alt="Татьяна Шкатова, перинатальный и детский психолог" width="100%"></a>
 </p>
 
@@ -11,15 +16,29 @@
 	<a href="LICENSE"><img src="https://img.shields.io/github/license/aimuzov-projects/shkatova-psychologist" alt="License"></a>
 </p>
 
-<p align="center"><a href="README.md">English</a> · <b>Русский</b></p>
+<h3 align="center">Сайт перинатального психолога</h3>
+<p align="center">Статичный сайт с ИИ-ассистентом, который готовит к первой встрече и отправляет выжимку в Telegram</p>
 
-Сайт перинатального психолога Татьяны Шкатовой: [tatiana-shkatova.ru](https://tatiana-shkatova.ru).
+<table>
+	<tr>
+		<td width="50%" align="center"><img src=".github/assets/home.jpg" alt="Главная"><br><b>Сайт</b> для клиенток</td>
+		<td width="50%" align="center"><img src=".github/assets/chat.jpg" alt="Чат с ассистентом"><br><b>Ассистент</b> перед первой встречей</td>
+	</tr>
+</table>
 
-Статичный сайт на [Astro](https://astro.build), из интерактива только ИИ-ассистент на Svelte. Он помогает подготовиться к первой встрече и отправляет Татьяне выжимку разговора. Сервис ассистента (`src/backend/`) написан на Node без зависимостей: модель вызывается через OpenRouter, выжимки уходят в Telegram.
+Живёт на [tatiana-shkatova.ru](https://tatiana-shkatova.ru). Статичный сайт на [Astro](https://astro.build) с единственным островом на Svelte, чатом ассистента, и маленький сервис (`src/backend/`) на Node без зависимостей: модель он вызывает через OpenRouter, выжимки отправляет в Telegram.
+
+## Что внутри
+
+- **Главная** (`/`): обо мне, с чем работаю, услуги и цены, бесплатные материалы, вопросы, контакты. Фото секций на телефоне едут с параллаксом.
+- **Материалы** (`/materials/<slug>/`): бесплатные памятки, у каждой своя страница, описаны в `src/frontend/data/materials.ts`.
+- **Ассистент** (`/chat/`): после согласия расспрашивает о ситуации и отправляет Татьяне выжимку с контактом и запросом. При признаках риска даёт телефоны помощи и с согласия сразу шлёт срочную выжимку, не дожидаясь остального. Переписка живёт только в `sessionStorage` вкладки, на сервере не хранится. Входы в чат выключаются флагом `enabled` в `src/shared/chat.ts`.
+- **Телефон**: открытым в HTML не попадает. В разметке лежит закодированная строка, ссылки из неё собирает `phone-reveal.ts` уже в браузере, так что сборщики без JavaScript номер не видят.
+- **API**: `POST /api/chat` (Server-Sent Events) и `GET /api/health`. Лимиты: 60 сообщений и 10 выжимок в час с одного IP и суточный потолок на весь сервис (`CHAT_DAILY_LIMIT`).
 
 ## Запуск
 
-Нужен Node 26.11.1, эта же версия закреплена в `package.json` и в Dockerfile.
+Стек и раскладка как в [infra-template-site](https://github.com/aimuzov-projects/infra-template-site): Astro + Svelte 5, Prettier, oxlint, stylelint (БЭМ), `node --test`. Node берётся из `mise.toml`, эта же версия закреплена в `package.json` и в Dockerfile.
 
 ```sh
 cp .env.example .env   # заполнить: телефон обязателен, ключи нужны только чату
@@ -28,7 +47,9 @@ npm run dev            # сайт, /api проксируется на localhost:
 npm run chat           # сервис ассистента
 ```
 
-Перед коммитом:
+Без `TELEGRAM_BOT_TOKEN` локальный сервис не отправляет выжимки, а печатает их в консоль.
+
+Перед коммитом те же проверки, что в CI:
 
 ```sh
 npm run format:check && npm run lint:js && npm run lint:css && npm run check && npm test
@@ -44,7 +65,9 @@ npm run format:check && npm run lint:js && npm run lint:css && npm run check && 
 
 ## Выкладка
 
-Пуш в `main` запускает GitHub Actions: сначала проверки, затем вход по SSH на сервер. Там ключ привязан к [`deploy/remote.sh`](deploy/remote.sh), который подтягивает `main` и пересобирает контейнеры из [`deploy/docker-compose.yml`](deploy/docker-compose.yml). Домен обслуживает общий Caddy сервера, `.env` лежит на сервере рядом с репозиторием.
+Сервер projects из [infra-server](https://github.com/aimuzov-projects/infra-server): пуш в `main` запускает `deploy.yml`, тот прогоняет проверки и заходит по SSH. Там ключ привязан к [`deploy/remote.sh`](deploy/remote.sh), который подтягивает `main` и пересобирает контейнеры из [`deploy/docker-compose.yml`](deploy/docker-compose.yml): `shkatova-psychologist` (nginx со статикой) и `shkatova-chat` (ассистент). Из РФ OpenRouter и Telegram не отвечают, поэтому чат ходит наружу через общий VPN-выход из infra-server. Домен, TLS и маршрут `/api` держит общий Caddy. `.env` лежит на сервере в `/srv/shkatova-psychologist`.
+
+Откатить выкладку: сделать `git revert` плохого коммита в `main` и запушить.
 
 ## Лицензия
 
