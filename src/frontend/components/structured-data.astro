@@ -3,7 +3,7 @@ import og from '#frontend/assets/og.jpg'
 import { about, contacts, person, services } from '#shared/site.ts'
 
 // Разметка schema.org для поисковиков: кто, где и почём. Телефона здесь нет
-// намеренно: в HTML он не попадает открытым (см. #/lib/phone.ts).
+// намеренно: в HTML он не попадает открытым (см. `#shared/phone.ts`).
 const plain = (text: string) => text.replaceAll(' ', ' ')
 const price = (text: string) => (text === 'Бесплатно' ? '0' : text.replace(/\D/g, ''))
 

@@ -13,12 +13,17 @@ export type MaterialBlock =
 export type Material = {
 	slug: string
 	icon: IconName
+	/** Кому памятка: метка над заголовком на карточке, в превью и на обложке. */
 	audience: string
 	title: string
+	/** Для `meta description` и `og:description` страницы памятки. */
 	description: string
+	/** Подпись карточки на главной. */
 	short: string
+	/** Вводный абзац на обложке, первом слайде. */
 	intro: string
 	blocks: MaterialBlock[]
+	/** Абзацы последнего слайда, над кнопками записи. */
 	outro: string[]
 }
 

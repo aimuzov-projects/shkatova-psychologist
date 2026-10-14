@@ -1,8 +1,8 @@
 name: Deploy
 
-# A merge into main only updates the release PR. Merging that PR cuts a release,
-# and the release goes to the server. A manual run deploys any release tag, e.g. to
-# roll back.
+# Мерж в main только обновляет релизный PR. Мерж этого PR выпускает релиз,
+# и уже релиз уезжает на сервер. Ручной запуск выкладывает любой релизный тег,
+# например чтобы откатиться.
 on:
   push:
     branches: [main]

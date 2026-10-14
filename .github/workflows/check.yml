@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      # The build needs a contact phone; the number here is a dummy.
+      # Сборке нужен контактный телефон, номер здесь подставной.
       - uses: aimuzov-projects/infra-site-kit/check@v1
         env:
           CONTACT_PHONE: '79000000000'

@@ -9,8 +9,12 @@ export type Usage = { prompt: number; cached: number; completion: number; cost: 
 
 const model = process.env.OPENROUTER_MODEL || 'anthropic/claude-haiku-5.5'
 
-// Ответ модели по кусочкам: текст отдаётся сразу через onText, вызов инструмента
-// приходит частями и склеивается к концу потока.
+/**
+ * Ответ модели по кусочкам: текст отдаётся сразу через `onText`, вызов инструмента
+ * приходит частями и склеивается к концу потока.
+ *
+ * @returns выжимку из `submit_summary`, если модель его вызвала, и расход на ответ.
+ */
 export async function complete(messages: Message[], onText: (chunk: string) => void, signal: AbortSignal) {
 	const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
 		method: 'POST',

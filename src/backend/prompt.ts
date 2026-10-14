@@ -6,6 +6,7 @@ const list = (items: string[]) => items.map((item) => `- ${item}`).join('\n')
 // Фразы FAQ об ассистенте модель цитировала, когда её спрашивали о ней самой.
 const withoutAssistant = (text: string) => text.replace(/\s*[^.]*ИИ-ассистент[^.]*\./g, '')
 
+/** Системный промпт чата: правила разговора и всё о Татьяне из `#shared/site.ts`. */
 export const systemPrompt = `Ты — ассистент на сайте психолога: ${person.name}, ${person.role.toLowerCase()}. ${person.experience}.
 
 # Твоя задача
@@ -92,6 +93,12 @@ ${list(faq.map((f) => `${f.q} ${withoutAssistant(f.a)}`))}
 
 const text = (description: string) => ({ type: 'string', description })
 
+/**
+ * Инструмент, которым модель передаёт Татьяне выжимку разговора.
+ *
+ * Схема для модели лишь пожелание, поэтому аргументы перед отправкой
+ * проходят через `normalizeSummary` (validate.ts).
+ */
 export const summaryTool = {
 	type: 'function',
 	function: {
@@ -120,6 +127,7 @@ export const summaryTool = {
 	},
 } as const
 
+/** Выжимка разговора, поля повторяют параметры `submit_summary`. */
 export type Summary = {
 	name: string
 	contact: string

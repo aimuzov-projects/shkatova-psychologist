@@ -104,6 +104,7 @@
 				buffer += decoder.decode(value, { stream: true })
 				const events = buffer.split('\n\n')
 
+				// Последнее событие могло прийти не целиком, дописываем его следующим куском.
 				buffer = events.pop() ?? ''
 
 				for (const raw of events) {
@@ -154,6 +155,8 @@
 
 		if (!message || busy) return
 
+		// Те же `limits`, что проверяет сервер, только с запасом на ответ ассистента:
+		// разговор должен уместиться целиком, а не оборваться на следующем сообщении.
 		const chars = chat.messages.reduce((sum, m) => sum + m.content.length, message.length)
 
 		if (chat.messages.length + 2 > limits.messages || chars + limits.assistantChars > limits.historyChars) {

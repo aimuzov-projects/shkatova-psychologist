@@ -16,13 +16,20 @@ const fields: [keyof Summary, string][] = [
 	['notes', 'Заметки ассистента'],
 ]
 
+/**
+ * Собирает выжимку в HTML-сообщения для Telegram.
+ *
+ * Пустые поля пропускаются. Если всё не влезает в одно сообщение,
+ * выжимка делится на несколько.
+ */
 export function formatSummary(summary: Summary) {
 	const head = `${summary.urgent ? '<b>СРОЧНО</b> · ' : ''}<b>Заявка из чата на сайте: ${escape(summary.name || 'без имени')}</b>`
 	const body = fields
 		.filter(([key]) => typeof summary[key] === 'string' && (summary[key] as string).trim())
 		.map(([key, label]) => `<b>${label}:</b> ${escape((summary[key] as string).slice(0, 3000))}`)
 	// У Telegram предел 4096 символов на сообщение. Режем по границам полей,
-	// чтобы не разорвать HTML-тег посередине.
+	// чтобы не разорвать HTML-тег посередине. Поле обрезано до 3000 символов,
+	// так что вместе с подписью оно всегда влезает в одно сообщение.
 	const messages = [head]
 
 	for (const part of body) {
@@ -33,6 +40,11 @@ export function formatSummary(summary: Summary) {
 	return messages
 }
 
+/**
+ * Отправляет выжимку всем получателям из `TELEGRAM_CHAT_ID` (через запятую).
+ *
+ * Бросает исключение, только если не дошло никому.
+ */
 export async function sendSummary(summary: Summary) {
 	const { TELEGRAM_BOT_TOKEN: token, TELEGRAM_CHAT_ID: chatIds = '' } = process.env
 	const recipients = chatIds

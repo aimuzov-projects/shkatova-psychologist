@@ -23,9 +23,10 @@ export default defineConfig({
 	integrations: [svelte(), sitemap()],
 	// Markdown на сайте нет, а подсветка Shiki несовместима с CSP.
 	markdown: { syntaxHighlight: false },
-	// Astro puts a CSP with hashes of its own scripts and styles into the page <meta>.
-	// The Yandex Metrika component from infra-site-kit adds its hash and sources itself.
-	// frame-ancestors doesn't work in <meta>, Caddy blocks embedding via X-Frame-Options.
+	// Astro кладёт CSP с хешами своих скриптов и стилей в <meta> страницы.
+	// Хеш и источники Метрики добавляет сам её компонент из infra-site-kit.
+	// frame-ancestors в <meta> не действует, встраивание запрещает X-Frame-Options
+	// в Caddy.
 	security: {
 		csp: {
 			scriptDirective: { resources: ["'self'"] },

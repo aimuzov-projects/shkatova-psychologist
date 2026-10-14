@@ -3,8 +3,15 @@ import { limits } from '#shared/chat.ts'
 import type { Message } from './openrouter.ts'
 import type { Summary } from './prompt.ts'
 
-// Историю присылает браузер, поэтому ответы ассистента в ней тоже чужой ввод.
-// Без потолка на всю историю ключ модели работал бы как бесплатный прокси.
+/**
+ * Проверяет переписку из тела запроса и оставляет в сообщениях только `role` и `content`.
+ *
+ * Историю присылает браузер, поэтому ответы ассистента в ней тоже чужой ввод.
+ * Без потолка на всю историю ключ модели работал бы как бесплатный прокси.
+ *
+ * @returns `null`, если сообщений нет, роли идут не по очереди, реплика пустая
+ * или переписка не влезает в `limits`.
+ */
 export function parseMessages(body: unknown): Message[] | null {
 	const messages = (body as { messages?: unknown })?.messages
 
@@ -30,8 +37,14 @@ export function parseMessages(body: unknown): Message[] | null {
 
 const str = (value: unknown) => (typeof value === 'string' ? value : value == null ? '' : String(value))
 
-// Аргументы инструмента пишет модель: схема для неё лишь пожелание, поля бывают
-// пустыми, числами или вовсе отсутствуют.
+/**
+ * Приводит выжимку от модели к `Summary`: поля к строкам, `urgent` к булеву.
+ *
+ * Аргументы инструмента пишет модель: схема для неё лишь пожелание, поля бывают
+ * пустыми, числами или вовсе отсутствуют.
+ *
+ * @returns `null`, если выжимка не объект.
+ */
 export function normalizeSummary(raw: unknown): Summary | null {
 	if (!raw || typeof raw !== 'object') return null
 
