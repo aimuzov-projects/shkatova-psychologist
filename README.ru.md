@@ -65,9 +65,9 @@ npm run format:check && npm run lint:js && npm run lint:css && npm run check && 
 
 ## Выкладка
 
-Сервер projects из [infra-server](https://github.com/aimuzov-projects/infra-server): пуш в `main` запускает `deploy.yml`, тот прогоняет проверки и заходит по SSH. Там ключ запускает общий [`deploy/site.sh`](https://github.com/aimuzov-projects/infra-server/blob/main/deploy/site.sh) из infra-server, который подтягивает `main` и пересобирает контейнеры из [`deploy/docker-compose.yml`](deploy/docker-compose.yml): `shkatova-psychologist` (nginx со статикой) и `shkatova-chat` (ассистент). Из РФ OpenRouter и Telegram не отвечают, поэтому чат ходит наружу через общий VPN-выход из infra-server. Домен, TLS и маршрут `/api` держит общий Caddy. `.env` лежит на сервере в `/srv/shkatova-psychologist`.
+Сервер projects из [infra-server](https://github.com/aimuzov-projects/infra-server): мерж релизного PR, который ведёт release-please, запускает `deploy.yml`, тот прогоняет проверки и заходит по SSH. Там ключ запускает общий [`deploy/site.sh`](https://github.com/aimuzov-projects/infra-server/blob/main/deploy/site.sh) из infra-server, который подтягивает `main` и пересобирает контейнеры из [`deploy/docker-compose.yml`](deploy/docker-compose.yml): `shkatova-psychologist` (nginx со статикой) и `shkatova-chat` (ассистент). Из РФ OpenRouter и Telegram не отвечают, поэтому чат ходит наружу через общий VPN-выход из infra-server. Домен, TLS и маршрут `/api` держит общий Caddy. `.env` лежит на сервере в `/srv/shkatova-psychologist`.
 
-Откатить выкладку: сделать `git revert` плохого коммита в `main` и запушить.
+Быстро откатиться — запустить Deploy вручную с прошлым тегом: `gh workflow run deploy.yml -f tag=v1.2.3`. Исправление плохого коммита выезжает через релизный PR, как любое изменение.
 
 ## Лицензия
 

@@ -1,9 +1,16 @@
 name: Deploy
 
+# A merge into main only updates the release PR. Merging that PR cuts a release,
+# and the release goes to the server. A manual run deploys any release tag, e.g. to
+# roll back.
 on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to deploy, e.g. v1.2.0. Empty deploys the newest main.
+        required: false
 
 # Выкладки идут по очереди, новая не обрывает уже начатую сборку.
 concurrency:
@@ -14,11 +21,29 @@ permissions:
   contents: read
 
 jobs:
+  release:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    outputs:
+      created: ${{ steps.release.outputs.created }}
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - id: release
+        uses: aimuzov-projects/infra-site-kit/release@v1
+
   check:
+    needs: release
+    if: needs.release.outputs.created == 'true'
     uses: ./.github/workflows/check.yml
 
   deploy:
-    needs: check
+    needs: [release, check]
+    if: always() && (github.event_name == 'workflow_dispatch' || needs.check.result == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     environment:
@@ -29,3 +54,4 @@ jobs:
         with:
           ssh-key: ${{ secrets.DEPLOY_SSH_KEY }}
           url: https://tatiana-shkatova.ru/
+          ref: ${{ needs.release.outputs.tag || inputs.tag }}
