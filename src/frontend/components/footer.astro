@@ -2,6 +2,8 @@
 import { Picture } from 'astro:assets'
 
 import mountains from '#frontend/assets/mountains.jpg'
+import AuthorMark from '#frontend/components/author-mark.astro'
+import Icon from '#frontend/components/icon.astro'
 import { contacts, person } from '#shared/site.ts'
 
 type Props = {
@@ -36,6 +38,24 @@ const year = new Date().getFullYear()
 		</span>
 		<span>{contacts.address}</span>
 		<span>Информация на сайте не является медицинской консультацией</span>
+		<span class="footer__credits">
+			<span class="footer__author">
+				Сделано
+				<a class="footer__link" href="https://github.com/aimuzov" target="_blank" rel="noopener">
+					<AuthorMark size={16} />
+					aimuzov
+				</a>
+			</span>
+			<a
+				class="footer__link"
+				href="https://github.com/aimuzov-projects/shkatova-psychologist"
+				target="_blank"
+				rel="noopener"
+			>
+				<Icon name="github" size={16} />
+				Исходный код
+			</a>
+		</span>
 	</div>
 </footer>
 
@@ -76,6 +96,31 @@ const year = new Date().getFullYear()
 			flex-wrap: wrap;
 			gap: 8px 24px;
 			justify-content: space-between;
+		}
+
+		/* Пробелы между ссылками держит gap: форматтер переносит их по строкам, и пробелы теряются. */
+		&__credits {
+			display: inline-flex;
+			flex-wrap: wrap;
+			gap: 4px 12px;
+			align-items: center;
+		}
+
+		&__author {
+			display: inline-flex;
+			gap: 5px;
+			align-items: center;
+		}
+
+		&__link {
+			display: inline-flex;
+			gap: 5px;
+			align-items: center;
+			text-underline-offset: 3px;
+
+			&:hover {
+				color: var(--fg);
+			}
 		}
 
 		/* Снизу обрезана краем страницы, контакты и подпись лежат поверх. Сдвинутая
