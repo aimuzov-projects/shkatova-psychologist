@@ -2,6 +2,7 @@
 import { Picture } from 'astro:assets'
 
 import mountains from '#frontend/assets/mountains.jpg'
+import Credit from '@aimuzov-projects/infra-site-kit/credit.astro'
 import { contacts, person } from '#shared/site.ts'
 
 type Props = {
@@ -12,8 +13,6 @@ type Props = {
 }
 
 const { stage = 'day', scenery = false } = Astro.props
-/** Год сборки -- запасной: текущий подставит скрипт ниже, по часам посетителя. */
-const year = new Date().getFullYear()
 ---
 
 <footer class="footer soft-rule" data-stage={stage}>
@@ -32,25 +31,22 @@ const year = new Date().getFullYear()
 	)}
 	<div class="container footer__inner muted">
 		<span>
-			© <span data-year>{year}</span> {person.name}, {person.status}, ИНН {person.inn}
+			{person.name}, {person.status}, ИНН {person.inn}
 		</span>
 		<span>{contacts.address}</span>
 		<span>Информация на сайте не является медицинской консультацией</span>
+		<Credit repo="https://github.com/aimuzov-projects/shkatova-psychologist" />
 	</div>
 </footer>
 
 <script>
 	import { everyFrame, reduceMotion } from '#frontend/lib/frame.ts'
 
-	// Страница собрана заранее, и год из сборки замирает до следующей выкладки.
-	for (const node of document.querySelectorAll('[data-year]')) {
-		node.textContent = String(new Date().getFullYear())
-	}
-
 	const scenery = document.querySelector<HTMLImageElement>('[data-scenery] img')
 
 	// Горы проявляются после загрузки. Из кэша картинка бывает готова раньше скрипта.
 	const show = () => scenery?.closest('[data-scenery]')?.classList.add('footer__scenery--loaded')
+
 	if (scenery?.complete && scenery.naturalWidth) show()
 	else scenery?.addEventListener('load', show, { once: true })
 
@@ -60,6 +56,7 @@ const year = new Date().getFullYear()
 		everyFrame(() => {
 			const rest = document.documentElement.scrollHeight - scrollY - innerHeight
 			const shift = Math.min(Math.max(rest, 0), innerHeight) * 0.2
+
 			return () => (scenery.style.transform = `translate3d(0, ${shift.toFixed(1)}px, 0)`)
 		})
 </script>
@@ -70,6 +67,9 @@ const year = new Date().getFullYear()
 		font-size: 0.82rem;
 
 		&__inner {
+			/* Ссылки подписи из infra-site-kit при наведении светлеют до цвета текста. */
+			--credit-hover: var(--fg);
+
 			position: relative;
 			z-index: 1;
 			display: flex;

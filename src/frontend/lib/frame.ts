@@ -20,11 +20,14 @@ export const onResize = (measure: Measure) => onLayout.push(measure)
 const run = (measures: Measure[]) => measures.map((measure) => measure()).forEach((write) => write?.())
 
 let ticking = false
+
 addEventListener(
 	'scroll',
 	() => {
 		if (ticking) return
+
 		ticking = true
+
 		requestAnimationFrame(() => {
 			run(onScroll)
 			ticking = false

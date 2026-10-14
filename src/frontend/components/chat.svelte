@@ -25,8 +25,10 @@
 	const load = (): State => {
 		try {
 			const saved = JSON.parse(sessionStorage.getItem(key) ?? 'null')
+
 			if (saved && Array.isArray(saved.messages)) return saved
 		} catch {}
+
 		return { consent: false, messages: [], done: false, delivered: false }
 	}
 	const chat = $state(load())
@@ -53,7 +55,9 @@
 	// Поле растёт вместе с текстом.
 	$effect(() => {
 		void text
+
 		if (!input) return
+
 		input.style.height = 'auto'
 		input.style.height = `${input.scrollHeight}px`
 	})
@@ -74,28 +78,38 @@
 		scrollDown()
 
 		let done: { delivered: boolean } | null = null
+
 		try {
 			const res = await fetch('/api/chat', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ messages: chat.messages }),
 			})
+
 			if (!res.ok || !res.body) {
 				const body = await res.json().catch(() => null)
+
 				throw new Error(body?.error ?? 'Не получилось отправить сообщение, попробуйте ещё раз')
 			}
+
 			let buffer = ''
 			const decoder = new TextDecoder()
 			const reader = res.body.getReader()
+
 			for (;;) {
 				const { value, done: end } = await reader.read()
+
 				if (end) break
+
 				buffer += decoder.decode(value, { stream: true })
 				const events = buffer.split('\n\n')
+
 				buffer = events.pop() ?? ''
+
 				for (const raw of events) {
 					const event = raw.match(/^event: (.+)$/m)?.[1]
 					const data = JSON.parse(raw.match(/^data: (.+)$/m)?.[1] ?? '{}')
+
 					if (event === 'delta') {
 						reply += data.text
 						await tick()
@@ -104,6 +118,7 @@
 					else if (event === 'error') throw new Error(data.error)
 				}
 			}
+
 			if (!reply.trim() && !done) throw new Error('Ассистент не ответил, попробуйте отправить сообщение ещё раз')
 		} catch (e) {
 			// Неудачное сообщение возвращается в поле ввода, чтобы история не сломалась.
@@ -112,31 +127,41 @@
 			text = message
 			error = (e as Error).message
 			busy = false
+
 			return
 		}
 
 		chat.messages.push({ role: 'assistant', content: reply.trim() || farewell })
 		reply = null
+
 		if (done) {
 			chat.done = true
 			chat.delivered = done.delivered
 		}
+
 		save()
 		busy = false
 		await tick()
+
 		if (!done) input?.focus()
+
 		scrollDown()
 	}
 
 	function submit(e: SubmitEvent) {
 		e.preventDefault()
 		const message = text.trim()
+
 		if (!message || busy) return
+
 		const chars = chat.messages.reduce((sum, m) => sum + m.content.length, message.length)
+
 		if (chat.messages.length + 2 > limits.messages || chars + limits.assistantChars > limits.historyChars) {
 			error = 'Разговор получился длинным. Напишите, пожалуйста, Татьяне напрямую — она обязательно ответит.'
+
 			return
 		}
+
 		text = ''
 		ask(message)
 	}
@@ -144,6 +169,7 @@
 	// На компьютере Enter отправляет, Shift+Enter переносит строку.
 	// На телефоне Enter -- перенос.
 	const touch = matchMedia('(pointer: coarse)').matches
+
 	function keydown(e: KeyboardEvent) {
 		if (e.key === 'Enter' && !e.shiftKey && !touch && !e.isComposing) {
 			e.preventDefault()
@@ -153,6 +179,7 @@
 
 	async function restart() {
 		if (chat.messages.length && !chat.done && !confirm('Начать разговор заново? Написанное сотрётся.')) return
+
 		Object.assign(chat, { messages: [], done: false, delivered: false })
 		save()
 		error = ''

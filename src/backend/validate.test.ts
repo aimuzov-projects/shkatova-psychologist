@@ -34,11 +34,13 @@ test('отклоняет слишком длинные реплики и ист�
 		user('а'.repeat(limits.userChars)),
 		assistant('б'.repeat(limits.assistantChars)),
 	])
+
 	assert.equal(parseMessages({ messages: [...long.flat(), user()] }), null)
 })
 
 test('выжимка приводится к строкам, urgent -- к булеву', () => {
 	const summary = normalizeSummary({ name: 'Анна', contact: 42, request: null, urgent: 'true' })
+
 	assert.equal(summary?.name, 'Анна')
 	assert.equal(summary?.contact, '42')
 	assert.equal(summary?.request, '')

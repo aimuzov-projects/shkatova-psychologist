@@ -39,6 +39,7 @@ const pad = (n: number) => String(n).padStart(2, '0')
 const slots = (text: string) =>
 	text.split(/(\{\d+:[^}]+\})/).map((part) => {
 		const m = part.match(/^\{(\d+):(.+)\}$/)
+
 		return m ? { text: m[2], slot: m[1] } : { text: part }
 	})
 
@@ -224,11 +225,13 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	const bg = document.querySelector<HTMLElement>('.deck__bg')!
 	const bgImg = bg.querySelector('img')!
 	const showBg = () => bg.classList.add('deck__bg--loaded')
+
 	if (bgImg.complete && bgImg.naturalWidth) showBg()
 	else bgImg.addEventListener('load', showBg, { once: true })
 
 	const go = (i: number) => {
 		const to = Math.max(0, Math.min(slides.length - 1, i))
+
 		track.scrollTo({ left: to * track.clientWidth, behavior: reduce ? 'auto' : 'smooth' })
 	}
 
@@ -236,9 +239,12 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	// больше половины ширины: от него стадия, счётчик и стрелки.
 	const update = () => {
 		const position = track.scrollLeft / track.clientWidth
+
 		progress.style.transform = `scaleX(${(position + 1) / slides.length})`
 		const i = Math.round(position)
+
 		if (i === index) return
+
 		index = i
 		root.dataset.stage = slides[i].dataset.stageName
 		current.textContent = String(i + 1)
@@ -249,11 +255,14 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 	}
 
 	let ticking = false
+
 	track.addEventListener(
 		'scroll',
 		() => {
 			if (ticking) return
+
 			ticking = true
+
 			requestAnimationFrame(() => {
 				update()
 				ticking = false
@@ -267,11 +276,14 @@ const quote = (text: string) => (text.endsWith('.') ? `«${text.slice(0, -1)}».
 
 	document.addEventListener('keydown', (e) => {
 		if (e.metaKey || e.ctrlKey || e.altKey) return
+
 		const step = { ArrowRight: 1, PageDown: 1, ArrowLeft: -1, PageUp: -1 }[e.key]
+
 		if (step) go(index + step)
 		else if (e.key === 'Home') go(0)
 		else if (e.key === 'End') go(slides.length - 1)
 		else return
+
 		e.preventDefault()
 	})
 

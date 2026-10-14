@@ -30,10 +30,13 @@ const phone = /(?:\+7|(?<!\d)8)(?:[\s()-]*\d){10}(?!\d)/g
 
 export function typograph(text: string): string {
 	const parts = split(text.replace(/\.{3}/g, '…'), phone)
+
 	return parts
 		.map((part, i) => {
 			if (i % 2) return part.replace(/\s+/g, NBSP)
+
 			const fixed = words(part)
+
 			// Перед телефоном короткое слово висит так же, как в конце строки.
 			return i < parts.length - 1 ? fixed.replace(shortAtEnd, `$1${NBSP}`) : fixed
 		})
@@ -57,10 +60,13 @@ function words(s: string): string {
 function split(s: string, re: RegExp): string[] {
 	const out: string[] = []
 	let last = 0
+
 	for (const m of s.matchAll(re)) {
 		out.push(s.slice(last, m.index), m[0])
 		last = m.index + m[0].length
 	}
+
 	out.push(s.slice(last))
+
 	return out
 }

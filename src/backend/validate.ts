@@ -7,7 +7,9 @@ import type { Summary } from './prompt.ts'
 // Без потолка на всю историю ключ модели работал бы как бесплатный прокси.
 export function parseMessages(body: unknown): Message[] | null {
 	const messages = (body as { messages?: unknown })?.messages
+
 	if (!Array.isArray(messages) || !messages.length || messages.length > limits.messages) return null
+
 	const valid = messages.every(
 		(m, i) =>
 			// Роли строго чередуются, первой и последней пишет клиентка.
@@ -16,9 +18,13 @@ export function parseMessages(body: unknown): Message[] | null {
 			m.content.trim() &&
 			m.content.length <= (m.role === 'user' ? limits.userChars : limits.assistantChars),
 	)
+
 	if (!valid || messages.length % 2 === 0) return null
+
 	const total = messages.reduce((sum, m) => sum + m.content.length, 0)
+
 	if (total > limits.historyChars) return null
+
 	return messages.map((m) => ({ role: m.role, content: m.content }))
 }
 
@@ -28,7 +34,9 @@ const str = (value: unknown) => (typeof value === 'string' ? value : value == nu
 // пустыми, числами или вовсе отсутствуют.
 export function normalizeSummary(raw: unknown): Summary | null {
 	if (!raw || typeof raw !== 'object') return null
+
 	const s = raw as Record<string, unknown>
+
 	return {
 		name: str(s.name),
 		contact: str(s.contact),
