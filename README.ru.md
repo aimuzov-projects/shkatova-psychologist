@@ -55,6 +55,8 @@ npm run chat           # сервис ассистента
 npm run format:check && npm run lint:js && npm run lint:css && npm run check && npm test
 ```
 
+E2E-тесты в [`e2e`](e2e) собирают сайт и открывают его в Chromium с общими проверками из [infra-site-kit](https://github.com/aimuzov-projects/infra-site-kit): страницы из sitemap отвечают без ошибок в консоли и проходят axe, Яндекс Метрика ждёт первого действия посетителя. Сборке нужен `CONTACT_PHONE`, подойдёт любой номер. Браузер ставится один раз через `npx playwright install chromium`, дальше `npm run test:e2e`.
+
 ## Content Security Policy
 
 Сборка кладёт в каждую страницу CSP с хешами скриптов и стилей Astro (настройка `security.csp` в `astro.config.mjs`). В `npm run dev` политики нет, поэтому нарушения видны только после `npm run build && npm run preview` и на проде.

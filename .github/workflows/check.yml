@@ -14,9 +14,19 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    # Сборке нужен телефон для связи и в проверках, и в e2e. Номер здесь фиктивный.
+    env:
+      CONTACT_PHONE: '79000000000'
     steps:
-      # Сборке нужен контактный телефон, номер здесь подставной.
       - uses: aimuzov-projects/infra-site-kit/check@v1
-        env:
-          CONTACT_PHONE: '79000000000'
+      # e2e из infra-site-kit: сборка в Chromium. Браузер кэшируется по версии Playwright,
+      # его системные библиотеки ставятся из apt каждый прогон.
+      - id: playwright
+        run: echo "version=$(npm ls @playwright/test --json | jq -r '.dependencies["@playwright/test"].version')" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

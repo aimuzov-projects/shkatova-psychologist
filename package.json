@@ -13,6 +13,7 @@
 		"preview": "astro preview",
 		"check": "astro check && svelte-check",
 		"test": "node --test 'src/**/*.test.ts'",
+		"test:e2e": "playwright test",
 		"astro": "astro",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
@@ -29,9 +30,10 @@
 		"svelte": "5.57.2"
 	},
 	"devDependencies": {
-		"@aimuzov-projects/infra-site-kit": "github:aimuzov-projects/infra-site-kit#v1.6.1",
+		"@aimuzov-projects/infra-site-kit": "github:aimuzov-projects/infra-site-kit#v1.8.0",
 		"@astrojs/check": "0.9.10",
 		"@csstools/postcss-global-data": "4.0.0",
+		"@playwright/test": "1.64.0",
 		"@types/node": "26.6.5",
 		"oxlint": "1.87.0",
 		"postcss-custom-media": "12.0.3",

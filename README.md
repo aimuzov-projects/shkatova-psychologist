@@ -57,6 +57,8 @@ Before committing, the same checks as in CI:
 npm run format:check && npm run lint:js && npm run lint:css && npm run check && npm test
 ```
 
+The e2e tests in [`e2e`](e2e) build the site and open it in Chromium with the shared checks of [infra-site-kit](https://github.com/aimuzov-projects/infra-site-kit): the sitemap pages answer without console errors and pass axe, Yandex Metrica waits for the first interaction. The build needs `CONTACT_PHONE`, any number will do. The browser is installed once with `npx playwright install chromium`, then `npm run test:e2e`.
+
 ## Content Security Policy
 
 The build puts a CSP with hashes of Astro's scripts and styles into every page (the `security.csp` option in `astro.config.mjs`). `npm run dev` has no policy, so violations only show up after `npm run build && npm run preview` and in production.
