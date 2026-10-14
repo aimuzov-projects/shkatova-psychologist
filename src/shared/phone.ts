@@ -8,6 +8,7 @@ export const formatPhone = (digits: string) => digits.replace(/^(\d)(\d{3})(\d{3
 /** Цифры задом наперёд в base64: в таком виде номер не находят ни шаблоны, ни поиск по цифрам. */
 export const encodePhone = (digits: string) => btoa([...digits].reverse().join(''))
 
+/** Обратное к `encodePhone`, вызывается уже в браузере. */
 export const decodePhone = (encoded: string) => [...atob(encoded)].reverse().join('')
 
 export const phoneHref = {

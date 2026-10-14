@@ -154,7 +154,7 @@ export const faq: { icon: IconName; q: string; a: string }[] = [
 ]
 
 // Номер берём из окружения, чтобы его не было в открытом репозитории.
-// В HTML он выводится закодированным (см. #/lib/phone.ts),
+// В HTML он выводится закодированным (см. `#shared/phone.ts`),
 // а открытым текстом нужен только промпту ассистента.
 const phone = process.env.CONTACT_PHONE
 
