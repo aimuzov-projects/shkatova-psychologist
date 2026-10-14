@@ -5,3 +5,5 @@ package-lock.json
 CHANGELOG.md
 .claude
 .serena
+test-results
+playwright-report
