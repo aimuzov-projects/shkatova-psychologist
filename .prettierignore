@@ -2,5 +2,6 @@ dist
 .astro
 node_modules
 package-lock.json
+CHANGELOG.md
 .claude
 .serena
