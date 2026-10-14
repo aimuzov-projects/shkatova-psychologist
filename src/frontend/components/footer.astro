@@ -67,15 +67,15 @@ const { stage = 'day', scenery = false } = Astro.props
 		font-size: 0.82rem;
 
 		&__inner {
+			/* Ссылки подписи из infra-site-kit при наведении светлеют до цвета текста. */
+			--credit-hover: var(--fg);
+
 			position: relative;
 			z-index: 1;
 			display: flex;
 			flex-wrap: wrap;
 			gap: 8px 24px;
 			justify-content: space-between;
-
-			/* Ссылки подписи из infra-site-kit при наведении светлеют до цвета текста. */
-			--credit-hover: var(--fg);
 		}
 
 		/* Снизу обрезана краем страницы, контакты и подпись лежат поверх. Сдвинутая
