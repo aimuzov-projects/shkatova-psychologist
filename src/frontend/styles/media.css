@@ -11,6 +11,9 @@
 
 @custom-media --reduced-motion (prefers-reduced-motion: reduce);
 
+/* Палец вместо мыши: телефоны и планшеты. */
+@custom-media --touch (pointer: coarse);
+
 /* Что проявляет скрипт, прячем только когда скрипты есть: без них страница видна сразу. */
 @custom-media --scripting (scripting: enabled);
 @custom-media --no-scripting (scripting: none);
