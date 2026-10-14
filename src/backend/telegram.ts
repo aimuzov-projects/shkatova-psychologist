@@ -24,10 +24,12 @@ export function formatSummary(summary: Summary) {
 	// У Telegram предел 4096 символов на сообщение. Режем по границам полей,
 	// чтобы не разорвать HTML-тег посередине.
 	const messages = [head]
+
 	for (const part of body) {
 		if (messages.at(-1)!.length + part.length + 2 > 4000) messages.push(part)
 		else messages[messages.length - 1] += `\n\n${part}`
 	}
+
 	return messages
 }
 
@@ -37,7 +39,9 @@ export async function sendSummary(summary: Summary) {
 		.split(',')
 		.map((id) => id.trim())
 		.filter(Boolean)
+
 	if (!token || !recipients.length) throw new Error('TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не заданы')
+
 	const messages = formatSummary(summary)
 
 	const sendTo = async (chatId: string) => {
@@ -47,6 +51,7 @@ export async function sendSummary(summary: Summary) {
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' }),
 			})
+
 			if (!res.ok) throw new Error(`Telegram ${res.status}: ${(await res.text()).slice(0, 300)}`)
 		}
 	}
@@ -57,6 +62,8 @@ export async function sendSummary(summary: Summary) {
 	const failures = results.flatMap((result, i) =>
 		result.status === 'rejected' ? [`${recipients[i]}: ${(result.reason as Error).message}`] : [],
 	)
+
 	if (failures.length === recipients.length) throw new Error(failures.join('; '))
+
 	for (const failure of failures) console.error('summary delivery failed for', failure)
 }

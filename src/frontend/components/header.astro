@@ -59,21 +59,29 @@ const base = home ? '' : '/'
 	const contacts = document.querySelector<HTMLElement>('#contacts')
 
 	let pastHero = false
+
 	if (hero)
 		everyFrame(() => {
 			const next = hero.getBoundingClientRect().bottom < 80
+
 			if (next === pastHero) return null
+
 			pastHero = next
+
 			return () => root.classList.toggle('page--past-hero', pastHero)
 		})
 
 	// У контактов записываться уже некуда: кнопка ведёт наверх.
 	let atContacts = false
+
 	if (fab && contacts)
 		everyFrame(() => {
 			const next = contacts.getBoundingClientRect().top < innerHeight * 0.5
+
 			if (next === atContacts) return null
+
 			atContacts = next
+
 			return () => {
 				root.classList.toggle('page--at-contacts', atContacts)
 				fab.setAttribute('href', atContacts ? '#top' : '#contacts')

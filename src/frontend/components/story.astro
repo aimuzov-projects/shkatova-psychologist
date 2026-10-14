@@ -71,19 +71,25 @@ const { shots, eager = false } = Astro.props
 				trigger ? (at <= 1 ? vh * at : at) - trigger.getBoundingClientRect().top : -box.top,
 			)
 			let active = -1
+
 			passed.forEach((p, i) => p >= 0 && (active = i))
 			let opacity: string | null = null
+
 			if (veil && active >= 0) {
 				const end =
 					active + 1 < passed.length ? passed[active] - passed[active + 1] : passed[active] + box.bottom - vh
 				const progress = Math.min(1, Math.max(0, passed[active] / Math.max(1, end)))
+
 				opacity = (0.35 + 0.45 * progress).toFixed(3)
 			}
+
 			return () => {
 				shots.forEach(({ el }, i) => el.classList.toggle('story__shot--active', i === active))
+
 				if (veil && opacity) veil.style.opacity = opacity
 			}
 		})
+
 		return () => writes.forEach((write) => write())
 	})
 </script>

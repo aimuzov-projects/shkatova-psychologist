@@ -38,23 +38,32 @@ export async function complete(messages: Message[], onText: (chunk: string) => v
 			usage: { include: true },
 		}),
 	})
+
 	if (!res.ok || !res.body) throw new Error(`OpenRouter ${res.status}: ${(await res.text()).slice(0, 300)}`)
 
 	const calls: ToolCall[] = []
 	let usage: Usage | null = null
 	let buffer = ''
 	const decoder = new TextDecoder()
+
 	for await (const bytes of res.body) {
 		buffer += decoder.decode(bytes, { stream: true })
 		const lines = buffer.split('\n')
+
 		buffer = lines.pop() ?? ''
+
 		for (const line of lines) {
 			// Строки-комментарии вида ": OPENROUTER PROCESSING" держат соединение, их пропускаем.
 			if (!line.startsWith('data: ')) continue
+
 			const data = line.slice(6).trim()
+
 			if (data === '[DONE]') continue
+
 			const chunk = JSON.parse(data)
+
 			if (chunk.error) throw new Error(`OpenRouter: ${chunk.error.message ?? JSON.stringify(chunk.error)}`)
+
 			if (chunk.usage)
 				usage = {
 					prompt: chunk.usage.prompt_tokens ?? 0,
@@ -62,16 +71,22 @@ export async function complete(messages: Message[], onText: (chunk: string) => v
 					completion: chunk.usage.completion_tokens ?? 0,
 					cost: chunk.usage.cost ?? 0,
 				}
+
 			const delta = chunk.choices?.[0]?.delta
+
 			if (delta?.content) onText(delta.content)
+
 			for (const call of delta?.tool_calls ?? []) {
 				const slot = (calls[call.index ?? 0] ??= { name: '', arguments: '' })
+
 				if (call.function?.name) slot.name += call.function.name
+
 				if (call.function?.arguments) slot.arguments += call.function.arguments
 			}
 		}
 	}
 
 	const summary = calls.find((call) => call.name === summaryTool.function.name)
+
 	return { summary: summary ? JSON.parse(summary.arguments || '{}') : null, usage }
 }

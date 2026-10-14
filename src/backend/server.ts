@@ -21,25 +21,35 @@ const hits = new Map<string, { requests: number[]; summaries: number[] }>()
 function allow(ip: string, kind: keyof typeof rates) {
 	const now = Date.now()
 	const entry = hits.get(ip) ?? { requests: [], summaries: [] }
+
 	entry[kind] = entry[kind].filter((t) => now - t < hour)
 	hits.set(ip, entry)
+
 	if (entry[kind].length >= rates[kind]) return false
+
 	entry[kind].push(now)
+
 	return true
 }
 
 // Общий потолок запросов к модели за сутки: от смены IP лимиты выше не спасают.
 const daily = { limit: Number(process.env.CHAT_DAILY_LIMIT || 1000), day: '', count: 0 }
+
 function allowToday() {
 	const day = new Date().toISOString().slice(0, 10)
+
 	if (daily.day !== day) Object.assign(daily, { day, count: 0 })
+
 	if (daily.count >= daily.limit) return false
+
 	daily.count++
+
 	return true
 }
 
 setInterval(() => {
 	const now = Date.now()
+
 	for (const [ip, entry] of hits) {
 		if ([...entry.requests, ...entry.summaries].every((t) => now - t >= hour)) hits.delete(ip)
 	}
@@ -55,11 +65,15 @@ const clientIp = (req: IncomingMessage) =>
 async function readBody(req: IncomingMessage) {
 	let size = 0
 	const chunks: Buffer[] = []
+
 	for await (const chunk of req) {
 		size += chunk.length
+
 		if (size > 256 * 1024) throw new Error('too large')
+
 		chunks.push(chunk)
 	}
+
 	return JSON.parse(Buffer.concat(chunks).toString('utf8'))
 }
 
@@ -69,23 +83,30 @@ const json = (res: ServerResponse, status: number, data: object) =>
 async function deliver(summary: Summary) {
 	if (!production && !process.env.TELEGRAM_BOT_TOKEN) {
 		console.log(`[dev] выжимка вместо Telegram:\n${formatSummary(summary).join('\n\n')}`)
+
 		return
 	}
+
 	await sendSummary(summary)
 }
 
 async function chat(req: IncomingMessage, res: ServerResponse) {
 	const started = Date.now()
 	const ip = clientIp(req)
+
 	if (!allow(ip, 'requests')) return json(res, 429, { error: 'Слишком много сообщений, попробуйте через час' })
 
 	let messages: Message[] | null = null
+
 	try {
 		messages = parseMessages(await readBody(req))
 	} catch {}
+
 	if (!messages) return json(res, 400, { error: 'Некорректный запрос' })
+
 	if (!allowToday()) {
 		console.error(`daily limit of ${daily.limit} requests reached`)
+
 		return json(res, 503, { error: 'Ассистент сейчас недоступен. Напишите, пожалуйста, Татьяне напрямую' })
 	}
 
@@ -94,20 +115,26 @@ async function chat(req: IncomingMessage, res: ServerResponse) {
 		'Cache-Control': 'no-cache, no-transform',
 		Connection: 'keep-alive',
 	})
+
 	const send = (event: string, data: object) => res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`)
 
 	// Закрыли вкладку -- не тратим токены на ответ, который никто не прочитает.
 	const abort = new AbortController()
+
 	res.on('close', () => abort.abort())
 
 	let status = 'ok'
 	let usage: Usage | null = null
+
 	try {
 		const reply = await complete(messages, (text) => send('delta', { text }), abort.signal)
+
 		usage = reply.usage
 		const summary = normalizeSummary(reply.summary)
+
 		if (summary) {
 			let delivered = false
+
 			if (allow(ip, 'summaries')) {
 				try {
 					await deliver(summary)
@@ -116,6 +143,7 @@ async function chat(req: IncomingMessage, res: ServerResponse) {
 					console.error('summary delivery failed:', (error as Error).message)
 				}
 			}
+
 			status = delivered ? (summary.urgent ? 'summary-urgent' : 'summary') : 'summary-failed'
 			send('done', { delivered })
 		}
@@ -126,24 +154,31 @@ async function chat(req: IncomingMessage, res: ServerResponse) {
 			send('error', { error: 'Не получилось ответить, попробуйте отправить сообщение ещё раз' })
 		} else status = 'aborted'
 	}
+
 	res.end()
 	// Расход в логе: по нему видно, во что обходится чат, без захода в кабинет OpenRouter.
 	const spent = usage
 		? ` tokens=${usage.prompt}/${usage.cached}/${usage.completion} cost=$${usage.cost.toFixed(4)}`
 		: ''
+
 	console.log(`chat ${status} messages=${messages.length}${spent} ${Date.now() - started}ms`)
 }
 
 createServer((req, res) => {
 	const path = req.url?.split('?')[0]
+
 	if (req.method === 'GET' && path === '/api/health') return json(res, 200, { ok: true })
+
 	if (req.method === 'POST' && path === '/api/chat') {
 		chat(req, res).catch((error) => {
 			console.error(error)
+
 			if (!res.headersSent) json(res, 500, { error: 'Ошибка сервера' })
 			else res.end()
 		})
+
 		return
 	}
+
 	json(res, 404, { error: 'Not found' })
 }).listen(port, () => console.log(`chat listening on :${port}`))

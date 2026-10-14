@@ -93,11 +93,16 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 			function initAnchorScroll() {
 				document.addEventListener('click', (e) => {
 					const link = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]')
+
 					if (!link || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return
+
 					const target = document.getElementById(link.hash.slice(1))
+
 					if (!target) return
+
 					e.preventDefault()
 					const behavior = reduceMotion ? 'auto' : 'smooth'
+
 					if (target.id === 'top') scrollTo({ top: 0, behavior })
 					else target.scrollIntoView({ behavior })
 				})
@@ -114,6 +119,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 					},
 					{ rootMargin: '-45% 0px -45% 0px' },
 				)
+
 				document.querySelectorAll<HTMLElement>('[data-stage]').forEach((el) => observer.observe(el))
 			}
 
@@ -123,12 +129,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 					(entries) => {
 						for (const e of entries) {
 							if (!e.isIntersecting) continue
+
 							e.target.classList.add('reveal--in')
 							observer.unobserve(e.target)
 						}
 					},
 					{ threshold: 0.15 },
 				)
+
 				document.querySelectorAll('.reveal').forEach((el) => observer.observe(el))
 			}
 
@@ -137,7 +145,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 			/** Светлый ли цвет, по яркости. В сборке минификатор сокращает цвета: `#ffffff` приходит как `#fff`. */
 			function isLight(hex: string) {
 				if (hex.length < 7) hex = '#' + hex.slice(1, 4).replace(/./g, '$&$&')
+
 				const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16))
+
 				return 0.2126 * r + 0.7152 * g + 0.0722 * b > 140
 			}
 
@@ -150,6 +160,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 				const items = sections.map((el) => {
 					const box = el.getBoundingClientRect()
 					const style = getComputedStyle(el)
+
 					return {
 						top: box.top + scrollY,
 						mid: box.top + scrollY + box.height / 2,
@@ -160,26 +171,34 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 					}
 				})
 				const stops = [{ y: 0, color: items[0].color }]
+
 				items.slice(1).forEach((b, i) => {
 					const a = items[i]
+
 					if (a.lightText === b.lightText)
 						stops.push({ y: a.mid, color: a.color }, { y: b.mid, color: b.color })
 					else {
 						const seam = Math.min(a.padBottom, b.padTop, 90)
+
 						stops.push({ y: b.top - seam, color: a.color }, { y: b.top + seam, color: b.color })
 					}
 				})
+
 				return stops
 			}
 
 			/** Цвет градиента в точке страницы `y`: до первой точки и после последней цвет не меняется. */
 			function colorAt(stops: Stop[], y: number) {
 				const next = stops.findIndex((stop) => stop.y > y)
+
 				if (next === -1) return stops.at(-1)!.color
+
 				if (next === 0) return stops[0].color
+
 				const a = stops[next - 1]
 				const b = stops[next]
 				const t = (y - a.y) / (b.y - a.y || 1)
+
 				return `color-mix(in oklab, ${b.color} ${(t * 100).toFixed(1)}%, ${a.color})`
 			}
 
@@ -191,7 +210,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 			 */
 			function initBackground() {
 				const sections = [...document.querySelectorAll<HTMLElement>('body [data-stage]')]
+
 				if (!sections.length) return
+
 				let stops: Stop[] = []
 
 				onResize(() => {
@@ -199,14 +220,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 					const list = stops.map(({ y, color }) => `${color} ${Math.round(y)}px`).join(', ')
 					// Ниже последней точки фон держит цвет последней секции.
 					const last = stops.at(-1)!.color
+
 					return () =>
 						(document.body.style.backgroundImage = `linear-gradient(in oklab to bottom, ${list}, ${last})`)
 				})
 
 				const storyVeil = document.querySelector<HTMLElement>('[data-veil="story"]')
+
 				if (storyVeil)
 					everyFrame(() => {
 						const y = scrollY + innerHeight / 2
+
 						return () => stops.length && (storyVeil.style.backgroundColor = colorAt(stops, y))
 					})
 			}
@@ -215,6 +239,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 			function initScrolledFlag() {
 				everyFrame(() => {
 					const scrolled = scrollY > 40
+
 					return () => root.classList.toggle('page--scrolled', scrolled)
 				})
 			}
@@ -222,7 +247,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 			/** Пятно света `.glow` за курсором. Только мышь и только без "уменьшения движения". */
 			function initCursorGlow() {
 				const glow = document.querySelector<HTMLElement>('.glow')
+
 				if (!glow || reduceMotion || !matchMedia('(pointer: fine)').matches) return
+
 				addEventListener(
 					'pointermove',
 					(e) => {
