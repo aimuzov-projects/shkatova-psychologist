@@ -1,4 +1,6 @@
 ---
+import Metrika from '@aimuzov-projects/infra-site-kit/metrika.astro'
+import MetrikaPixel from '@aimuzov-projects/infra-site-kit/metrika-pixel.astro'
 import '@fontsource/prata/400.css'
 import '@fontsource/golos-text/400.css'
 import '@fontsource/golos-text/500.css'
@@ -33,6 +35,9 @@ const {
 	index = true,
 } = Astro.props
 const canonical = new URL(Astro.url.pathname, Astro.site)
+
+/** Yandex Metrika counter. */
+const metrikaId = 113579697
 ---
 
 <!doctype html>
@@ -62,20 +67,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
 			<link rel="preload" as="font" type="font/woff2" href={href} crossorigin />
 		))}
 
-		{/* Yandex Metrika. On mobile the ~85 KB counter script stole bandwidth from fonts and
-		    the first photo, so it loads on first interaction or 4 s after load, earlier ym calls
-		    are queued. Webvisor is off: on mobile it raised LCP from ~2.1 to ~3 s. The snippet
-		    lives in public/metrika.js: Astro doesn't hash is:inline scripts for the CSP it puts
-		    into <meta>, so an inline body gets blocked, while a same-origin file passes through
-		    'self'. */}
-		<script is:inline src="/metrika.js"></script>
+		<Metrika id={metrikaId} />
 	</head>
 	<body>
-		<noscript>
-			<div>
-				<img src="https://mc.yandex.ru/watch/113579697" style="position:absolute; left:-9999px;" alt="" />
-			</div>
-		</noscript>
+		<MetrikaPixel id={metrikaId} />
 		<div class="glow" aria-hidden="true" />
 		<slot />
 
