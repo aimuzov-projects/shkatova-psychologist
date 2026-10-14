@@ -38,7 +38,7 @@
 
 ## Запуск
 
-Стек и раскладка как в [infra-template-site](https://github.com/aimuzov-projects/infra-template-site): Astro + Svelte 5, Prettier, oxlint, stylelint (БЭМ), `node --test`. Node берётся из `mise.toml`, эта же версия закреплена в `package.json` и в Dockerfile.
+Стек и раскладка как в [infra-site-template](https://github.com/aimuzov-projects/infra-site-template): Astro + Svelte 5, Prettier, oxlint, stylelint (БЭМ), `node --test`. Node берётся из `mise.toml`, эта же версия закреплена в `package.json` и в Dockerfile.
 
 ```sh
 cp .env.example .env   # заполнить: телефон обязателен, ключи нужны только чату
