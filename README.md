@@ -40,7 +40,7 @@ The site and the assistant are in Russian, so the names below are translated.
 
 ## Running
 
-Stack and layout follow [infra-template-site](https://github.com/aimuzov-projects/infra-template-site): Astro + Svelte 5, Prettier, oxlint, stylelint (BEM), `node --test`. Node comes from `mise.toml`, the same version is pinned in `package.json` and the Dockerfiles.
+Stack and layout follow [infra-site-template](https://github.com/aimuzov-projects/infra-site-template): Astro + Svelte 5, Prettier, oxlint, stylelint (BEM), `node --test`. Node comes from `mise.toml`, the same version is pinned in `package.json` and the Dockerfiles.
 
 ```sh
 cp .env.example .env   # fill in: the phone is required, the keys are only needed by the chat
