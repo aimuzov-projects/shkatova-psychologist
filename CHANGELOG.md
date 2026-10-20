@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/aimuzov-projects/shkatova-psychologist/compare/v1.1.0...v1.2.0) (2026-10-20)
+
+
+### Features
+
+* reserve the scrollbar gutter on every page ([b630e73](https://github.com/aimuzov-projects/shkatova-psychologist/commit/b630e73b590d1713c02f2b1f3f2febc5f68d6d00))
+* reserve the scrollbar gutter on every page ([8cdef42](https://github.com/aimuzov-projects/shkatova-psychologist/commit/8cdef4221f8b84ea66b96c8f5edb9b0c625851bb))
+
 ## [1.1.0](https://github.com/aimuzov-projects/shkatova-psychologist/compare/v1.0.0...v1.1.0) (2026-10-18)
 
 
