@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/aimuzov-projects/shkatova-psychologist/compare/v1.2.0...v1.2.1) (2026-10-20)
+
+
+### Bug Fixes
+
+* **deps:** move to infra-site-kit v2 with base.css ([66fd82f](https://github.com/aimuzov-projects/shkatova-psychologist/commit/66fd82fd42c58da43c098cc11c2aeb3cc8ccb737))
+* **deps:** move to infra-site-kit v2 with base.css ([33defa4](https://github.com/aimuzov-projects/shkatova-psychologist/commit/33defa4c6e92b1652d54b462a09235a81cbfe4aa))
+
 ## [1.2.0](https://github.com/aimuzov-projects/shkatova-psychologist/compare/v1.1.0...v1.2.0) (2026-10-20)
 
 
