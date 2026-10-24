@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-	<a href="https://github.com/aimuzov/shkatova-psychologist/actions/workflows/deploy.yml"><img src="https://img.shields.io/github/actions/workflow/status/aimuzov/shkatova-psychologist/deploy.yml?branch=main&label=deploy" alt="Deploy"></a>
+	<a href="https://github.com/aimuzov/shkatova-psychologist/actions/workflows/deploy.yml"><img src="https://img.shields.io/github/actions/workflow/status/aimuzov/shkatova-psychologist/deploy.yml?branch=main&label=release" alt="Release"></a>
 	<a href="https://tatiana-shkatova.ru"><img src="https://img.shields.io/website?url=https%3A%2F%2Ftatiana-shkatova.ru&label=site" alt="Site status"></a>
 	<a href="package.json"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Faimuzov%2Fshkatova-psychologist%2Fmain%2Fpackage.json&query=%24.engines.node&label=node&logo=nodedotjs&logoColor=white&color=5fa04e" alt="Node"></a>
 	<a href="https://astro.build"><img src="https://img.shields.io/github/package-json/dependency-version/aimuzov/shkatova-psychologist/astro?logo=astro&logoColor=white&color=bc52ee" alt="Astro"></a>
@@ -69,7 +69,7 @@ E2E-тесты в [`e2e`](e2e) собирают сайт и открывают �
 
 Сервер projects из [infra-server](https://github.com/aimuzov/infra-server): мерж релизного PR, который ведёт release-please, запускает `deploy.yml`, тот прогоняет проверки и заходит по SSH. Там ключ запускает общий [`deploy/site.sh`](https://github.com/aimuzov/infra-server/blob/main/deploy/site.sh) из infra-server, который подтягивает `main` и пересобирает контейнеры из [`deploy/docker-compose.yml`](deploy/docker-compose.yml): `shkatova-psychologist` (nginx со статикой) и `shkatova-chat` (ассистент). Из РФ OpenRouter и Telegram не отвечают, поэтому чат ходит наружу через общий VPN-выход из infra-server. Домен, TLS и маршрут `/api` держит общий Caddy. `.env` лежит на сервере в `/srv/shkatova-psychologist`.
 
-Быстро откатиться — запустить Deploy вручную с прошлым тегом: `gh workflow run deploy.yml -f tag=v1.2.3`. Исправление плохого коммита выезжает через релизный PR, как любое изменение.
+Быстро откатиться — запустить Release вручную с прошлым тегом: `gh workflow run deploy.yml -f tag=v1.2.3`. Исправление плохого коммита выезжает через релизный PR, как любое изменение.
 
 ## Лицензия
 
