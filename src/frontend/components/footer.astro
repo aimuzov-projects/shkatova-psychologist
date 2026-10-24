@@ -2,7 +2,7 @@
 import { Picture } from 'astro:assets'
 
 import mountains from '#frontend/assets/mountains.jpg'
-import Credit from '@aimuzov-projects/infra-site-kit/credit.astro'
+import Credit from '@aimuzov/infra-site-kit/credit.astro'
 import { contacts, person } from '#shared/site.ts'
 
 type Props = {
@@ -35,7 +35,7 @@ const { stage = 'day', scenery = false } = Astro.props
 		</span>
 		<span>{contacts.address}</span>
 		<span>Информация на сайте не является медицинской консультацией</span>
-		<Credit repo="https://github.com/aimuzov-projects/shkatova-psychologist" />
+		<Credit repo="https://github.com/aimuzov/shkatova-psychologist" />
 	</div>
 </footer>
 
